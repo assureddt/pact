@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Condition="'$(PushOnPack)'=='true'" Name="PublishToNuget" AfterTargets="Pack">
+    <Message Text="Pushing package to feed &quot;$(PackageId).$(PackageVersion).nupkg&quot;"></Message>
+    <Exec Command="nuget push &quot;$(OutputPath)..\$(PackageId).$(PackageVersion).nupkg&quot; -src &quot;https://nuget.pkg.github.com/assureddt&quot;"></Exec>
+  </Target>
+
+</Project>

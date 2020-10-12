@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>Pact.Email</PackageId>
+    <Description>✉ Email services</Description>
+    <PackageTags>Email</PackageTags>
+    <PushOnPack>true</PushOnPack>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="2.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Pact.Core\Pact.Core.csproj" />
+  </ItemGroup>
+</Project>

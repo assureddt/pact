@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Description>🌍 Extensions to ASP.NET Core Dynamic Localization</Description>
+    <PackageTags>Localization</PackageTags>
+    <PackageId>Pact.Localization</PackageId>
+    <PushOnPack>true</PushOnPack>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+</Project>

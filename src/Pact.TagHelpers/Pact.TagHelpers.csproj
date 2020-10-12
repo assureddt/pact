@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PackageId>Pact.TagHelpers</PackageId>
+    <Description>🏷 Useful TagHelpers</Description>
+    <PackageTags>TagHelpers</PackageTags>
+    <PushOnPack>true</PushOnPack>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+</Project>

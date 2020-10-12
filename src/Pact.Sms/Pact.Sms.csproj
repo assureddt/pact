@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>Pact.Sms</PackageId>
+    <Description>📲 SMS services</Description>
+    <PackageTags>SMS</PackageTags>
+    <PushOnPack>true</PushOnPack>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Twilio.AspNet.Core" Version="5.33.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Pact.Core\Pact.Core.csproj" />
+  </ItemGroup>
+
+</Project>
