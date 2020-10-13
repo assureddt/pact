@@ -28,9 +28,6 @@ jobs:
         with:
            dotnet-version: '3.1.x'
 
-      - name: Setup nuget
-        uses: nuget/setup-nuget@v1
-      
       - name: Add Private Nuget Feed
         run: Out-File -FilePath "nuget.config" -InputObject "<?xml version=`"1.0`" encoding=`"utf-8`"?>
          <configuration>
@@ -60,4 +57,4 @@ jobs:
       
       # Push
       - name: Push generated package to GitHub registry
-        run: dotnet nuget push ./nupkg/*.nupkg -s github --skip-duplicate
+        run: dotnet nuget push './nupkg/*.nupkg' -s github --skip-duplicate
