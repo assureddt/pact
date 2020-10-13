@@ -1,0 +1,54 @@
+name: publish packages
+
+on:
+  release:
+    types: [ created ]
+
+env:
+  # Stop wasting time caching packages
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  # Disable sending usage data to Microsoft
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  # Project name to pack and publish
+  PROJECT_NAME: Pact
+  # GitHub Packages Feed settings
+  GITHUB_FEED: https://nuget.pkg.github.com/assureddt/
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Prep
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+           dotnet-version: '3.1.x'
+
+      - name: Setup nuget
+        uses: nuget/setup-nuget@v1
+      
+      - name: Add private GitHub registry to NuGet
+        run: dotnet nuget add source $GITHUB_FEED --name $PROJECT_NAME --store-password-in-clear-text --username ADT --password ${{ secrets.GITHUB_TOKEN }}
+        
+      # Build
+      - name: Restore
+        run: dotnet restore
+        
+      - name: Build
+        run: dotnet build -c Release --no-restore
+      
+      - name: Pack
+        run: dotnet pack -c Release --no-restore --include-symbols --include-source src/$PROJECT_NAME/$PROJECT_NAME.*proj -o out
+      
+      # Push
+      - name: Push generated package to GitHub registry
+        run: dotnet nuget push out/*.nupkg -s $PROJECT_NAME --skip-duplicate -k ${{ secrets.GITHUB_TOKEN }}
