@@ -16,16 +16,15 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packaging", "Packaging", "{6CD23C95-876D-4AC5-BA2F-E88ED12249F4}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
-		Directory.Build.targets = Directory.Build.targets
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.MessageBus", "Pact.MessageBus\Pact.MessageBus.csproj", "{AC043369-9E76-41E4-BD7A-B8FEA13EF4ED}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Kendo", "Pact.Kendo\Pact.Kendo.csproj", "{75A092FC-05BA-4EA9-AC68-AC3D1C00C61A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pact.Email", "Pact.Email\Pact.Email.csproj", "{9CA6A8DF-A9BE-4349-9306-09FDCB506636}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Email", "Pact.Email\Pact.Email.csproj", "{9CA6A8DF-A9BE-4349-9306-09FDCB506636}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pact.Sms", "Pact.Sms\Pact.Sms.csproj", "{D008128B-E8A9-41F4-A701-8D62302EC233}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Sms", "Pact.Sms\Pact.Sms.csproj", "{D008128B-E8A9-41F4-A701-8D62302EC233}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
