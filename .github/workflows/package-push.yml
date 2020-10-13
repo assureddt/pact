@@ -11,9 +11,6 @@ env:
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   # Project name to pack and publish
   PROJECT_NAME: Pact
-  # GitHub Packages Feed settings
-  GITHUB_FEED: https://nuget.pkg.github.com/assureddt/
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -36,11 +33,22 @@ jobs:
       - name: Setup nuget
         uses: nuget/setup-nuget@v1
       
-      - name: Add default GitHub registry to NuGet
-        run: dotnet nuget add source https://api.nuget.org/v3/index.json --name nuget.org
-
-      - name: Add private GitHub registry to NuGet
-        run: dotnet nuget add source $GITHUB_FEED --name $PROJECT_NAME --store-password-in-clear-text --username ADT --password $GITHUB_TOKEN
+      - name: Add Private Nuget Feed
+        run: Out-File -FilePath "nuget.config" -InputObject "<?xml version=`"1.0`" encoding=`"utf-8`"?>
+         <configuration>
+               <packageSources>
+                    <clear />
+                    <add key=`"github`" value=`"https://nuget.pkg.github.com/assureddt/index.json`" />
+                    <add key=`"nuget`" value=`"https://api.nuget.org/v3/index.json`" />
+                </packageSources>
+                <packageSourceCredentials>
+                    <github>
+                        <add key=`"Username`" value=`"assureddt`" />
+                        <add key=`"ClearTextPassword`" value=`"${{ secrets.GITHUB_TOKEN }}`" />
+                    </github>
+                </packageSourceCredentials>
+         </configuration>"
+        shell: pwsh
         
       # Build
       - name: Restore
@@ -54,4 +62,4 @@ jobs:
       
       # Push
       - name: Push generated package to GitHub registry
-        run: dotnet nuget push out/*.nupkg -s $PROJECT_NAME --skip-duplicate -k $GITHUB_TOKEN
+        run: dotnet nuget push out/*.nupkg -s $PROJECT_NAME --skip-duplicate -k ${{ secrets.GITHUB_TOKEN }}
