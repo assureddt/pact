@@ -3,28 +3,29 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30524.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Cache", "Pact.Cache\Pact.Cache.csproj", "{0D6C5D86-0DF3-4BD7-9280-DC2B2517734E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Cache", "src\Pact.Cache\Pact.Cache.csproj", "{0D6C5D86-0DF3-4BD7-9280-DC2B2517734E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Core", "Pact.Core\Pact.Core.csproj", "{CB09B04F-C242-4FB5-9FC6-5F458C183C9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Core", "src\Pact.Core\Pact.Core.csproj", "{CB09B04F-C242-4FB5-9FC6-5F458C183C9E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Localization", "Pact.Localization\Pact.Localization.csproj", "{7346C772-B907-4314-9DDF-8A1CD0466A9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Localization", "src\Pact.Localization\Pact.Localization.csproj", "{7346C772-B907-4314-9DDF-8A1CD0466A9E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Impersonation", "Pact.Impersonation\Pact.Impersonation.csproj", "{E468D8A7-C28B-4761-A071-F616A9D952E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Impersonation", "src\Pact.Impersonation\Pact.Impersonation.csproj", "{E468D8A7-C28B-4761-A071-F616A9D952E2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.TagHelpers", "Pact.TagHelpers\Pact.TagHelpers.csproj", "{265C6F06-673D-4B29-B1DD-51CDC1B815C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.TagHelpers", "src\Pact.TagHelpers\Pact.TagHelpers.csproj", "{265C6F06-673D-4B29-B1DD-51CDC1B815C1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packaging", "Packaging", "{6CD23C95-876D-4AC5-BA2F-E88ED12249F4}"
 	ProjectSection(SolutionItems) = preProject
-		Directory.Build.props = Directory.Build.props
+		src\Directory.Build.props = src\Directory.Build.props
+		.github\workflows\package-push.yml = .github\workflows\package-push.yml
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.MessageBus", "Pact.MessageBus\Pact.MessageBus.csproj", "{AC043369-9E76-41E4-BD7A-B8FEA13EF4ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.MessageBus", "src\Pact.MessageBus\Pact.MessageBus.csproj", "{AC043369-9E76-41E4-BD7A-B8FEA13EF4ED}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Kendo", "Pact.Kendo\Pact.Kendo.csproj", "{75A092FC-05BA-4EA9-AC68-AC3D1C00C61A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Kendo", "src\Pact.Kendo\Pact.Kendo.csproj", "{75A092FC-05BA-4EA9-AC68-AC3D1C00C61A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Email", "Pact.Email\Pact.Email.csproj", "{9CA6A8DF-A9BE-4349-9306-09FDCB506636}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Email", "src\Pact.Email\Pact.Email.csproj", "{9CA6A8DF-A9BE-4349-9306-09FDCB506636}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Sms", "Pact.Sms\Pact.Sms.csproj", "{D008128B-E8A9-41F4-A701-8D62302EC233}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Sms", "src\Pact.Sms\Pact.Sms.csproj", "{D008128B-E8A9-41F4-A701-8D62302EC233}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
