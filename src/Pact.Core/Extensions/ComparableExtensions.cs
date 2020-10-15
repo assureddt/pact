@@ -2,7 +2,7 @@
 
 namespace Pact.Core.Extensions
 {
-    public static class ComparableHelpers
+    public static class ComparableExtensions
     {
         public static bool IsInRange<T>(this T value, T lower, T upper, RangeExtremityInclusion comparison) where T : IComparable
         {

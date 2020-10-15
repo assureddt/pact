@@ -6,7 +6,7 @@ using Pact.Core.Extensions;
 
 namespace Pact.Web.Extensions
 {
-    public static class CollectionHelpers
+    public static class CollectionExtensions
     {
         
         public static IEnumerable<SelectListItem> WithDefault(this IEnumerable<SelectListItem> @this, string description)

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Core.Helpers
+namespace Pact.Core
 {
     public class GenericEqualityComparer<T> : IEqualityComparer<T>
     {

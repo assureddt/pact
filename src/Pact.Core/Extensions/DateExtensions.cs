@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Pact.Core.Extensions
 {
-    public static class DateHelpers
+    public static class DateExtensions
     {
         public static double GetBusinessDays(
             this DateTime start, DateTime end,

@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace Pact.Core.Extensions
 {
-    public static class ColorHelpers
+    public static class ColorExtensions
     {
         public static string ToCssHex(this Color value) => $"#{value.R:X2}{value.G:X2}{value.B:X2}";
 

@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace Pact.Core.Extensions
 {
-    public static class EnumHelpers
+    public static class EnumExtensions
     {
         /// <summary>
         /// Gets an attribute on an enum field value
