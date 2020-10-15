@@ -4,13 +4,6 @@ on:
   release:
     types: [ created ]
 
-env:
-  # Stop wasting time caching packages
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-  # Disable sending usage data to Microsoft
-  DOTNET_CLI_TELEMETRY_OPTOUT: true
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
   build:
@@ -19,6 +12,12 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      # Env
+      - name: Set environment variables
+        run: |
+            echo "DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true" >> $GITHUB_ENV
+            echo "DOTNET_CLI_TELEMETRY_OPTOUT=true" >> $GITHUB_ENV
+
       # Prep
       - name: Checkout
         uses: actions/checkout@v2
