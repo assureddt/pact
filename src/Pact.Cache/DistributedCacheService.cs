@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
-using Pact.Core.Helpers;
+using Pact.Core.Extensions;
 
 namespace Pact.Cache
 {

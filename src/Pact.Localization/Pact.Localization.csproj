@@ -6,7 +6,6 @@
     <Description>🌍 Extensions to ASP.NET Core Dynamic Localization</Description>
     <PackageTags>Localization</PackageTags>
     <PackageId>Pact.Localization</PackageId>
-    <PushOnPack>true</PushOnPack>
   </PropertyGroup>
 
   <ItemGroup>

@@ -5,7 +5,6 @@
     <PackageId>Pact.Kendo</PackageId>
     <Description>🤺 IQueryable extension helpers for kendo ui data sources</Description>
     <PackageTags>Kendo</PackageTags>
-    <PushOnPack>true</PushOnPack>
   </PropertyGroup>
 
   <ItemGroup>

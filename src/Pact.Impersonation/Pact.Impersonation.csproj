@@ -5,7 +5,6 @@
     <PackageId>Pact.Impersonation</PackageId>
     <Description>🎭 File system impersonation (for Windows, currently)</Description>
     <PackageTags>Impersonation</PackageTags>
-    <PushOnPack>true</PushOnPack>
   </PropertyGroup>
 
   <ItemGroup>

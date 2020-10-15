@@ -3,7 +3,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Pact.Core.Helpers;
+using Pact.Core.Extensions;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 

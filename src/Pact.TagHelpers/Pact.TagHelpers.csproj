@@ -5,7 +5,6 @@
     <PackageId>Pact.TagHelpers</PackageId>
     <Description>🏷 Useful TagHelpers</Description>
     <PackageTags>TagHelpers</PackageTags>
-    <PushOnPack>true</PushOnPack>
   </PropertyGroup>
 
   <ItemGroup>

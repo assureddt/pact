@@ -5,7 +5,6 @@
     <PackageId>Pact.MessageBus</PackageId>
     <Description>📡 A wrapper for RabbitMQ to make it easier to use.</Description>
     <PackageTags>RabbitMQ, Message, Bus</PackageTags>
-    <PushOnPack>true</PushOnPack>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <Version>1.0.2-beta</Version>
+    <Version>1.0.2</Version>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
@@ -9,9 +9,15 @@
     <Authors>ADT</Authors>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
     <Copyright>© 2020 ADT. All rights reserved</Copyright>
+    <PackageIcon>icon.png</PackageIcon>
     <RepositoryType>git</RepositoryType>
 	  <PackageLicenseExpression>UNLICENSED</PackageLicenseExpression>
 	  <LangVersion>latest</LangVersion>
     <RepositoryUrl>https://github.com/assureddt/pact</RepositoryUrl>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(SolutionDir)/icon.png" Pack="true" PackagePath="\" Visible="false"/>
+  </ItemGroup>
+
 </Project>

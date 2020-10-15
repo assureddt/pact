@@ -5,7 +5,6 @@
     <Description>💨 Distributed caching service</Description>
     <PackageTags>Redis, Cache, Sql Server</PackageTags>
     <PackageId>Pact.Cache</PackageId>
-    <PushOnPack>true</PushOnPack>
   </PropertyGroup>
 
   <ItemGroup>

@@ -5,7 +5,6 @@
     <PackageId>Pact.Sms</PackageId>
     <Description>📲 SMS services</Description>
     <PackageTags>SMS</PackageTags>
-    <PushOnPack>true</PushOnPack>
   </PropertyGroup>
 
   <ItemGroup>
