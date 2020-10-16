@@ -8,18 +8,29 @@ namespace Pact.Core.Extensions
 {
     public static class ColorExtensions
     {
-        public static string ToCssHex(this Color value) => $"#{value.R:X2}{value.G:X2}{value.B:X2}";
+        /// <summary>
+        /// Formats the color as a hash-prefixed hex value (for CSS)
+        /// </summary>
+        /// <param name="value">The color</param>
+        /// <param name="withAlpha">Whether to include the alpha channel</param>
+        /// <returns></returns>
+        public static string ToCssHex(this Color value, bool withAlpha = false) => $"#{(withAlpha?value.A.ToString("X2"):string.Empty)}{value.R:X2}{value.G:X2}{value.B:X2}";
 
-        public static string[] GetRandomKnownColors(int number)
+        /// <summary>
+        /// Gets a specific number of distinct random known colors 
+        /// </summary>
+        /// <param name="number">How many you want</param>
+        /// <returns>The list of colors</returns>
+        public static IList<Color> GetRandomKnownColors(int number)
         {
-            var colors = new List<string>();
+            var colors = new List<Color>();
             var random = new Random();
 
             for (var i = 0; i < number; i++)
             {
                 do
                 {
-                    var color = random.KnownColor().ToCssHex();
+                    var color = random.KnownColor();
                     if (colors.Any(x => x == color)) continue;
 
                     colors.Add(color);
@@ -27,10 +38,10 @@ namespace Pact.Core.Extensions
                 } while (true);
             }
 
-            return colors.ToArray();
+            return colors;
         }
 
-        public static Color KnownColor(this Random random)
+        private static Color KnownColor(this Random random)
         {
             while (true)
             {

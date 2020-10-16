@@ -6,6 +6,13 @@ namespace Pact.Core.Extensions
 {
     public static class DateExtensions
     {
+        /// <summary>
+        /// Returns the precise number of working days between 2 date-times (assuming Monday-Friday working week)
+        /// </summary>
+        /// <param name="start">Start date</param>
+        /// <param name="end">End date</param>
+        /// <param name="holidays">Optional collection of holiday dates to add to the exclusion</param>
+        /// <returns>The decimal working days difference between the date-times</returns>
         public static double GetBusinessDays(
             this DateTime start, DateTime end,
             params DateTime [] holidays)
@@ -13,6 +20,15 @@ namespace Pact.Core.Extensions
             return GetBusinessDays(start, end, new TimeSpan(0, 0, 0), new TimeSpan(24, 0, 0), holidays).TotalDays;
         }
 
+        /// <summary>
+        /// Returns the precise number of working days between 2 date-times (assuming Monday-Friday working week), factoring in actual working hours
+        /// </summary>
+        /// <param name="start">Start date</param>
+        /// <param name="end">End date</param>
+        /// <param name="workdayStartTime">The time the working day starts</param>
+        /// <param name="workdayEndTime">The time the working day ends</param>
+        /// <param name="holidays">Optional collection of holiday dates to add to the exclusion</param>
+        /// <returns>The timespan difference between the date-times</returns>
         public static TimeSpan GetBusinessDays(
             this DateTime start, DateTime end,
             TimeSpan workdayStartTime, TimeSpan workdayEndTime,
@@ -95,13 +111,24 @@ namespace Pact.Core.Extensions
                 var dailyWorkSecondsToAdd = dailyWorkSeconds * businessDaysBetween;
 
                 output = timeBeforeEndOfWorkDay + timeAfterStartOfWorkDay;
-                output = output + new TimeSpan(0, 0, dailyWorkSecondsToAdd);
+                output += new TimeSpan(0, 0, dailyWorkSecondsToAdd);
             }
 
             return flip ? -output : output;
         }
 
-        public static DateTime Earliest(DateTime a, DateTime b) => a <= b ? a : b;
-        public static DateTime Latest(DateTime a, DateTime b) => a >= b ? a : b;
+        /// <summary>
+        /// Returns the earliest of 2 dates
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns>Whichever is the earliest</returns>
+        public static DateTime Earliest(params DateTime[] dt) => dt.Min();
+
+        /// <summary>
+        /// Returns the latest of 2 dates
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns>Whichever is the latest</returns>
+        public static DateTime Latest(params DateTime[] dt) => dt.Max();
     }
 }

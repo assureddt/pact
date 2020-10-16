@@ -15,7 +15,7 @@ namespace Pact.Core.Extensions
         /// <typeparam name="T">The type of the attribute you want to retrieve</typeparam>
         /// <param name="enumVal">The enum value</param>
         /// <returns>The attribute of type T that exists on the enum value, null if not present</returns>
-        /// <example>string desc = myEnumVariable.GetAttributeOfType<DescriptionAttribute>().Description;</example>
+        /// <example>myEnumVariable.GetAttributeOfType<DescriptionAttribute>().Description;</example>
         public static T GetAttributeOfType<T>(this Enum enumVal) where T : Attribute
         {
             var type = enumVal.GetType();
@@ -25,23 +25,44 @@ namespace Pact.Core.Extensions
             return (T)attributes?.FirstOrDefault();
         }
 
+        /// <summary>
+        /// Gets Name attribute metadata for an enum value, falling back to some alternatives if absent
+        /// </summary>
+        /// <param name="enumVal"></param>
+        /// <returns></returns>
         public static string GetName(this Enum enumVal)
         {
             return enumVal.GetAttributeOfType<DisplayAttribute>()?.Name ??
+                   enumVal.GetAttributeOfType<DisplayAttribute>()?.Description ??
                    enumVal.GetAttributeOfType<DescriptionAttribute>()?.Description;
         }
 
+        /// <summary>
+        /// Gets Description attribute metadata for an enum value, falling back to some alternatives if absent
+        /// </summary>
+        /// <param name="enumVal"></param>
+        /// <returns></returns>
         public static string GetDescription(this Enum enumVal)
         {
             return enumVal.GetAttributeOfType<DisplayAttribute>()?.Description ??
                    enumVal.GetAttributeOfType<DescriptionAttribute>()?.Description;
         }
 
+        /// <summary>
+        /// Gets Order attribute metadata for an enum value
+        /// </summary>
+        /// <param name="enumVal"></param>
+        /// <returns></returns>
         public static int? GetOrder(this Enum enumVal)
         {
             return enumVal.GetAttributeOfType<DisplayAttribute>()?.Order;
         }
 
+        /// <summary>
+        /// Returns all the values in an enum as a collection, respecting the order attribute
+        /// </summary>
+        /// <typeparam name="TEnum"></typeparam>
+        /// <returns></returns>
         public static IEnumerable<TEnum> Values<TEnum>()
             where TEnum : struct,  IComparable, IFormattable, IConvertible
         {
@@ -52,7 +73,12 @@ namespace Pact.Core.Extensions
             return GetWithOrder<TEnum>(enumType);
         }
 
-
+        /// <summary>
+        /// Returns all the values in an enum as a collection, respecting the order attribute
+        /// </summary>
+        /// <typeparam name="TEnum"></typeparam>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public static IEnumerable<TEnum> GetWithOrder<TEnum>(this Type type)
             where TEnum : struct,  IComparable, IFormattable, IConvertible
         {

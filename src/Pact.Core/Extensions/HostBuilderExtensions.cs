@@ -8,6 +8,12 @@ namespace Pact.Core.Extensions
 {
     public static class HostBuilderExtensions
     {
+        /// <summary>
+        /// Adds "sharedsettings(.*).json" as the initial source of settings (intended to be a single origin in the project to reduce need for common settings in appsettings.json)
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public static IHostBuilder ConfigureSharedSettings(this IHostBuilder builder, string [] args)
         {
             return builder.ConfigureAppConfiguration((hostingContext, config) =>
