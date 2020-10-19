@@ -1,25 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MailKit.Net.Smtp;
-using MailKit.Security;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using Pact.Email.Helpers;
+using Pact.Core.Extensions;
 
 namespace Pact.Email
 {
+    /// <inheritdoc/>
     public class EmailSender : IEmailSender
     {
         private readonly ILogger<EmailSender> _logger;
+        private readonly IServiceProvider _serviceProvider;
 
-        public EmailSender(IOptions<EmailSettings> emailSettings, ILogger<EmailSender> logger)
+        public EmailSender(IOptions<EmailSettings> emailSettings, ILogger<EmailSender> logger, IServiceProvider serviceProvider)
         {
             Settings = emailSettings.Value;
             _logger = logger;
+            _serviceProvider = serviceProvider;
         }
 
         public EmailSettings Settings { get; set; }
@@ -41,15 +43,15 @@ namespace Pact.Email
 
         public async Task SendEmailAsync(string recipients, string subject, string message, MailboxAddress from, MailboxAddress sender, params MimePart[] attachments)
         {
-            var useClient = string.IsNullOrWhiteSpace(Settings.MaildropPath);
+            var client = _serviceProvider.GetService<ISmtpClient>();
+            var maildrop = _serviceProvider.GetService<IMaildropProvider>();
 
-            using var client = useClient ? new SmtpClient() : null;
             try
             {
                 if (client != null)
                 {
                     await client
-                        .ConnectAsync(Settings.SmtpUri, Settings.SmtpPort, SecureSocketOptions.None)
+                        .ConnectAsync(Settings.SmtpUri, Settings.SmtpPort)
                         .ConfigureAwait(false);
                 }
 
@@ -100,22 +102,22 @@ namespace Pact.Email
                         {
                             if (client != null)
                             {
-                                _logger.LogInformation("Smtp Sending => {Subject}, {To}", emailMessage.Subject,
+                                _logger.LogInformation("Smtp Sending (Smtp) => {Subject}, {To}", emailMessage.Subject,
                                     recipient);
 
                                 await client.SendAsync(emailMessage).ConfigureAwait(false);
                             }
+                            else if (maildrop != null)
+                            {
+                                using var streamWriter = maildrop.GetStreamWriter();
+
+                                _logger.LogInformation("Smtp Sending (File) => {Subject}, {To}", emailMessage.Subject, recipient);
+
+                                await emailMessage.WriteToAsync(streamWriter.BaseStream).ConfigureAwait(false);
+                            }
                             else
                             {
-                                var path = Path.Combine(Settings.MaildropPath,
-                                    Guid.NewGuid().ToString("D") + ".eml");
-
-                                using var data = File.CreateText(path);
-
-                                _logger.LogInformation("Smtp Sending => {Subject}, {To} ({FilePath})",
-                                    emailMessage.Subject, recipient, path);
-
-                                await emailMessage.WriteToAsync(data.BaseStream).ConfigureAwait(false);
+                                _logger.LogInformation("Smtp Sending (Null) => {Subject}, {To}", emailMessage.Subject, recipient);
                             }
                         }
                     }

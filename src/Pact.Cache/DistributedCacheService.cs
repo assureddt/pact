@@ -6,6 +6,7 @@ using Pact.Core.Extensions;
 
 namespace Pact.Cache
 {
+    /// <inheritdoc/>
     public class DistributedCacheService : IDistributedCacheService
     {
         private readonly IDistributedCache _cache;
