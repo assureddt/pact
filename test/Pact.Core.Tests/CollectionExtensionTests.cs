@@ -10,7 +10,7 @@ namespace Pact.Core.Tests
         [Fact]
         public void NormalizeOrder_AllApplied()
         {
-            // setup
+            // arrange
             var items = new[]
             {
                 new MyClass { Id = 1, Order = 8 },
@@ -18,7 +18,7 @@ namespace Pact.Core.Tests
                 new MyClass { Id = 3, Order = 1008 }
             };
 
-            // apply
+            // act
             items.NormalizeOrder(x => x.Order);
 
             // assert
@@ -39,7 +39,7 @@ namespace Pact.Core.Tests
         [Fact]
         public void FormatListForTooltip_AsExpected()
         {
-            // setup
+            // arrange
             var items = new[]
             {
                 new { Id = 1, Name = "Wibble" },
@@ -47,7 +47,7 @@ namespace Pact.Core.Tests
                 new { Id = 3, Name = "Wubble" }
             };
 
-            // apply
+            // act
             var result = items.FormatListForTooltip(x => x.Name);
 
             // assert
@@ -57,7 +57,7 @@ namespace Pact.Core.Tests
         [Fact]
         public void PropertyCsv_AsExpected()
         {
-            // setup
+            // arrange
             var items = new[]
             {
                 new { Id = 1, Name = "Wibble" },
@@ -65,7 +65,7 @@ namespace Pact.Core.Tests
                 new { Id = 3, Name = "Wubble" }
             };
 
-            // apply
+            // act
             var result = items.PropertyCsv(x => x.Id.ToString());
 
             // assert
@@ -75,14 +75,14 @@ namespace Pact.Core.Tests
         [Fact]
         public void Cartesian_AsExpected()
         {
-            // setup
+            // arrange
             var items = new[]
             {
                 new[] {1, 2},
                 new[] {1, 2}
             };
 
-            // apply
+            // act
             var result = items.CartesianProduct();
 
             // assert
@@ -99,14 +99,14 @@ namespace Pact.Core.Tests
         [Fact]
         public void Flatten_IncludesAll()
         {
-            // setup
+            // arrange
             var items = new[]
             {
                 new MyHierarchy { Id = 1, Children = new [] {new MyHierarchy {Id = 2}} },
                 new MyHierarchy { Id = 2, Children = new [] {new MyHierarchy {Id = 3}, new MyHierarchy {Id = 4}} }
             };
 
-            // apply
+            // act
             var flattened = items.Flatten(x => x.Children).ToArray();
 
             // assert
@@ -126,7 +126,7 @@ namespace Pact.Core.Tests
         [Fact]
         public void OrderByIndex_AsExpected()
         {
-            // setup
+            // arrange
             var items = new[]
             {
                 new MyClass { Id = 1, Order = 8 },
@@ -134,7 +134,7 @@ namespace Pact.Core.Tests
                 new MyClass { Id = 3, Order = 1008 }
             };
 
-            // apply
+            // act
             var reordered = items.OrderByIndex(x => x.Order, new [] {1008, 1, 8}).ToArray();
 
             // assert
@@ -146,7 +146,7 @@ namespace Pact.Core.Tests
         [Fact]
         public void Distinct_AsExpected()
         {
-            // setup
+            // arrange
             var items = new[]
             {
                 new MyClass { Id = 1, Order = 8 },
@@ -156,7 +156,7 @@ namespace Pact.Core.Tests
                 new MyClass { Id = 3, Order = 1008 }
             };
 
-            // apply
+            // act
             var result = items.Distinct(x => x.Id).ToArray();
 
             // assert
@@ -170,7 +170,7 @@ namespace Pact.Core.Tests
         [Fact]
         public void Except_AsExpected()
         {
-            // setup
+            // arrange
             var items = new[]
             {
                 new MyClass { Id = 1, Order = 8 },
@@ -185,7 +185,7 @@ namespace Pact.Core.Tests
                 new MyClass {Id = 2}
             };
 
-            // apply
+            // act
             var result = items.Except(exclusions,  x => x.Id).ToArray();
 
             // assert
@@ -197,7 +197,7 @@ namespace Pact.Core.Tests
         [Fact]
         public void Shuffle_AsExpected()
         {
-            // setup
+            // arrange
             var items = new[]
             {
                 new MyClass { Id = 1, Order = 8 },
@@ -210,7 +210,7 @@ namespace Pact.Core.Tests
             const int iterations = 1000;
             var results = new int[iterations];
 
-            // apply
+            // act
             // NOTE: by definition, the outcome is random, so we can't really unit test it properly
             // settling for the assertion if we shuffle it 1000 times then there should be no chance of the 1st element always having ID 1
             for (var i = 0; i < iterations; i++)

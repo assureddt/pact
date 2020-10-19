@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 
@@ -16,7 +18,7 @@ namespace Pact.Core.Extensions
         /// <param name="value"></param>
         /// <param name="relaxedArrayEnclosure">If true, isn't picky about square brackets wrapping a comma-separated list of objects</param>
         /// <returns></returns>
-        public static T FromJson<T>(this string value, bool relaxedArrayEnclosure = false) where T : class
+        public static T FromJson<T>(this string value, bool relaxedArrayEnclosure = false)
         {
             if (!relaxedArrayEnclosure || !typeof(T).IsArray) return JsonConvert.DeserializeObject<T>(value);
 
@@ -148,6 +150,45 @@ namespace Pact.Core.Extensions
             const string ellipsis = "...";
 
             return $"{source.Substring(0, maximum - ellipsis.Length)}{ellipsis}";
+        }
+
+        /// <summary>
+        /// Simplifies a big string into a series of lines of maximum specified length, with ellipsis applied at the end of the overall max length (breaks and reassembles on whitespace characters)
+        /// </summary>
+        /// <param name="value">The full string</param>
+        /// <param name="wrapAt">Maximum length of each line</param>
+        /// <param name="maxLength">Capped overall length of the string (excess results in ellipsis)</param>
+        /// <returns></returns>
+        public static string[] GetLines(this string value, int wrapAt, int maxLength = 250)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return new[] { "" };
+
+            value = value.Ellipsis(maxLength);
+
+            var lines = new List<string>();
+            var words = value.Split(new[]{' ', '\t', '\r', '\n'}, StringSplitOptions.RemoveEmptyEntries);
+            var thisLine = new StringBuilder();
+
+            var padStart = false;
+
+            foreach (var word in words)
+            {
+                if (thisLine.Length + word.Length + 1 >= wrapAt)
+                {
+                    lines.Add(thisLine.ToString());
+                    thisLine.Clear();
+                    padStart = false;
+                }
+
+                if (padStart) thisLine.Append(" ");
+                thisLine.AppendFormat("{0}", word);
+                padStart = true;
+            }
+
+            lines.Add(thisLine.ToString());
+
+            return lines.ToArray();
         }
     }
 }

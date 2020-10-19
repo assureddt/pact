@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
@@ -9,55 +8,6 @@ namespace Pact.Core.Extensions
 {
     public static class EnumExtensions
     {
-        /// <summary>
-        /// Gets an attribute on an enum field value
-        /// </summary>
-        /// <typeparam name="T">The type of the attribute you want to retrieve</typeparam>
-        /// <param name="enumVal">The enum value</param>
-        /// <returns>The attribute of type T that exists on the enum value, null if not present</returns>
-        /// <example>myEnumVariable.GetAttributeOfType<DescriptionAttribute>().Description;</example>
-        public static T GetAttributeOfType<T>(this Enum enumVal) where T : Attribute
-        {
-            var type = enumVal.GetType();
-            var memInfo = type.GetMember(enumVal.ToString());
-            var attributes = memInfo.FirstOrDefault()?.GetCustomAttributes(typeof(T), false);
-
-            return (T)attributes?.FirstOrDefault();
-        }
-
-        /// <summary>
-        /// Gets Name attribute metadata for an enum value, falling back to some alternatives if absent
-        /// </summary>
-        /// <param name="enumVal"></param>
-        /// <returns></returns>
-        public static string GetName(this Enum enumVal)
-        {
-            return enumVal.GetAttributeOfType<DisplayAttribute>()?.Name ??
-                   enumVal.GetAttributeOfType<DisplayAttribute>()?.Description ??
-                   enumVal.GetAttributeOfType<DescriptionAttribute>()?.Description;
-        }
-
-        /// <summary>
-        /// Gets Description attribute metadata for an enum value, falling back to some alternatives if absent
-        /// </summary>
-        /// <param name="enumVal"></param>
-        /// <returns></returns>
-        public static string GetDescription(this Enum enumVal)
-        {
-            return enumVal.GetAttributeOfType<DisplayAttribute>()?.Description ??
-                   enumVal.GetAttributeOfType<DescriptionAttribute>()?.Description;
-        }
-
-        /// <summary>
-        /// Gets Order attribute metadata for an enum value
-        /// </summary>
-        /// <param name="enumVal"></param>
-        /// <returns></returns>
-        public static int? GetOrder(this Enum enumVal)
-        {
-            return enumVal.GetAttributeOfType<DisplayAttribute>()?.Order;
-        }
-
         /// <summary>
         /// Returns all the values in an enum as a collection, respecting the order attribute
         /// </summary>

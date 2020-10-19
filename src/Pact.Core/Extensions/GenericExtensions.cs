@@ -16,7 +16,7 @@ namespace Pact.Core.Extensions
         /// <param name="ignoreNull">If true, properties with null values will be omitted from the output</param>
         /// <param name="stringEscape">If true, HTML content is escaped</param>
         /// <returns></returns>
-        public static string ToJson<T>(this T obj, bool indent = false, bool ignoreNull = false, bool stringEscape = true) where T : class
+        public static string ToJson<T>(this T obj, bool indent = false, bool ignoreNull = false, bool stringEscape = true)
         {
             return JsonConvert.SerializeObject(obj, new JsonSerializerSettings
             {

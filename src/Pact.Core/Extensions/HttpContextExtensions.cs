@@ -1,11 +1,16 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using Microsoft.AspNetCore.Http;
 
 namespace Pact.Core.Extensions
 {
     public static class HttpContextExtensions
     {
+        /// <summary>
+        /// Compares the remote IP of the context to a provided set of "Safe" IPs
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="safeIps"></param>
+        /// <returns></returns>
         public static bool IsSafe(this HttpContext context, params string[] safeIps)
         {
             if (safeIps == null)
@@ -31,56 +36,14 @@ namespace Pact.Core.Extensions
             return !badIp;
         }
 
-        private const string NullIPv6 = "::1";
-
-        public static bool IsLocal(this ConnectionInfo conn)
-        {
-            if (!conn.RemoteIpAddress.IsSet())
-                return true;
-
-            // we have a remote address set up
-            // is local is same as remote, then we are local
-            // else we are remote if the remote IP address is not a loopback address
-            return conn.LocalIpAddress.IsSet() ? conn.RemoteIpAddress.Equals(conn.LocalIpAddress) : conn.RemoteIpAddress.IsLoopback();
-        }
-
+        /// <summary>
+        /// Compares remote and local endpoints of the connection to determine locality
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
         public static bool IsLocal(this HttpContext ctx)
         {
             return ctx.Connection.IsLocal();
-        }
-
-        public static bool IsLocal(this HttpRequest req)
-        {
-            return req.HttpContext.IsLocal();
-        }
-
-        public static bool IsSet(this IPAddress address)
-        {
-            return address != null && address.ToString() != NullIPv6;
-        }
-
-        public static bool IsLoopback(this IPAddress address)
-        {
-            return IPAddress.IsLoopback(address);
-        }
-
-        /// <summary>
-        /// Determines whether the specified HTTP request is an AJAX request.
-        /// </summary>
-        /// 
-        /// <returns>
-        /// true if the specified HTTP request is an AJAX request; otherwise, false.
-        /// </returns>
-        /// <param name="request">The HTTP request.</param><exception cref="T:System.ArgumentNullException">The <paramref name="request"/> parameter is null (Nothing in Visual Basic).</exception>
-        public static bool IsAjaxRequest(this HttpRequest request)
-        {
-            if (request == null)
-                throw new ArgumentNullException(nameof(request));
-
-            if (request.Headers != null)
-                return request.Headers["X-Requested-With"] == "XMLHttpRequest";
-
-            return false;
         }
     }
 }

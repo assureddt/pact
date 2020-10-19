@@ -9,7 +9,7 @@ namespace Pact.Core.Tests
         [Fact]
         public void GetJson_AsExpected()
         {
-            // setup
+            // arrange
             var item = new {Id = 1, Name = "Test"};
 
             // assert
@@ -19,7 +19,7 @@ namespace Pact.Core.Tests
         [Fact]
         public void GetJson_Indented_AsExpected()
         {
-            // setup
+            // arrange
             var item = new {Id = 1, Name = "Test"};
 
             // assert
@@ -29,7 +29,7 @@ namespace Pact.Core.Tests
         [Fact]
         public void GetJson_Escaped_AsExpected()
         {
-            // setup
+            // arrange
             var item = new {Id = 1, Name = "<p>Test</p>"};
 
             // assert
@@ -39,7 +39,7 @@ namespace Pact.Core.Tests
         [Fact]
         public void GetValue_OK()
         {
-            // setup
+            // arrange
             var item = new {Id = 1, Name = "Test"};
 
             // assert
@@ -49,10 +49,10 @@ namespace Pact.Core.Tests
         [Fact]
         public void SetValue_Settable_Changed()
         {
-            // setup
+            // arrange
             var item = new MyClass {Id = 1, Name = "Test"};
 
-            // apply
+            // act
             item.SetPropertyValue(x => x.Name, "Edited");
 
             // assert
@@ -62,10 +62,10 @@ namespace Pact.Core.Tests
         [Fact]
         public void SetValue_NotSettable_DoesNothing()
         {
-            // setup
+            // arrange
             var item = new {Id = 1, Name = "Test"};
 
-            // apply
+            // act
             item.SetPropertyValue(x => x.Name, "Edited");
 
             // assert

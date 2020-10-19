@@ -10,10 +10,10 @@ namespace Pact.Core.Tests
         [Fact]
         public void CssHex_AsExpected()
         {
-            // setup
+            // arrange
             var col = Color.OrangeRed;
 
-            // apply
+            // act
             var result = col.ToCssHex();
 
             // assert
@@ -23,10 +23,10 @@ namespace Pact.Core.Tests
         [Fact]
         public void CssHex_WithAlpha_AsExpected()
         {
-            // setup
+            // arrange
             var col = Color.MediumPurple;
 
-            // apply
+            // act
             var result = col.ToCssHex(true);
 
             // assert
@@ -36,7 +36,7 @@ namespace Pact.Core.Tests
         [Fact]
         public void RandomColors_AsExpected()
         {
-            // apply
+            // act
             var result = ColorExtensions.GetRandomKnownColors(8);
 
             // assert

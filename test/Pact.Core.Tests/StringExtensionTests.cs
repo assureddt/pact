@@ -10,10 +10,10 @@ namespace Pact.Core.Tests
         [Fact]
         public void FromJson_OK()
         {
-            // apply
+            // act
             var result = "{ \"Id\": 1, \"Name\": \"Test\" }".FromJson<MyClass>();
 
-            // check
+            // assert
             result.ShouldSatisfyAllConditions(
                 () => result.Id.ShouldBe(1),
                 () => result.Name.ShouldBe("Test"));
@@ -22,17 +22,17 @@ namespace Pact.Core.Tests
         [Fact]
         public void FromJson_BadArray_Throws()
         {
-            // check
+            // assert
             Assert.Throws<JsonReaderException>(() => "{ \"Id\": 1, \"Name\": \"Test\" }, { \"Id\": 2, \"Name\": \"Test2\" }".FromJson<MyClass>());
         }
 
         [Fact]
         public void FromJson_Relaxed_OK()
         {
-            // apply
+            // act
             var result = "{ \"Id\": 1, \"Name\": \"Test\" }, { \"Id\": 2, \"Name\": \"Test2\" }".FromJson<MyClass[]>(true);
 
-            // check
+            // assert
             result.ShouldSatisfyAllConditions(
                 () => result[0].Id.ShouldBe(1),
                 () => result[0].Name.ShouldBe("Test"),
@@ -49,63 +49,63 @@ namespace Pact.Core.Tests
         [Fact]
         public void Alphanumerics_OK()
         {
-            // check
+            // assert
             "My-Name-Is-George_& I was born in 1964".StripNonAlphaNumeric("").ShouldBe("MyNameIsGeorgeIwasbornin1964");
         }
 
         [Fact]
         public void Filename_OK()
         {
-            // check
+            // assert
             "Some@Of:these\\should-not_be;here, right?!".MakeSafeFilename().ShouldBe("Some@Of_these_should-not_be;here, right_!");
         }
 
         [Fact]
         public void EmailAddresses_OK()
         {
-            // check
+            // assert
             "fred.smith@test.com <freddy smith, sales>, jon.smith@test.com".GetEmailAddresses().ShouldBe(new [] {"fred.smith@test.com", "jon.smith@test.com"});
         }
 
         [Fact]
         public void IsUppercaseCharacter_OK()
         {
-            // check
-            'F'.IsBasicUppercaseLetter().ShouldBe(true);
+            // assert
+            'F'.IsBasicUppercaseLetter().ShouldBeTrue();
         }
 
         [Fact]
         public void IsUppercaseCharacter_Nope()
         {
-            // check
-            ';'.IsBasicUppercaseLetter().ShouldBe(false);
+            // assert
+            ';'.IsBasicUppercaseLetter().ShouldBeFalse();
         }
 
         [Fact]
         public void ToNullable_OK()
         {
-            // check
+            // assert
             "5".ToNullable<int>().ShouldBe(5);
         }
 
         [Fact]
         public void ToNullable_Null()
         {
-            // check
+            // assert
             "a".ToNullable<int>().ShouldBe(null);
         }
 
         [Fact]
         public void Masked_Simple_AsExpected()
         {
-            // check
+            // assert
             "sensitiveinfohere".Masked(4).ShouldBe("sensitiveinfo****");
         }
 
         [Fact]
         public void Masked_Inverted_AsExpected()
         {
-            // check
+            // assert
             "sensitiveinfohere".Masked(4, true).ShouldBe("*************here");
         }
 
@@ -113,14 +113,14 @@ namespace Pact.Core.Tests
         public void Masked_Specific_AsExpected()
         {
             const string source = "sensitiveinfohere";
-            // check
+            // assert
             source.Masked('X', 1, source.Length - 1).ShouldBe("sXXXXXXXXXXXXXXXX");
         }
 
         [Fact]
         public void Ellipsis_AsExpected()
         {
-            // check
+            // assert
             "large sentence that we don't want to wrap".Ellipsis(16).ShouldBe("large sentenc...");
         }
     }

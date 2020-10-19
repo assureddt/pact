@@ -9,10 +9,10 @@ namespace Pact.Core.Tests
         [Fact]
         public void Times_Applied()
         {
-            // setup
+            // arrange
             var initial = 1;
 
-            // apply
+            // act
             8.Times(() => initial++);
 
             // assert
