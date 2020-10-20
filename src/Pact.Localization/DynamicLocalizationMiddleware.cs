@@ -17,7 +17,7 @@ namespace Pact.Localization
     /// Enables automatic setting of the culture for <see cref="HttpRequest"/>s based on information
     /// sent by the client in headers and logic provided by the application.
     /// </summary>
-    public class DynamicSupportLocalizationMiddleware
+    public class DynamicLocalizationMiddleware
     {
         private const int MaxCultureFallbackDepth = 5;
 
@@ -34,7 +34,7 @@ namespace Pact.Localization
         /// <param name="next">The <see cref="RequestDelegate"/> representing the next middleware in the pipeline.</param>
         /// <param name="options">The <see cref="RequestLocalizationOptions"/> representing the options for the
         /// <see cref="RequestLocalizationOptions"/>.</param>
-        public DynamicSupportLocalizationMiddleware(RequestDelegate next, IOptions<RequestLocalizationOptions> options)
+        public DynamicLocalizationMiddleware(RequestDelegate next, IOptions<RequestLocalizationOptions> options)
         {
             if (options == null)
             {
@@ -138,7 +138,7 @@ namespace Pact.Localization
 
         private void EnsureLogger(HttpContext context)
         {
-            _logger ??= context.RequestServices.GetService<ILogger<DynamicSupportLocalizationMiddleware>>();
+            _logger ??= context.RequestServices.GetService<ILogger<DynamicLocalizationMiddleware>>();
         }
 
         private static void SetCurrentThreadCulture(RequestCulture requestCulture)

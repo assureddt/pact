@@ -18,6 +18,11 @@ namespace Pact.Logging
 {
     public static class LoggingExtensions
     {
+        /// <summary>
+        /// Configures log enrichment with noise reduction for specified endpoints
+        /// </summary>
+        /// <param name="opts"></param>
+        /// <param name="noisyEndpointPatterns"></param>
         public static void WithPactDefaults(this RequestLoggingOptions opts, string[] noisyEndpointPatterns = null)
         {
             opts.EnrichDiagnosticContext = EnrichFromContext;
@@ -31,7 +36,12 @@ namespace Pact.Logging
                             : LogEventLevel.Information;
         }
 
-        private static void EnrichFromContext(IDiagnosticContext diagnosticContext, HttpContext httpContext)
+        /// <summary>
+        /// HttpContext log enrichments used in most cases 
+        /// </summary>
+        /// <param name="diagnosticContext"></param>
+        /// <param name="httpContext"></param>
+        public static void EnrichFromContext(IDiagnosticContext diagnosticContext, HttpContext httpContext)
         {
             diagnosticContext.Set("IdentityName", httpContext?.User?.Identity?.Name);
             diagnosticContext.Set("RemoteIp", httpContext?.Connection?.RemoteIpAddress);
@@ -42,6 +52,11 @@ namespace Pact.Logging
             }
         }
 
+        /// <summary>
+        /// FilterContext log enrichments used on action filters etc. 
+        /// </summary>
+        /// <param name="diagnosticContext"></param>
+        /// <param name="context"></param>
         public static void EnrichFromFilterContext(IDiagnosticContext diagnosticContext, FilterContext context)
         {
             diagnosticContext.Set("RouteData", context?.ActionDescriptor?.RouteValues);
@@ -50,6 +65,12 @@ namespace Pact.Logging
             diagnosticContext.Set("ValidationState", context?.ModelState?.IsValid);
         }
 
+        /// <summary>
+        /// Checks if the endpoint matches any of the provided patterns
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="patterns"></param>
+        /// <returns></returns>
         private static bool IsNoisyEndpoint(HttpContext ctx, string[] patterns)
         {
             if (patterns == null || !patterns.Any())
@@ -58,6 +79,12 @@ namespace Pact.Logging
             return patterns.Any(x => MatchesEndpointPattern(ctx, x));
         }
 
+        /// <summary>
+        /// Checks if the endpoint matches this pattern
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
         private static bool MatchesEndpointPattern(HttpContext ctx, string name)
         {
             var endpoint = ctx.GetEndpoint();
@@ -72,6 +99,12 @@ namespace Pact.Logging
 
         private const string OriginalValuePrefix = "__";
 
+        /// <summary>
+        /// Retrieves a dictionary of the values of all public properties we may want to log from an object
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="filtered">By default, this is true, and removes any properties including "password" or "token" in their names</param>
+        /// <returns></returns>
         public static Dictionary<string, object> GetLogPropertyDictionary(this object obj, bool filtered = true)
         {
             if (obj == null) return new Dictionary<string, object>();
@@ -84,6 +117,14 @@ namespace Pact.Logging
                 .ToDictionary(x => x.Name, x => x.GetValue(obj));
         }
 
+        /// <summary>
+        /// Retrieves a dictionary of all properties between the two objects and, where values differ, introduces a prefixed key for the original value
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="amended"></param>
+        /// <param name="original"></param>
+        /// <param name="filtered">By default, this is true, and removes any properties including "password" or "token" in their names</param>
+        /// <returns></returns>
         public static Dictionary<string, object> GetDifference<T>(this T amended, T original, bool filtered = true)
         {
             var originalProps = GetLogPropertyDictionary(original, filtered);
@@ -91,6 +132,14 @@ namespace Pact.Logging
             return GetDifference(amended, originalProps);
         }
 
+        /// <summary>
+        /// Retrieves a dictionary of all properties between the object & original property dictionary and, where values differ, introduces a prefixed key for the original value
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="amended"></param>
+        /// <param name="originalProps"></param>
+        /// <param name="filtered">By default, this is true, and removes any properties including "password" or "token" in their names</param>
+        /// <returns></returns>
         public static Dictionary<string, object> GetDifference<T>(this T amended, Dictionary<string, object> originalProps, bool filtered = true)
         {
             var amendedProps = GetLogPropertyDictionary(amended, filtered);
@@ -98,7 +147,13 @@ namespace Pact.Logging
             return amendedProps.GetDifference(originalProps);
         }
 
-        public static Dictionary<string, object> GetDifference(this Dictionary<string, object> amendedProps, Dictionary<string, object> originalProps, bool filtered = true)
+        /// <summary>
+        /// Retrieves a dictionary of all properties between the two dictionaries and, where values differ, introduces a prefixed key for the original value
+        /// </summary>
+        /// <param name="amendedProps"></param>
+        /// <param name="originalProps"></param>
+        /// <returns></returns>
+        public static Dictionary<string, object> GetDifference(this Dictionary<string, object> amendedProps, Dictionary<string, object> originalProps)
         {
             var allKeys = originalProps.Keys.Union(amendedProps.Keys);
 
@@ -131,6 +186,15 @@ namespace Pact.Logging
             return differences;
         }
 
+        /// <summary>
+        /// Logs all properties on the objects and, where differences exist, denotes the original value with a prefixed key
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="logger"></param>
+        /// <param name="original"></param>
+        /// <param name="updated"></param>
+        /// <param name="message"></param>
+        /// <param name="args"></param>
         public static void LogDifference<T>(this ILogger logger, Dictionary<string, object> original, T updated, string message, params object[] args)
         {
             try
@@ -162,8 +226,20 @@ namespace Pact.Logging
             }
         }
 
+        /// <summary>
+        /// Helper to get the basic calling method name
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="memberName"></param>
+        /// <returns></returns>
         public static string MethodName(this object obj, [CallerMemberName] string memberName = "") => memberName;
 
+        /// <summary>
+        /// Helper to get the fully qualified calling method name
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="memberName"></param>
+        /// <returns></returns>
         public static string FullMethodName(this object obj, [CallerMemberName] string memberName = "") => obj.GetType().FullName + "." + memberName;
     }
 }

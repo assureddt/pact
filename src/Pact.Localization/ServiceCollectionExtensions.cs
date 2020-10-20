@@ -7,7 +7,7 @@ namespace Pact.Localization
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        /// Adds the <see cref="DynamicSupportLocalizationMiddleware"/> to automatically set culture information for
+        /// Adds the <see cref="DynamicLocalizationMiddleware"/> to automatically set culture information for
         /// requests based on information provided by the client.
         /// NOTE: probably want this placed towards the bottom of the middleware stack to ensure the HttpContext is furnished with an Identity by the time it arrives
         /// </summary>
@@ -20,11 +20,11 @@ namespace Pact.Localization
                 throw new ArgumentNullException(nameof(app));
             }
 
-            return app.UseMiddleware<DynamicSupportLocalizationMiddleware>();
+            return app.UseMiddleware<DynamicLocalizationMiddleware>();
         }
 
         /// <summary>
-        /// Adds the <see cref="DynamicSupportLocalizationMiddleware"/> to automatically set culture information for
+        /// Adds the <see cref="DynamicLocalizationMiddleware"/> to automatically set culture information for
         /// requests based on information provided by the client.
         /// NOTE: probably want this placed towards the bottom of the middleware stack to ensure the HttpContext is furnished with an Identity by the time it arrives
         /// </summary>
@@ -45,11 +45,11 @@ namespace Pact.Localization
                 throw new ArgumentNullException(nameof(options));
             }
 
-            return app.UseMiddleware<DynamicSupportLocalizationMiddleware>(Options.Create(options));
+            return app.UseMiddleware<DynamicLocalizationMiddleware>(Options.Create(options));
         }
 
         /// <summary>
-        /// Adds the <see cref="DynamicSupportLocalizationMiddleware"/> to automatically set culture information for
+        /// Adds the <see cref="DynamicLocalizationMiddleware"/> to automatically set culture information for
         /// requests based on information provided by the client.
         /// NOTE: probably want this placed towards the bottom of the middleware stack to ensure the HttpContext is furnished with an Identity by the time it arrives
         /// </summary>
@@ -76,7 +76,7 @@ namespace Pact.Localization
             var options = new RequestLocalizationOptions();
             optionsAction.Invoke(options);
 
-            return app.UseMiddleware<DynamicSupportLocalizationMiddleware>(Options.Create(options));
+            return app.UseMiddleware<DynamicLocalizationMiddleware>(Options.Create(options));
         }
     }
 }

@@ -8,14 +8,19 @@ using Twilio.Types;
 
 namespace Pact.Sms
 {
+    ///<inheritdoc/>
+    /// <summary>
+    /// An SMS & Voice service implementation using Twilio (https://www.twilio.com/)
+    /// For docs on implementing the voice endpoint, refer to: https://www.twilio.com/docs/voice/tutorials/how-to-respond-to-incoming-phone-calls-csharp
+    /// </summary>
     public class TwilioSmsSender : ISmsSender
     {
         private readonly ILogger<TwilioSmsSender> _logger;
-        private readonly TwilioRestClient _twilio;
+        private readonly ITwilioRestClient _twilio;
 
         public TwilioSmsSender(IOptions<SmsSettings> smsSettings,
             ILogger<TwilioSmsSender> logger,
-            TwilioRestClient twilio)
+            ITwilioRestClient twilio)
         {
             Settings = smsSettings.Value;
             _twilio = twilio;
@@ -34,7 +39,7 @@ namespace Pact.Sms
 
             var call = await CallResource.CreateAsync(to, from, url: new Uri(callbackUrl), client: _twilio).ConfigureAwait(false);
 
-            _logger.LogInformation(">> Voice Sent => {Number}, {CallbackUrl}, {Sid}", number, callbackUrl, call.Sid);
+            _logger.LogInformation(">> Voice Sent => {Number}, {CallbackUrl}, {Sid}", number, callbackUrl, call?.Sid);
         }
 
         public async Task SendSmsAsync(string number, string message)
