@@ -1,12 +1,13 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using Pact.Core.Extensions;
 using Pact.Web.Extensions;
 using Shouldly;
+using Unidecode.NET;
 using Xunit;
 
 namespace Pact.Web.Tests
@@ -16,12 +17,16 @@ namespace Pact.Web.Tests
         [Fact]
         public void Attachment_OK()
         {
-            const string expected = "Some@Of_these_should-not_be;here, right_!.pdf";
-            const string expected2 = "Some%40Of_these_should-not_be%3Bhere%2C%20right_%21.pdf";
+            const string filename = "Some@Of:these\\/should-not_be;here, right?!.pdf";
+
+            // these are tested elsewhere so not repeating that here
+            var safename = filename.MakeSafeFilename();
+            var ascii = safename.Unidecode();
+            var escaped = Uri.EscapeDataString(safename);
 
             // assert
-            "Some@Of:these\\should-not_be;here, right?!.pdf".MakeSafeAttachmentHeader()
-                .ShouldBe($"attachment; filename=\"{expected}\"; filename*=UTF-8''{expected2}");
+            filename.MakeSafeAttachmentHeader()
+                .ShouldBe($"attachment; filename=\"{ascii}\"; filename*=UTF-8''{escaped}");
         }
 
         [Fact]

@@ -1,3 +1,4 @@
+using System;
 using Pact.Core.Extensions;
 using Shouldly;
 using Xunit;
@@ -23,7 +24,7 @@ namespace Pact.Core.Tests
             var item = new {Id = 1, Name = "Test"};
 
             // assert
-            item.ToJson(true).ShouldBe("{\r\n  \"Id\": 1,\r\n  \"Name\": \"Test\"\r\n}");
+            item.ToJson(true).ShouldMatch("{\\s+\"Id\":\\s+1,\\s+\"Name\":\\s+\"Test\"\\s+}");
         }
 
         [Fact]

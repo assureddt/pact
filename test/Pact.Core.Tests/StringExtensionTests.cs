@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 using Pact.Core.Extensions;
 using Shouldly;
@@ -57,7 +58,10 @@ namespace Pact.Core.Tests
         public void Filename_OK()
         {
             // assert
-            "Some@Of:these\\should-not_be;here, right?!".MakeSafeFilename().ShouldBe("Some@Of_these_should-not_be;here, right_!");
+            "Some@Of:these\\/should-not_be;here, right?!".MakeSafeFilename()
+                .ShouldBe(RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
+                    ? "Some@Of:these\\_should-not_be;here, right?!"
+                    : "Some@Of_these__should-not_be;here, right_!");
         }
 
         [Fact]
