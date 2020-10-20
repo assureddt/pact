@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -14,9 +15,11 @@ namespace Pact.Localization.Tests
 {
     public class DynamicLocalizationTests
     {
-        [Fact]
+        [SkippableFact]
         public async Task Minimal_Defaults_enGB()
         {
+            Skip.If(RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
+
             // arrange
             var resolver = new Mock<ISupportedCulturesResolver>();
             var options = new OptionsWrapper<RequestLocalizationOptions>(new RequestLocalizationOptions());
@@ -42,9 +45,11 @@ namespace Pact.Localization.Tests
             body.ShouldBe("en-GB");
         }
 
-        [Fact]
+        [SkippableFact]
         public async Task Extended_Match_frFR()
         {
+            Skip.If(RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
+
             // arrange
             var resolver = new Mock<ISupportedCulturesResolver>();
             resolver.Setup(m => m.GetSupportedCulturesAsync(It.IsAny<HttpContext>()))
@@ -79,9 +84,11 @@ namespace Pact.Localization.Tests
             body.ShouldBe("fr-FR");
         }
 
-        [Fact]
+        [SkippableFact]
         public async Task Extended_NoMatch_enGB()
         {
+            Skip.If(RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
+
             // arrange
             var resolver = new Mock<ISupportedCulturesResolver>();
             resolver.Setup(m => m.GetSupportedCulturesAsync(It.IsAny<HttpContext>()))
@@ -116,9 +123,11 @@ namespace Pact.Localization.Tests
             body.ShouldBe("en-GB");
         }
         
-        [Fact]
+        [SkippableFact]
         public async Task Extended_Partial_frCA_NoFallback_enGB()
         {
+            Skip.If(RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
+
             // arrange
             var resolver = new Mock<ISupportedCulturesResolver>();
             resolver.Setup(m => m.GetSupportedCulturesAsync(It.IsAny<HttpContext>()))
@@ -158,9 +167,11 @@ namespace Pact.Localization.Tests
             body.ShouldBe("en-GB");
         }
 
-        [Fact]
+        [SkippableFact]
         public async Task Extended_Partial_frCA_WithFallback_frFR()
         {
+            Skip.If(RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
+
             // arrange
             var resolver = new Mock<ISupportedCulturesResolver>();
             resolver.Setup(m => m.GetSupportedCulturesAsync(It.IsAny<HttpContext>()))
