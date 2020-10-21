@@ -16,6 +16,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packaging", "Packaging", "{6CD23C95-876D-4AC5-BA2F-E88ED12249F4}"
 	ProjectSection(SolutionItems) = preProject
 		src\Directory.Build.props = src\Directory.Build.props
+		src\Directory.Build.targets = src\Directory.Build.targets
 		.github\workflows\package-push.yml = .github\workflows\package-push.yml
 	EndProjectSection
 EndProject
@@ -45,7 +46,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Localization.Tests", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Sms.Tests", "test\Pact.Sms.Tests\Pact.Sms.Tests.csproj", "{361BD8F1-E213-4AB1-8B59-FBD5782D11CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pact.Logging.Tests", "test\Pact.Logging.Tests\Pact.Logging.Tests.csproj", "{C95D2509-7CC5-492A-95A7-4FA83B518F4A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Logging.Tests", "test\Pact.Logging.Tests\Pact.Logging.Tests.csproj", "{C95D2509-7CC5-492A-95A7-4FA83B518F4A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
