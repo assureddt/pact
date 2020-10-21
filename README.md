@@ -6,3 +6,6 @@ A collection of useful common services and helpers for .NET
 
 ## Packaging Status
 ![main](https://github.com/assureddt/pact/workflows/publish%20packages/badge.svg)
+
+## Wiki Auto-Doc Status
+![main](https://github.com/assureddt/pact/workflows/wiki/badge.svg)
