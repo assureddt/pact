@@ -63,7 +63,7 @@ jobs:
         run: |
           cd ..
           git clone "https://${GITHUB_TOKEN}@github.com/assureddt/pact.wiki.git"
-          mv -v pact/doc/*.md pact.wiki/
+          mv -v pact/src/**/*.md pact.wiki/
           cd pact.wiki
           git add .
           git commit -m "Auto-generated Wiki from source"
