@@ -61,7 +61,7 @@ jobs:
       # Wiki
       - name: Move Markdown
         run: |
-          md doc
+          mkdir doc
           mv -v pact/src/**/*.md doc/
           
       - name: Update Wiki
