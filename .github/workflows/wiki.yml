@@ -1,0 +1,65 @@
+name: wiki
+
+on:
+  workflow_dispatch
+
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Env
+      - name: Set environment variables
+        run: |
+            echo "DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true" >> $GITHUB_ENV
+            echo "DOTNET_CLI_TELEMETRY_OPTOUT=true" >> $GITHUB_ENV
+
+      # Prep
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+           dotnet-version: '3.1.x'
+
+      - name: Add Private Nuget Feed
+        run: Out-File -FilePath "nuget.config" -InputObject "<?xml version=`"1.0`" encoding=`"utf-8`"?>
+         <configuration>
+               <packageSources>
+                    <clear />
+                    <add key=`"github`" value=`"https://nuget.pkg.github.com/assureddt/index.json`" />
+                    <add key=`"nuget`" value=`"https://api.nuget.org/v3/index.json`" />
+                </packageSources>
+                <packageSourceCredentials>
+                    <github>
+                        <add key=`"Username`" value=`"assureddt`" />
+                        <add key=`"ClearTextPassword`" value=`"${{ secrets.GITHUB_TOKEN }}`" />
+                    </github>
+                </packageSourceCredentials>
+         </configuration>"
+        shell: pwsh
+        
+      # Build
+      - name: Restore
+        run: dotnet restore
+        
+      - name: Build
+        run: dotnet build -c Release --no-restore
+              
+      # Wiki
+      - name: Move Markdown
+        run: |
+          shopt -s globstar
+          mkdir doc
+          mv -v pact/src/**/*.md doc/
+          
+      - name: Update Wiki
+        uses: SwiftDocOrg/github-wiki-publish-action@v1
+        with:
+          path: "doc"
+        env:
+          GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
