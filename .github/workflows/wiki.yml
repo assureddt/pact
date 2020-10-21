@@ -55,7 +55,7 @@ jobs:
         run: |
           shopt -s globstar
           mkdir doc
-          mv -v pact/src/**/*.md doc/
+          mv -v src/**/*.md doc/
           
       - name: Update Wiki
         uses: SwiftDocOrg/github-wiki-publish-action@v1
