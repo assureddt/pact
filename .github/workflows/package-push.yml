@@ -57,3 +57,14 @@ jobs:
       # Push
       - name: Push generated package to GitHub registry
         run: dotnet nuget push './nupkg/*.nupkg' -s github --skip-duplicate -k ${{ secrets.GITHUB_TOKEN }}
+        
+      # Wiki
+      - name: Upload to Wiki
+        run: |
+          cd ..
+          git clone "https://${GITHUB_TOKEN}@github.com/assureddt/pact.wiki.git"
+          mv -v pact/doc/*.md pact.wiki/
+          cd pact.wiki
+          git add .
+          git commit -m "Auto-generated Wiki from source"
+          git push
