@@ -57,16 +57,3 @@ jobs:
       # Push
       - name: Push generated package to GitHub registry
         run: dotnet nuget push './nupkg/*.nupkg' -s github --skip-duplicate -k ${{ secrets.GITHUB_TOKEN }}
-        
-      # Wiki
-      - name: Move Markdown
-        run: |
-          mkdir doc
-          mv -v pact/src/**/*.md doc/
-          
-      - name: Update Wiki
-        uses: SwiftDocOrg/github-wiki-publish-action@v1
-        with:
-          path: "doc"
-        env:
-          GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
