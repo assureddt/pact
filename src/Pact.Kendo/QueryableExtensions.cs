@@ -16,36 +16,36 @@ namespace Pact.Kendo
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
-        /// <param name="r"></param>
+        /// <param name="kendoDataRequest"></param>
         /// <returns></returns>
-        public static IQueryable<T> Kendo<T>(this IQueryable<T> source, KendoDataRequest r) where T : class
+        public static IQueryable<T> Kendo<T>(this IQueryable<T> source, KendoDataRequest kendoDataRequest) where T : class
         {
             //Remove soft delete
             source = SoftDelete(source);
 
             //Kendo text filter
-            source = TextFilter(source, r.TextFilter);
+            source = TextFilter(source, kendoDataRequest.TextFilter);
 
             //Sort
-            if (r.Sort != null)
+            if (kendoDataRequest.Sort != null)
             {
-                if (r.Sort.Count > 0)
-                    source = source.OrderBy(r.Sort.First().ToString());
-                if (r.Sort.Count > 1)
-                    source = source.ThenBy(r.Sort[0].ToString());
+                if (kendoDataRequest.Sort.Count > 0)
+                    source = source.OrderBy(kendoDataRequest.Sort.First().ToString());
+                if (kendoDataRequest.Sort.Count > 1)
+                    source = source.ThenBy(kendoDataRequest.Sort[0].ToString());
             }
 
             return source;
         }
 
         /// <summary>
-        /// 
+        /// Kendo data source support for soft delete, text filtering and sorting
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
-        /// <param name="r"></param>
+        /// <param name="kendoDataRequest"></param>
         /// <returns></returns>
-        public static async Task<JsonResult> KendoResultAsync<T>(this IQueryable<T> source, KendoDataRequest r) where T : class
+        public static async Task<JsonResult> KendoResultAsync<T>(this IQueryable<T> source, KendoDataRequest kendoDataRequest) where T : class
         {
             //Execute
             var items = await source.ToListAsync();
@@ -54,13 +54,13 @@ namespace Pact.Kendo
             var count = items.Count;
 
             //Skip/Take
-            items = items.Skip(r.Skip).Take(r.Take).ToList();
+            items = items.Skip(kendoDataRequest.Skip).Take(kendoDataRequest.Take).ToList();
 
-            return new JsonResult(new KendoResult<T> { Result = "OK", Records = items, TotalRecordCount = count });
+            return new JsonResult(new KendoResult<T> { Result = "OK", Records = items, Count = count });
         }
 
         /// <summary>
-        /// Removes soft delete item if the "SoftDelete" property is present and false
+        /// Removes soft delete items if the "SoftDelete" property is present and true
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
@@ -82,7 +82,9 @@ namespace Pact.Kendo
         }
 
         /// <summary>
-        /// Checks if any of the string properties on the object contain the search term
+        /// Filters enumerable using the search term.
+        /// If <see cref="FilterAttribute"/> & <see cref="IgnoreFilterAttribute"/> are present on the class these are used to determine what properties to filter on.
+        /// If no filter arbitrates are present it checks all string fields.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>

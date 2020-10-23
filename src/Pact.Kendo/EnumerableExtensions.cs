@@ -74,7 +74,7 @@ namespace Pact.Kendo
             //Skip/Take
             items = items.Skip(kendoDataRequest.Skip).Take(kendoDataRequest.Take).ToList();
 
-            return new JsonResult(new KendoResult<T> { Result = "OK", Records = items, TotalRecordCount = count });
+            return new JsonResult(new KendoResult<T> { Result = "OK", Records = items, Count = count });
         }
 
         /// <summary>
