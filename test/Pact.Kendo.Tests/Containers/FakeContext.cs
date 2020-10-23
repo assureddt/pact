@@ -9,5 +9,7 @@ namespace Pact.Kendo.Tests.Containers
         }
 
         public DbSet<Basic> Basics { get; set; }
+        public DbSet<BasicIgnore> Ignores { get; set; }
+        public DbSet<BasicFilter> Filters { get; set; }
     }
 }
