@@ -79,7 +79,7 @@ namespace Pact.Kendo
 
         /// <summary>
         /// Filters enumerable using the search term.
-        /// If [FilterAttribute] & [IgnoreFilterAttribute] are present on the class these are used to determine what properties to filter on.
+        /// If <see cref="FilterAttribute"/> & <see cref="IgnoreFilterAttribute"/> are present on the class these are used to determine what properties to filter on.
         /// If no filter arbitrates are present it checks all string fields.
         /// </summary>
         /// <typeparam name="T"></typeparam>

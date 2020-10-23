@@ -48,6 +48,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Sms.Tests", "test\Pact
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Logging.Tests", "test\Pact.Logging.Tests\Pact.Logging.Tests.csproj", "{C95D2509-7CC5-492A-95A7-4FA83B518F4A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pact.Kendo.Tests", "test\Pact.Kendo.Tests\Pact.Kendo.Tests.csproj", "{8F96033C-4CD3-4713-8F20-D7FAE198FC33}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -126,6 +128,10 @@ Global
 		{C95D2509-7CC5-492A-95A7-4FA83B518F4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C95D2509-7CC5-492A-95A7-4FA83B518F4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C95D2509-7CC5-492A-95A7-4FA83B518F4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F96033C-4CD3-4713-8F20-D7FAE198FC33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F96033C-4CD3-4713-8F20-D7FAE198FC33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F96033C-4CD3-4713-8F20-D7FAE198FC33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F96033C-4CD3-4713-8F20-D7FAE198FC33}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -138,6 +144,7 @@ Global
 		{6DD74C11-DCE7-4835-977A-EB07A2D86C0E} = {226EB161-A82D-42B5-851E-237887954673}
 		{361BD8F1-E213-4AB1-8B59-FBD5782D11CE} = {226EB161-A82D-42B5-851E-237887954673}
 		{C95D2509-7CC5-492A-95A7-4FA83B518F4A} = {226EB161-A82D-42B5-851E-237887954673}
+		{8F96033C-4CD3-4713-8F20-D7FAE198FC33} = {226EB161-A82D-42B5-851E-237887954673}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8624EA60-C90D-4B90-AFA3-F59D2B738E28}
