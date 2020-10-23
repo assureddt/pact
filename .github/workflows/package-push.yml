@@ -47,7 +47,7 @@ jobs:
         
       # Build
       - name: Set version from release tag in props (sans v)
-        run: sed -i 's/<Version>.*<\/Version>/<Version>${{ env.RELEASE_VERSION }}</Version>/g' ./src/Directory.build.props
+        run: sed -i 's/<Version>.*<\/Version>/<Version>${{ env.RELEASE_VERSION }}<\/Version>/g' ./src/Directory.build.props
           
       - name: Restore
         run: dotnet restore
