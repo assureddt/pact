@@ -3,7 +3,7 @@
 namespace Pact.Kendo
 {
     /// <summary>
-    /// Sets if we should filters on this property.
+    /// Apply to property to say we are going to filter on it.
     /// Used with <see cref="EnumerableExtensions.TextFilter{T}(System.Collections.Generic.IEnumerable{T}, string)"/> and <see cref="QueryableExtensions.TextFilter{T}(System.Linq.IQueryable{T}, string)"/>
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
