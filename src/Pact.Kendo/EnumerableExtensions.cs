@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Pact.Kendo
 {
+    /// <summary>
+    /// A set of enumerable extensions to help with common functions
+    /// </summary>
     public static class EnumerableExtensions
     {
         /// <summary>
@@ -13,26 +16,26 @@ namespace Pact.Kendo
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
-        /// <param name="r"></param>
+        /// <param name="kendoDataRequest">filer and pagination options</param>
         /// <returns></returns>
-        public static IEnumerable<T> Kendo<T>(this IEnumerable<T> source, KendoDataRequest r) where T : class
+        public static IEnumerable<T> Kendo<T>(this IEnumerable<T> source, KendoDataRequest kendoDataRequest) where T : class
         {
             //Remove soft delete
             source = SoftDelete(source);
 
             //Kendo text filter
-            source = TextFilter(source, r.TextFilter);
+            source = TextFilter(source, kendoDataRequest.TextFilter);
 
             //Sort
-            if (r.Sort == null) return source;
-            if (r.Sort.Count > 0)
-                source = source.OrderBy(r.Sort.First().ToString());
+            if (kendoDataRequest.Sort == null) return source;
+            if (kendoDataRequest.Sort.Count > 0)
+                source = source.OrderBy(kendoDataRequest.Sort.First().ToString());
 
             return source;
         }
 
         /// <summary>
-        /// Removes soft delete item if the "SoftDelete" property is present and false
+        /// Removes soft delete items if the "SoftDelete" property is present and true
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
@@ -53,13 +56,14 @@ namespace Pact.Kendo
         }
 
         /// <summary>
-        /// 
+        /// Formats data source into json result kendo ui expects
+        /// Applies pagination
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
-        /// <param name="r"></param>
+        /// <param name="kendoDataRequest">filer and pagination options</param>
         /// <returns></returns>
-        public static JsonResult KendoResult<T>(this IEnumerable<T> source, KendoDataRequest r) where T : class
+        public static JsonResult KendoResult<T>(this IEnumerable<T> source, KendoDataRequest kendoDataRequest) where T : class
         {
             //Execute
             var items = source.ToList();
@@ -68,13 +72,15 @@ namespace Pact.Kendo
             var count = items.Count;
 
             //Skip/Take
-            items = items.Skip(r.Skip).Take(r.Take).ToList();
+            items = items.Skip(kendoDataRequest.Skip).Take(kendoDataRequest.Take).ToList();
 
-            return new JsonResult(new KendoResult<T> { Result = "OK", Records = items, TotalRecordCount = count });
+            return new JsonResult(new KendoResult<T> { Result = "OK", Records = items, Count = count });
         }
 
         /// <summary>
-        /// Checks if any of the string properties on the object contain the search term
+        /// Filters enumerable using the search term.
+        /// If <see cref="FilterAttribute"/> & <see cref="IgnoreFilterAttribute"/> are present on the class these are used to determine what properties to filter on.
+        /// If no filter arbitrates are present it checks all string fields.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
