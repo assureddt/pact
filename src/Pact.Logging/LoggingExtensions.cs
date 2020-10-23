@@ -133,7 +133,7 @@ namespace Pact.Logging
         }
 
         /// <summary>
-        /// Retrieves a dictionary of all properties between the object & original property dictionary and, where values differ, introduces a prefixed key for the original value
+        /// Retrieves a dictionary of all properties between the object &amp; original property dictionary and, where values differ, introduces a prefixed key for the original value
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="amended"></param>

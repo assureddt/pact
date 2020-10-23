@@ -10,7 +10,7 @@ namespace Pact.Sms
 {
     ///<inheritdoc/>
     /// <summary>
-    /// An SMS & Voice service implementation using Twilio (https://www.twilio.com/)
+    /// An SMS &amp; Voice service implementation using Twilio (https://www.twilio.com/)
     /// For docs on implementing the voice endpoint, refer to: https://www.twilio.com/docs/voice/tutorials/how-to-respond-to-incoming-phone-calls-csharp
     /// </summary>
     public class TwilioSmsSender : ISmsSender
