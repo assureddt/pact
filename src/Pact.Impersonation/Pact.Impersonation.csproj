@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <PackageId>Pact.Impersonation</PackageId>
     <Description>🎭 File system impersonation (for Windows, currently)</Description>
     <PackageTags>Impersonation</PackageTags>
   </PropertyGroup>

@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <PackageId>Pact.Web</PackageId>
     <Description>🕸 Web helpers</Description>
     <PackageTags>Web</PackageTags>
   </PropertyGroup>

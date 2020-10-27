@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <PackageId>Pact.TagHelpers</PackageId>
     <Description>🏷 Useful TagHelpers</Description>
     <PackageTags>TagHelpers</PackageTags>
   </PropertyGroup>

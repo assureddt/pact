@@ -4,7 +4,6 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>💨 Distributed caching service</Description>
     <PackageTags>Redis, Cache, Sql Server</PackageTags>
-    <PackageId>Pact.Cache</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

@@ -14,15 +14,17 @@
 	  <PackageLicenseExpression>UNLICENSED</PackageLicenseExpression>
 	  <LangVersion>latest</LangVersion>
     <RepositoryUrl>https://github.com/assureddt/pact</RepositoryUrl>
+    <DocGen>false</DocGen>
   </PropertyGroup>
-
 
   <ItemGroup>
     <None Include="$(SolutionDir)/icon.png" Pack="true" PackagePath="\" Visible="false"/>
-    <PackageReference Include="Vsxmd" Version="1.4.5">
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(DocGen)'=='true'">
+    <PackageReference Include="DefaultDocumentation" Version="0.6.19-beta">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-
 </Project>
