@@ -1,8 +1,8 @@
 ﻿using System;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Pact.Core.Extensions
 {
@@ -39,5 +39,30 @@ namespace Pact.Core.Extensions
         /// <param name="obj"></param>
         /// <returns></returns>
         public static int? GetOrder(this object obj) => obj.GetMemberInfo()?.GetOrder();
+
+        /// <summary>
+        /// Returns a deep copy of the object
+        /// Object must be serializable
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static T DeepCopy<T>(T source)
+        {
+            if (!typeof(T).IsSerializable)
+                throw new ArgumentException("The type must be serializable.", nameof(source));
+
+            // Don't serialize a null object, simply return the default for that object
+            if (ReferenceEquals(source, null))
+                return default(T);
+
+            var formatter = new BinaryFormatter();
+            using (var stream = new MemoryStream())
+            {
+                formatter.Serialize(stream, source);
+                stream.Seek(0, SeekOrigin.Begin);
+                return (T)formatter.Deserialize(stream);
+            }
+        }
     }
 }
