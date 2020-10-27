@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 
-namespace Pact.MessageBus
+namespace Pact.RabbitMQ
 {
     public class MessageBusConnection : IMessageBusConnection, IDisposable
     {

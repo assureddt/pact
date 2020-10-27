@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Pact.MessageBus
+namespace Pact.RabbitMQ
 {
     public static class ServiceCollectionExtensions
     {

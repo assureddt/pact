@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Pact.MessageBus
+namespace Pact.RabbitMQ
 {
     public class MessageBusService : IHostedService
     {

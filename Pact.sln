@@ -20,8 +20,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packaging", "Packaging", "{
 		.github\workflows\package-push.yml = .github\workflows\package-push.yml
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.MessageBus", "src\Pact.MessageBus\Pact.MessageBus.csproj", "{AC043369-9E76-41E4-BD7A-B8FEA13EF4ED}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Kendo", "src\Pact.Kendo\Pact.Kendo.csproj", "{75A092FC-05BA-4EA9-AC68-AC3D1C00C61A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Email", "src\Pact.Email\Pact.Email.csproj", "{9CA6A8DF-A9BE-4349-9306-09FDCB506636}"
@@ -48,7 +46,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Sms.Tests", "test\Pact
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Logging.Tests", "test\Pact.Logging.Tests\Pact.Logging.Tests.csproj", "{C95D2509-7CC5-492A-95A7-4FA83B518F4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pact.Kendo.Tests", "test\Pact.Kendo.Tests\Pact.Kendo.Tests.csproj", "{8F96033C-4CD3-4713-8F20-D7FAE198FC33}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Kendo.Tests", "test\Pact.Kendo.Tests\Pact.Kendo.Tests.csproj", "{8F96033C-4CD3-4713-8F20-D7FAE198FC33}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.RabbitMQ", "src\Pact.RabbitMQ\Pact.RabbitMQ.csproj", "{1C1CADDA-4C9F-4AD6-8AD9-4CBCF1073AFD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,10 +76,6 @@ Global
 		{265C6F06-673D-4B29-B1DD-51CDC1B815C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{265C6F06-673D-4B29-B1DD-51CDC1B815C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{265C6F06-673D-4B29-B1DD-51CDC1B815C1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AC043369-9E76-41E4-BD7A-B8FEA13EF4ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AC043369-9E76-41E4-BD7A-B8FEA13EF4ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AC043369-9E76-41E4-BD7A-B8FEA13EF4ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AC043369-9E76-41E4-BD7A-B8FEA13EF4ED}.Release|Any CPU.Build.0 = Release|Any CPU
 		{75A092FC-05BA-4EA9-AC68-AC3D1C00C61A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{75A092FC-05BA-4EA9-AC68-AC3D1C00C61A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75A092FC-05BA-4EA9-AC68-AC3D1C00C61A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -132,6 +128,10 @@ Global
 		{8F96033C-4CD3-4713-8F20-D7FAE198FC33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F96033C-4CD3-4713-8F20-D7FAE198FC33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F96033C-4CD3-4713-8F20-D7FAE198FC33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C1CADDA-4C9F-4AD6-8AD9-4CBCF1073AFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C1CADDA-4C9F-4AD6-8AD9-4CBCF1073AFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C1CADDA-4C9F-4AD6-8AD9-4CBCF1073AFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C1CADDA-4C9F-4AD6-8AD9-4CBCF1073AFD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

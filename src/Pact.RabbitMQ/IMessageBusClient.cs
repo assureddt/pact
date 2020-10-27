@@ -1,6 +1,6 @@
 ﻿using RabbitMQ.Client;
 
-namespace Pact.MessageBus
+namespace Pact.RabbitMQ
 {
     public interface IMessageBusClient
     {

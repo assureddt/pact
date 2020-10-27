@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-namespace Pact.MessageBus.Fakes
+namespace Pact.RabbitMQ.Fakes
 {
     public class FakeMessageBusSender : IMessageBusSender
     {

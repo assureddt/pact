@@ -1,7 +1,7 @@
 ﻿using System;
 using RabbitMQ.Client;
 
-namespace Pact.MessageBus.Fakes
+namespace Pact.RabbitMQ.Fakes
 {
     public class FakeMessageBusClient : IMessageBusClient, IDisposable
     {

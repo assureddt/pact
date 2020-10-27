@@ -7,7 +7,7 @@ using Pact.Core.Extensions;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace Pact.MessageBus
+namespace Pact.RabbitMQ
 {
     public abstract class MessageBusListener<T> : IMessageBusListener where T : class
     {
