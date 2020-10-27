@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <PackageId>Pact.MessageBus</PackageId>
+    <PackageId>Pact.RabbitMQ</PackageId>
     <Description>📡 A wrapper for RabbitMQ to make it easier to use.</Description>
     <PackageTags>RabbitMQ, Message, Bus</PackageTags>
   </PropertyGroup>
