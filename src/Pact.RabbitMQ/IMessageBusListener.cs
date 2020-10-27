@@ -2,6 +2,9 @@
 
 namespace Pact.RabbitMQ
 {
+    /// <summary>
+    /// Defines handler for listening to messages
+    /// </summary>
     public interface IMessageBusListener
     {
         string Name { get; }

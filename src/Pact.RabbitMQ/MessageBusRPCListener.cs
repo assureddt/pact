@@ -9,6 +9,11 @@ using RabbitMQ.Client.Events;
 
 namespace Pact.RabbitMQ
 {
+    /// <summary>
+    /// A basic class used to listen for RPC events
+    /// </summary>
+    /// <typeparam name="T1">Type of object received in messages</typeparam>
+    /// <typeparam name="T2">Type of object sent as a response</typeparam>
     public abstract class MessageBusRPCListener<T1, T2> : IMessageBusListener where T1 : class where T2 : class
     {
         protected MessageBusRPCListener(ILoggerFactory loggerFactory, IServiceProvider services)

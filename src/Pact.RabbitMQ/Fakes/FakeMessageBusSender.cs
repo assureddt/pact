@@ -5,6 +5,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Pact.RabbitMQ.Fakes
 {
+    /// <summary>
+    /// Used in unit tests to fake messages being sent
+    /// </summary>
     public class FakeMessageBusSender : IMessageBusSender
     {
         public FakeMessageBusSender(ILogger<MessageBusSender> logger, IMessageBusClient client)

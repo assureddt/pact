@@ -9,6 +9,10 @@ using RabbitMQ.Client.Events;
 
 namespace Pact.RabbitMQ
 {
+    /// <summary>
+    /// A basic class used to listen for events
+    /// </summary>
+    /// <typeparam name="T">Type of object received in messages</typeparam>
     public abstract class MessageBusListener<T> : IMessageBusListener where T : class
     {
         protected MessageBusListener(ILoggerFactory loggerFactory, IServiceProvider services)
@@ -32,6 +36,11 @@ namespace Pact.RabbitMQ
         /// <returns>Task completion result</returns>
         public abstract Task ProcessMessage(IServiceProvider services, T message);
 
+        /// <summary>
+        /// Set up the message bus listener
+        /// </summary>
+        /// <param name="client"></param>
+        /// <returns></returns>
         public Task Setup(IMessageBusClient client)
         {
             try

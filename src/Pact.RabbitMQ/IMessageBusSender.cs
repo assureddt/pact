@@ -2,24 +2,27 @@
 
 namespace Pact.RabbitMQ
 {
+    /// <summary>
+    /// Defines handler for sending messages
+    /// </summary>
     public interface IMessageBusSender
     {
         /// <summary>
-        /// Sends the item to the key and exchange combination 
+        /// Sends a basic fire and forget message
         /// </summary>
-        /// <param name="item"></param>
-        /// <param name="exchange"></param>
-        /// <param name="key"></param>
+        /// <param name="item">object to be sent</param>
+        /// <param name="exchange">the bucket to send it too</param>
+        /// <param name="key">the message routing key</param>
         void Send(object item, string exchange, string key);
 
         /// <summary>
-        /// Sends the item to the key and exchange combination and waits for a response
+        /// Sends a message and waits for a response
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="item"></param>
-        /// <param name="exchange"></param>
-        /// <param name="key"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">Expected return type</typeparam>
+        /// <param name="item">object to be sent</param>
+        /// <param name="exchange">the bucket to send it too</param>
+        /// <param name="key">the message routing key</param>
+        /// <returns>instance of T</returns>
         Task<T> SendRPCAsync<T>(object item, string exchange, string key) where T : class;
     }
 }

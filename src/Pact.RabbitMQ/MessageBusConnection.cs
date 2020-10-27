@@ -5,6 +5,9 @@ using RabbitMQ.Client;
 
 namespace Pact.RabbitMQ
 {
+    /// <summary>
+    /// The raw message bus connection handler
+    /// </summary>
     public class MessageBusConnection : IMessageBusConnection, IDisposable
     {
         public MessageBusConnection(ILogger<MessageBusConnection> logger, IOptions<MessageBusSettings> options)
@@ -19,7 +22,7 @@ namespace Pact.RabbitMQ
                 ConnectionFactory = new ConnectionFactory
                 {
                     HostName = Options.Hostname,
-                    UserName = Options.UserName,
+                    UserName = Options.Username,
                     Password = Options.Password,
                     AutomaticRecoveryEnabled = true
                 };
@@ -36,6 +39,10 @@ namespace Pact.RabbitMQ
         public ConnectionFactory ConnectionFactory { get; }
         public IConnection Connection { get; }
 
+        /// <summary>
+        /// Gets the current channel to the server.
+        /// </summary>
+        /// <returns></returns>
         public IModel GetModel()
         {
             try

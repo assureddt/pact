@@ -5,6 +5,9 @@ using RabbitMQ.Client;
 
 namespace Pact.RabbitMQ
 {
+    /// <summary>
+    /// A raw message bus client object.
+    /// </summary>
     public class MessageBusClient : IMessageBusClient, IDisposable
     {
         public MessageBusClient(ILogger<MessageBusClient> logger, IOptions<MessageBusSettings> options, IMessageBusConnection connection)
@@ -72,6 +75,11 @@ namespace Pact.RabbitMQ
             Channel.Dispose();
         }
 
+        /// <summary>
+        /// Sends errors to the defined error exchange
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="originalKey"></param>
         public void SendError(byte[] data, string originalKey)
         {
             try

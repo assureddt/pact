@@ -17,7 +17,7 @@ namespace Pact.RabbitMQ
         }
 
         /// <summary>
-        /// Sets up message bus service with required dependencies
+        /// Sets up message bus client with required dependencies
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>

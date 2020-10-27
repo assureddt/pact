@@ -3,6 +3,9 @@ using RabbitMQ.Client;
 
 namespace Pact.RabbitMQ.Fakes
 {
+    /// <summary>
+    /// A fake client used in unit tests.
+    /// </summary>
     public class FakeMessageBusClient : IMessageBusClient, IDisposable
     {
         public ConnectionFactory ConnectionFactory { get; }

@@ -9,6 +9,9 @@ using RabbitMQ.Client.Events;
 
 namespace Pact.RabbitMQ
 {
+    /// <summary>
+    /// Basic handler for sending messages
+    /// </summary>
     public class MessageBusSender : IMessageBusSender
     {
         public MessageBusSender (ILogger<MessageBusSender> logger, IMessageBusClient client)
@@ -49,6 +52,12 @@ namespace Pact.RabbitMQ
         private readonly ConcurrentDictionary<string, TaskCompletionSource<string>> _pendingMessages;
         private readonly string _rpcQueue;
 
+        /// <summary>
+        /// Sends a basic fire and forget message
+        /// </summary>
+        /// <param name="item">object to be sent</param>
+        /// <param name="exchange">the bucket to send it too</param>
+        /// <param name="key">the message routing key</param>
         public void Send(object item, string exchange, string key)
         {
             try
@@ -68,6 +77,14 @@ namespace Pact.RabbitMQ
             }
         }
 
+        /// <summary>
+        /// Sends a message and waits for a response
+        /// </summary>
+        /// <typeparam name="T">Expected return type</typeparam>
+        /// <param name="item">object to be sent</param>
+        /// <param name="exchange">the bucket to send it too</param>
+        /// <param name="key">the message routing key</param>
+        /// <returns>instance of T</returns>
         public async Task<T> SendRPCAsync<T>(object item, string exchange, string key) where T : class
         {
             try

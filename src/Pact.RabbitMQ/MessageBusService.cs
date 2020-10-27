@@ -8,6 +8,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Pact.RabbitMQ
 {
+    /// <summary>
+    /// A hosted service which sets up IMessageBusListener instances which have been added to DI
+    /// </summary>
     public class MessageBusService : IHostedService
     {
         public MessageBusService(ILogger<MessageBusService> logger, IServiceProvider services, IMessageBusClient client)
