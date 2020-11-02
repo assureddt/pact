@@ -12,9 +12,10 @@ namespace Pact.Core.Extensions
         /// Adds "sharedsettings(.*).json" as the initial source of settings (intended to be a single origin in the project to reduce need for common settings in appsettings.json)
         /// </summary>
         /// <param name="builder"></param>
-        /// <param name="args"></param>
+        /// <param name="pathOffset">Relative location to the project of the shared settings file to be used (defaults to the parent (usually the solution directory)</param>
+        /// <param name="filename">The name of the settings file (defaults to "sharedsettings.json" & "sharedsettings.{Env}.json")</param>
         /// <returns></returns>
-        public static IHostBuilder ConfigureSharedSettings(this IHostBuilder builder, string [] args)
+        public static IHostBuilder ConfigureSharedSettings(this IHostBuilder builder, string pathOffset = "..", string filename = @"sharedsettings")
         {
             return builder.ConfigureAppConfiguration((hostingContext, config) =>
             {
@@ -22,15 +23,15 @@ namespace Pact.Core.Extensions
 
                 // NOTE: docs used to suggest using clear, but there's a chained configuration provider that gets added first earlier on
                 // we can't re-add that and it breaks everything, so we'll just insert these shared sources directly above the appsettings.json already added
-                foreach (var provider in GetSharedFileProviders(env))
+                foreach (var provider in GetSharedFileProviders(env, pathOffset))
                 {
-                    config.Sources.Insert(1, new JsonConfigurationSource { Path = $"sharedsettings.{env.EnvironmentName}.json", Optional = true, ReloadOnChange = false, FileProvider = provider });
-                    config.Sources.Insert(1, new JsonConfigurationSource { Path = "sharedsettings.json", Optional = true, ReloadOnChange = false, FileProvider = provider });
+                    config.Sources.Insert(1, new JsonConfigurationSource { Path = $"{filename}.{env.EnvironmentName}.json", Optional = true, ReloadOnChange = false, FileProvider = provider });
+                    config.Sources.Insert(1, new JsonConfigurationSource { Path = $"{filename}.json", Optional = true, ReloadOnChange = false, FileProvider = provider });
                 }
             });
         }
 
-        private static IEnumerable<IFileProvider> GetSharedFileProviders(IHostEnvironment env)
+        private static IEnumerable<IFileProvider> GetSharedFileProviders(IHostEnvironment env, string pathOffset)
         {
             // as only one of the variations needs to work (and some will fail) dependent on the runtime (IISExpress, Docker, Published) environment, we add with failover
             // the default (content root: bin folder for published scenarios)
@@ -39,7 +40,7 @@ namespace Pact.Core.Extensions
             try
             {
                 // repo root where the raw files are (for local debug)
-                fps.Add(new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "..", "..")));
+                fps.Add(new PhysicalFileProvider(Path.Combine(env.ContentRootPath, pathOffset)));
             }
             catch
             {
