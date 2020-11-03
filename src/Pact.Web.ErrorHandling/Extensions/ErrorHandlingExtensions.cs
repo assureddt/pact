@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Pact.Core;
+using Pact.Core.Extensions;
 
 namespace Pact.Web.ErrorHandling.Extensions
 {   
