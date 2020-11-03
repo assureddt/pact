@@ -1,0 +1,39 @@
+﻿@page "/Error/{code?}"
+@using Microsoft.AspNetCore.Http
+@model Pact.Web.ErrorHandling.Pages.Error.IndexModel
+@{
+    ViewData["Title"] = "Error";
+
+    switch (Model.Code)
+    {
+        case StatusCodes.Status404NotFound:
+            <h3>Page not found</h3>
+            <p>We were unable to find the page you're looking for.</p>
+            break;
+        case StatusCodes.Status401Unauthorized:
+            <h3>Unauthenticated</h3>
+            <p>You need to sign into the system to access this feature.</p>
+            break;
+        case StatusCodes.Status403Forbidden:
+            <h3>Access denied</h3>
+            <p>You do not have the necessary rights to access this feature.</p>
+            break;
+        case StatusCodes.Status400BadRequest:
+            <h3>Invalid request</h3>
+            <p>Your request was missing some required information. Please review the data entered and try again.</p>
+            break;
+        default:
+            <h3>Our apologies</h3>
+            <p>An unexpected error occurred when processing your request. Please review the data entered and try again.</p>
+            break;
+    }
+
+    if (!string.IsNullOrWhiteSpace(Model.Details))
+    {
+        <div class="alert alert-danger" role="alert">
+            @Html.Raw(Model.Details)
+        </div>
+    }
+}
+
+<partial name="_ErrorSub" optional="true" />

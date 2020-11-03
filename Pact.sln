@@ -50,6 +50,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Kendo.Tests", "test\Pa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.RabbitMQ", "src\Pact.RabbitMQ\Pact.RabbitMQ.csproj", "{1C1CADDA-4C9F-4AD6-8AD9-4CBCF1073AFD}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Web.ErrorHandling", "src\Pact.Web.ErrorHandling\Pact.Web.ErrorHandling.csproj", "{8AE28578-2DF3-4C0B-A230-EAB03E160821}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{57E2DFB0-5B43-48F3-8529-99608E73B40F}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -132,6 +139,10 @@ Global
 		{1C1CADDA-4C9F-4AD6-8AD9-4CBCF1073AFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C1CADDA-4C9F-4AD6-8AD9-4CBCF1073AFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C1CADDA-4C9F-4AD6-8AD9-4CBCF1073AFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AE28578-2DF3-4C0B-A230-EAB03E160821}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AE28578-2DF3-4C0B-A230-EAB03E160821}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AE28578-2DF3-4C0B-A230-EAB03E160821}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AE28578-2DF3-4C0B-A230-EAB03E160821}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
