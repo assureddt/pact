@@ -4,7 +4,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RazorLangVersion>3.0</RazorLangVersion>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
-    <PushOnPack>true</PushOnPack>
+    <Description>💀 Razor Pages Error helpers</Description>
+    <PackageTags>Web, Error</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

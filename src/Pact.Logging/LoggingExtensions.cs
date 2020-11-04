@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Serilog;
 using Serilog.Events;
@@ -18,6 +19,18 @@ namespace Pact.Logging
 {
     public static class LoggingExtensions
     {
+        /// <summary>
+        /// Adds Serilog Request logging with some defaults and noise reduction for specified endpoints
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="noisyEndpointPatterns">Any specific endpoint addresses to log at verbose level only</param>
+        public static IApplicationBuilder UseSerilogRequestLoggingWithPactDefaults(this IApplicationBuilder app, params string[] noisyEndpointPatterns)
+        {
+            app.UseSerilogRequestLogging(opts => opts.WithPactDefaults(noisyEndpointPatterns));
+
+            return app;
+        }
+
         /// <summary>
         /// Configures log enrichment with noise reduction for specified endpoints
         /// </summary>

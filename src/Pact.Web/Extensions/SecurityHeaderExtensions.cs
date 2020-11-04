@@ -6,6 +6,11 @@ namespace Pact.Web.Extensions
 {
     public static class SecurityHeaderExtensions
     {
+        /// <summary>
+        /// Configures a restricted feature policy for web apps that don't need any
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <returns></returns>
         public static FeaturePolicyBuilder AddDefaultFeaturePolicy(this FeaturePolicyBuilder builder)
         {
             builder.AddAccelerometer().None();
@@ -29,16 +34,45 @@ namespace Pact.Web.Extensions
             return builder;
         }
 
-        public static T FromAnalytics<T>(this T builder) where T : CspDirectiveBuilder
+        /// <summary>
+        /// Adds default CSP From urls for Google Analytics
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="builder"></param>
+        /// <returns></returns>
+        public static T FromGoogleAnalytics<T>(this T builder) where T : CspDirectiveBuilder
         {
             return builder.From("https://www.google-analytics.com/").From("https://www.googletagmanager.com/");
         }
 
-        public static T FromRecaptcha<T>(this T builder) where T : CspDirectiveBuilder
+        /// <summary>
+        /// Adds default CSP From urls for Google Recaptcha
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="builder"></param>
+        /// <returns></returns>
+        public static T FromGoogleRecaptcha<T>(this T builder) where T : CspDirectiveBuilder
         {
             return builder.From("https://www.google.com/").From("https://www.gstatic.com/");
         }
 
+        /// <summary>
+        /// Adds default CSP From urls for Google Fonts
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="builder"></param>
+        /// <returns></returns>
+        public static T FromGoogleFonts<T>(this T builder) where T : CspDirectiveBuilder
+        {
+            return builder.From("https://fonts.gstatic.com").From("https://fonts.googleapis.com");
+        }
+
+        /// <summary>
+        /// Adds just the basic Csp
+        /// </summary>
+        /// <param name="csp"></param>
+        /// <param name="reportUri"></param>
+        /// <returns></returns>
         public static CspBuilder AddDefaultCsp(this CspBuilder csp, string reportUri)
         {
             if (!string.IsNullOrWhiteSpace(reportUri))
@@ -48,13 +82,20 @@ namespace Pact.Web.Extensions
 
             csp.AddBlockAllMixedContent();
             csp.AddDefaultSrc().Self();
-            csp.AddFontSrc().Self().Data().From("https://fonts.gstatic.com");
-            csp.AddStyleSrc().Self().From("https://fonts.googleapis.com").UnsafeInline();
+            csp.AddFontSrc().Self().Data();
+            csp.AddStyleSrc().Self().UnsafeInline();
 
             return csp;
         }
 
-        public static IApplicationBuilder Use360CspWithFeaturePolicy(this IApplicationBuilder app, bool reportOnly, Action<CspBuilder> cspBuilder)
+        /// <summary>
+        /// Adds default CSP with Restrictive Feature Policy but control over the specifics of CSP
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="reportOnly"></param>
+        /// <param name="cspBuilder"></param>
+        /// <returns></returns>
+        public static IApplicationBuilder UseCspWithFeaturePolicy(this IApplicationBuilder app, bool reportOnly, Action<CspBuilder> cspBuilder)
         {
             var head = new HeaderPolicyCollection()
                 .AddFrameOptionsSameOrigin()
@@ -78,6 +119,32 @@ namespace Pact.Web.Extensions
                 head.AddContentSecurityPolicy(cspBuilder);
 
             app.UseSecurityHeaders(head);
+
+            return app;
+        }
+
+        /// <summary>
+        /// Adds CSP with:
+        /// * Restrictive Feature Policy
+        /// * Allowed Google services (Analytics, Fonts, Recaptcha)
+        /// * No reporting
+        /// * Everything else sensibly restrictive
+        /// Should be good for most simple-but-secure sites
+        /// </summary>
+        /// <param name="app"></param>
+        /// <returns></returns>
+        public static IApplicationBuilder UseCspWithPactDefaults(this IApplicationBuilder app)
+        {
+            app.UseCspWithFeaturePolicy(false, csp =>
+            {
+                csp.AddDefaultCsp(null);
+                csp.AddFrameSource().Self().FromGoogleRecaptcha();
+                csp.AddImgSrc().Self().Data().FromGoogleAnalytics();
+                csp.AddConnectSrc().Self().FromGoogleAnalytics();
+                csp.AddFontSrc().Self().Data().FromGoogleFonts();
+                csp.AddStyleSrc().Self().FromGoogleFonts().UnsafeInline();
+                csp.AddScriptSrc().Self().UnsafeEval().UnsafeInline().ReportSample().FromGoogleAnalytics();
+            });
 
             return app;
         }
