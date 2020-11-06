@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using Microsoft.Extensions.Configuration.Json;
+﻿using System.IO;
+using System.Linq;
+using System.Reflection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 
@@ -11,53 +11,23 @@ namespace Pact.Core.Extensions
         /// <summary>
         /// Adds "sharedsettings(.*).json" as the initial source of settings (intended to be a single origin in the project to reduce need for common settings in appsettings.json)
         /// </summary>
-        /// <param name="builder"></param>
-        /// <param name="pathOffset">Relative location to the project of the shared settings file to be used (defaults to the parent (usually the solution directory)</param>
+        /// <param name="builder">The host builder</param>
         /// <param name="filename">The name of the settings file (defaults to "sharedsettings.json" & "sharedsettings.{Env}.json")</param>
         /// <returns></returns>
-        public static IHostBuilder ConfigureSharedSettings(this IHostBuilder builder, string pathOffset = "..", string filename = @"sharedsettings")
+        public static IHostBuilder ConfigureSharedSettings(this IHostBuilder builder, string filename = @"sharedsettings")
         {
             return builder.ConfigureAppConfiguration((hostingContext, config) =>
             {
                 var env = hostingContext.HostingEnvironment;
 
-                // NOTE: docs used to suggest using clear, but there's a chained configuration provider that gets added first earlier on
-                // we can't re-add that and it breaks everything, so we'll just insert these shared sources directly above the appsettings.json already added
-                foreach (var provider in GetSharedFileProviders(env, pathOffset))
-                {
-                    config.Sources.Insert(1, new JsonConfigurationSource { Path = $"{filename}.{env.EnvironmentName}.json", Optional = true, ReloadOnChange = false, FileProvider = provider });
-                    config.Sources.Insert(1, new JsonConfigurationSource { Path = $"{filename}.json", Optional = true, ReloadOnChange = false, FileProvider = provider });
-                }
+                // as the files are "linked", not explicit, if running in docker, we won't be able to see them in the project directory
+                // so we'll always use the copy that's in the bin folder instead (if we can). a null provider will just use the appcontext.basedirectory by default
+                var assemblyLocation = Assembly.GetEntryAssembly()?.Location;
+                var provider = assemblyLocation != null ? new PhysicalFileProvider(Path.GetDirectoryName(assemblyLocation)) : null;
+
+                config.InsertJsonFileSource(provider, $"{filename}.{env.EnvironmentName}.json");
+                config.InsertJsonFileSource(provider, $"{filename}.json");
             });
-        }
-
-        private static IEnumerable<IFileProvider> GetSharedFileProviders(IHostEnvironment env, string pathOffset)
-        {
-            // as only one of the variations needs to work (and some will fail) dependent on the runtime (IISExpress, Docker, Published) environment, we add with failover
-            // the default (content root: bin folder for published scenarios)
-            var fps = new List<IFileProvider> {null};
-
-            try
-            {
-                // repo root where the raw files are (for local debug)
-                fps.Add(new PhysicalFileProvider(Path.Combine(env.ContentRootPath, pathOffset)));
-            }
-            catch
-            {
-                // ignored
-            }
-
-            try
-            { 
-                // mapped volume source for docker debug
-                fps.Add(new PhysicalFileProvider("/src"));
-            }
-            catch
-            {
-                // ignored
-            }
-
-            return fps;
         }
     }
 }
