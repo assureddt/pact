@@ -13,7 +13,7 @@ The documentation Wiki is largely auto-generated but needs manual pushing. Ping 
 ![main](https://github.com/assureddt/pact/workflows/publish%20packages/badge.svg)
 ![main](https://img.shields.io/badge/gremlins-likely-orange?logo=github&labelColor=2d2d2d&logoColor=lightgray)
 
-# Package List
+## Package List
 * [Pact.Cache](./src/Pact.Cache)
 * Pact.Core
 * [Pact.Email](./src/Pact.Email)
