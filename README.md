@@ -14,15 +14,15 @@ The documentation Wiki is largely auto-generated but needs manual pushing. Ping 
 ![main](https://img.shields.io/badge/gremlins-likely-orange?logo=github&labelColor=2d2d2d&logoColor=lightgray)
 
 # Package List
-* [Pact.Cache](./src/Pact.Cache/README.md)
+* [Pact.Cache](./src/Pact.Cache)
 * Pact.Core
-* [Pact.Email](./src/Pact.Email/README.md)
-* [Pact.Impersonation](./src/Pact.Impersonation/README.md)
+* [Pact.Email](./src/Pact.Email)
+* [Pact.Impersonation](./src/Pact.Impersonation)
 * Pact.Kendo
-* [Pact.Localization](./src/Pact.Localization/README.md)
-* [Pact.Logging](./src/Pact.Logging/README.md)
+* [Pact.Localization](./src/Pact.Localization)
+* [Pact.Logging](./src/Pact.Logging)
 * Pact.RabbitMQ
-* [Pact.Sms](./src/Pact.Sms/README.md)
+* [Pact.Sms](./src/Pact.Sms)
 * Pact.TagHelpers
 * Pact.Web
 * Pact.Web.ErrorHandling
