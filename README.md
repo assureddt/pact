@@ -12,3 +12,17 @@ The documentation Wiki is largely auto-generated but needs manual pushing. Ping 
 ![main](https://github.com/assureddt/pact/workflows/test/badge.svg)
 ![main](https://github.com/assureddt/pact/workflows/publish%20packages/badge.svg)
 ![main](https://img.shields.io/badge/gremlins-likely-orange?logo=github&labelColor=2d2d2d&logoColor=lightgray)
+
+# Package List
+* [Pact.Cache](./Pact.Cache/README.md)
+* Pact.Core
+* [Pact.Email](./Pact.Email/README.md)
+* [Pact.Impersonation](./Pact.Impersonation/README.md)
+* Pact.Kendo
+* [Pact.Localization](./Pact.Localization/README.md)
+* [Pact.Logging](./Pact.Logging/README.md)
+* Pact.RabbitMQ
+* [Pact.Sms](./Pact.Sms/README.md)
+* Pact.TagHelpers
+* Pact.Web
+* Pact.Web.ErrorHandling
