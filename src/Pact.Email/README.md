@@ -1,6 +1,6 @@
 # Pact.Email ✉
 Provides an [EmailSender](Pact.Email/EmailSender.cs) service implementation to deliver emails either via SMTP or a file-storage maildrop path (common with IIS6 SMTP configured with a smart-host).
-The implemtation supports attachments and also the option of an override delivery address & whitelist (useful for testing environments - allows you to redirect all outbound email to a specific address, except for emails already destined for specified testing addresses) via [EmailSettings](Pact.Email/EmailSettings.cs).
+The implementation supports attachments and also the option of an override delivery address & whitelist (useful for testing environments - allows you to redirect all outbound email to a specific address, except for emails already destined for specified testing addresses) via [EmailSettings](Pact.Email/EmailSettings.cs).
 
 DI service extensions for both variations can be found in [ServiceCollectionExtensions](Pact.Email/ServiceCollectionExtensions.cs).
 
