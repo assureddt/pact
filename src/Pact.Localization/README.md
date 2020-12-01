@@ -1,9 +1,9 @@
 # Pact.Localization 🌍
 Builds on the behaviour of the framework-provided Microsoft.AspNetCore.Localization functionality by introducing context-based decisions into the selection of culture to present to the user.
-This involves a replacement RequestLocalizationMiddleware: [DynamicLocalizationMiddleware](Pact.Localization/DynamicLocalizationMiddleware.cs), which inserts the dynamic check into the process via an additional "Culture Resolver" service, which needs to implement [ISupportedCulturesResolver](Pact.Localization/ISupportedCulturesResolver.cs).
+This involves a replacement RequestLocalizationMiddleware: [DynamicLocalizationMiddleware](./DynamicLocalizationMiddleware.cs), which inserts the dynamic check into the process via an additional "Culture Resolver" service, which needs to implement [ISupportedCulturesResolver](./ISupportedCulturesResolver.cs).
 That implementation will typically look up the Identity on the HttpContext to infer specifics about the user's account configuration (which may include languages explicitly made available to them).
 
-DI service extensions for adding the middleware can be found in [ServiceCollectionExtensions](Pact.Localization/ServiceCollectionExtensions.cs).
+DI service extensions for adding the middleware can be found in [ServiceCollectionExtensions](./ServiceCollectionExtensions.cs).
 
 An example implementation of the GetSupportedCulturesAsync method follows:
 ```c#

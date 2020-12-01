@@ -1,5 +1,5 @@
 # Pact.Impersonation 🎭
-Provides a basis for file system access requests via impersonation, with an implementation for Microsoft Windows in [WindowsImpersonator](Pact.Impersonation/WindowsImpersonator.cs).
+Provides a basis for file system access requests via impersonation, with an implementation for Microsoft Windows in [WindowsImpersonator](./WindowsImpersonator.cs).
 An action that needs to be executed in an impersonated context is passed in as a parameter to the request, along with the provided impersonation account details (ideally configured via Environment Settings or equivalent).
 
 An example usage of the ExecuteAction method follows:
