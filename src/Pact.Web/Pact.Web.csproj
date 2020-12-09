@@ -17,6 +17,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Pact.Core\Pact.Core.csproj" />
+    <ProjectReference Include="..\Pact.Logging\Pact.Logging.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Filters\" />
   </ItemGroup>
 
 </Project>
