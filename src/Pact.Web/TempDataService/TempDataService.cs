@@ -17,7 +17,7 @@ namespace Pact.Web.TempDataService
 
         private readonly ITempDataDictionaryFactory _tempDataDictionaryFactory;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private const string _urlCacheString = "TempDataService.URLItem:";
+        private const string UrlCacheString = "TempDataService.URLItem:";
 
         private ITempDataDictionary GetTempData()
         {
@@ -31,26 +31,25 @@ namespace Pact.Web.TempDataService
 
         public T Get<T>(string key) where T : class
         {
-            if (GetTempData().TryGetValue(key, out object value) && value is string json)
-            {
-                GetTempData().Remove(key);
-                return json.FromJson<T>();
-            }
+            if (!GetTempData().TryGetValue(key, out var value) || !(value is string json))
+                return default;
 
-            return default(T);
+            GetTempData().Remove(key);
+            return json.FromJson<T>();
+
         }
 
         public string StoreOnKeyToken<T>(string key, T value) where T : class
         {
             var token = "Z" + Regex.Replace(Convert.ToBase64String(Guid.NewGuid().ToByteArray()), "[/+=]", "-");
-            var cacheKey = _urlCacheString + key + ":" + token;
+            var cacheKey = UrlCacheString + key + ":" + token;
             Set(cacheKey, value);
             return token;
         }
 
         public T GetFromKeyToken<T>(string key, string token) where T : class
         {
-            var cacheKey = _urlCacheString + key + ":" + token;
+            var cacheKey = UrlCacheString + key + ":" + token;
             return Get<T>(cacheKey);
         }
 

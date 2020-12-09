@@ -16,8 +16,7 @@ namespace Pact.Web.Extensions
         /// <returns></returns>
         public static JsonResult JsonError(this Controller controller, Exception ex, ILogger logger = null)
         {
-            if (ex == null)
-                ex = new ArgumentNullException(nameof(ex));
+            ex ??= new ArgumentNullException(nameof(ex));
 
             logger?.LogError(ex, ex.Message);
             return controller.Json(new { Result = "ERROR", ex.Message });
@@ -32,8 +31,7 @@ namespace Pact.Web.Extensions
         /// <returns></returns>
         public static ViewResult ViewError(this Controller controller, Exception ex, ILogger logger = null)
         {
-            if (ex == null)
-                ex = new ArgumentNullException(nameof(ex));
+            ex ??= new ArgumentNullException(nameof(ex));
 
             logger?.LogError(ex, ex.Message);
             return controller.View("Error");
@@ -48,8 +46,7 @@ namespace Pact.Web.Extensions
         /// <returns></returns>
         public static ViewResult ViewErrorMessage(this Controller controller, Exception ex, ILogger logger = null)
         {
-            if (ex == null)
-                ex = new ArgumentNullException(nameof(ex));
+            ex ??= new ArgumentNullException(nameof(ex));
 
             logger?.LogError(ex, ex.Message);
             return controller.View("ErrorMessage", ex);
@@ -64,8 +61,7 @@ namespace Pact.Web.Extensions
         /// <returns></returns>
         public static PartialViewResult PartialViewErrorModal(this Controller controller, Exception ex, ILogger logger = null)
         {
-            if (ex == null)
-                ex = new ArgumentNullException(nameof(ex));
+            ex ??= new ArgumentNullException(nameof(ex));
 
             logger?.LogError(ex, ex.Message);
             return controller.PartialView("ErrorModal");
@@ -80,8 +76,7 @@ namespace Pact.Web.Extensions
         /// <returns></returns>
         public static FileStreamResult FileStreamError(this Controller controller, Exception ex, ILogger logger = null)
         {
-            if (ex == null)
-                ex = new ArgumentNullException(nameof(ex));
+            ex ??= new ArgumentNullException(nameof(ex));
 
             logger?.LogError(ex, ex.Message);
             return null;
@@ -96,8 +91,7 @@ namespace Pact.Web.Extensions
         /// <returns></returns>
         public static FileContentResult FileContentError(this Controller controller, Exception ex, ILogger logger = null)
         {
-            if (ex == null)
-                ex = new ArgumentNullException(nameof(ex));
+            ex ??= new ArgumentNullException(nameof(ex));
 
             logger?.LogError(ex, ex.Message);
             return null;
@@ -112,8 +106,7 @@ namespace Pact.Web.Extensions
         /// <returns></returns>
         public static StatusCodeResult HttpStatusCodeError(this Controller controller, Exception ex, ILogger logger = null)
         {
-            if (ex == null)
-                ex = new ArgumentNullException(nameof(ex));
+            ex ??= new ArgumentNullException(nameof(ex));
 
             logger?.LogError(ex, ex.Message);
             return controller.StatusCode((int)HttpStatusCode.InternalServerError);
