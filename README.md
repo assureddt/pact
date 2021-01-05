@@ -23,6 +23,6 @@ The documentation Wiki is largely auto-generated but needs manual pushing. Ping 
 * [Pact.Logging](./src/Pact.Logging)
 * Pact.RabbitMQ
 * [Pact.Sms](./src/Pact.Sms)
-* Pact.TagHelpers
+* [Pact.TagHelpers](./src/Pact.TagHelpers)
 * Pact.Web
 * Pact.Web.ErrorHandling
