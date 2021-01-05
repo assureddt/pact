@@ -3,6 +3,11 @@ using System.Collections.Generic;
 
 namespace Pact.Core
 {
+    /// <summary>
+    /// Provides equality comparison for a type based on the resolved value of a provided projection
+    /// Saves the need for an explicit IEqualityComparer implementation where the comparison is based on a single contained primitive
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class GenericEqualityComparer<T> : IEqualityComparer<T>
     {
         private readonly Func<T, T, bool> _projection;

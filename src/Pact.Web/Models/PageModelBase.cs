@@ -3,32 +3,28 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using Pact.Web.ErrorHandling.Interfaces;
+using Pact.Web.Interfaces;
 
-namespace Pact.Web.ErrorHandling.Models
+namespace Pact.Web.Models
 {
     /// <summary>
-    /// Intended to form the base page model if you're opting into the error handling
+    /// Intended to form the base page model if you're opting into the error handling, but you can just implement IModel instead
     /// Adds some other useful standard functionality to the page model (AntiForgery, Page title, TempData-based alerts and a Forbid response)
     /// </summary>
     public abstract class PageModelBase : PageModel, IModel
     {
-        protected ILogger Logger { get; }
-        protected IPageModelService Service { get; }
+        public ILogger Logger { get; }
+        public IAntiforgery Xsrf { get; }
 
-        public IAntiforgery Xsrf => Service.Xsrf;
         public string Title { get; protected set; }
 
-        protected PageModelBase(ILogger logger, IPageModelService service)
+        protected PageModelBase(ILogger logger, IAntiforgery xsrf)
         {
             Logger = logger;
-            Service = service;
+            Xsrf = xsrf;
         }
 
-        public AntiforgeryTokenSet GetAntiXsrfRequestToken(HttpContext context)
-        {
-            return Xsrf.GetAndStoreTokens(context);
-        }
+        public AntiforgeryTokenSet GetAntiXsrfRequestToken(HttpContext context) => ((IModel)this).GetAntiXsrfRequestToken(context);
 
         [TempData]
         public string Error { get; set; }

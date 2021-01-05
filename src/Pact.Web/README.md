@@ -6,9 +6,10 @@ Some examples follow:
 Simplifies the storing of objects in TempData
 ```c#
 var svc = provider.GetService<ITempDataService>();
-svc.Set(theThing);
+var theThing = new Thing();
+svc.Set("ThingKey", theThing);
 ...
-svc.Get<Thing>(it);
+var retrievedThing = svc.Get<Thing>("ThingKey");
 ```
 
 ## [LoggingActionFilter](./Filters/LoggingActionFilter.cs) & [LoggingPageFilter](./Filters/LoggingPageFilter.cs) 

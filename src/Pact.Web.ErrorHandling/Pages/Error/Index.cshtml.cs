@@ -1,21 +1,22 @@
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Pact.Web.ErrorHandling.Extensions;
-using Pact.Web.ErrorHandling.Interfaces;
-using Pact.Web.ErrorHandling.Models;
+using Pact.Web.Interfaces;
 
 namespace Pact.Web.ErrorHandling.Pages.Error
 {
     [IgnoreAntiforgeryToken]
     [AllowAnonymous]
-    public class IndexModel : PageModelBase
+    public class IndexModel : PageModel, IModel
     {
-        public IndexModel(ILogger<IndexModel> logger, IPageModelService service)
-        : base(logger, service)
+        public IndexModel(ILogger<IndexModel> logger)
         {
+            Logger = logger;
         }
 
         public int? Code { get; private set; }
@@ -35,5 +36,9 @@ namespace Pact.Web.ErrorHandling.Pages.Error
 
             await base.OnPageHandlerExecutionAsync(context, next);
         }
+
+        public ILogger Logger { get; }
+        public string Title { get; }
+        public IAntiforgery Xsrf { get; }
     }
 }
