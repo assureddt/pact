@@ -24,5 +24,5 @@ The documentation Wiki is largely auto-generated but needs manual pushing. Ping 
 * Pact.RabbitMQ
 * [Pact.Sms](./src/Pact.Sms)
 * [Pact.TagHelpers](./src/Pact.TagHelpers)
-* Pact.Web
+* [Pact.Web](./src/Pact.Web)
 * Pact.Web.ErrorHandling
