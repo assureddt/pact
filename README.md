@@ -15,7 +15,7 @@ The documentation Wiki is largely auto-generated but needs manual pushing. Ping 
 
 ## Package List
 * [Pact.Cache](./src/Pact.Cache)
-* Pact.Core
+* [Pact.Core](./src/Pact.Core)
 * [Pact.Email](./src/Pact.Email)
 * [Pact.Impersonation](./src/Pact.Impersonation)
 * Pact.Kendo
