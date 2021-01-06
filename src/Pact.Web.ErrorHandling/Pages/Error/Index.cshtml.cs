@@ -14,9 +14,11 @@ namespace Pact.Web.ErrorHandling.Pages.Error
     [AllowAnonymous]
     public class IndexModel : PageModel, IModel
     {
-        public IndexModel(ILogger<IndexModel> logger)
+        public IndexModel(ILogger<IndexModel> logger, IAntiforgery xsrf)
         {
             Logger = logger;
+            Xsrf = xsrf;
+            Title = "Error";
         }
 
         public int? Code { get; private set; }
