@@ -18,7 +18,7 @@ Then it just needs a Layout defined in the Pages/Error/_ViewStart.cshtml path of
 }
 ```
 
-... and the model used in the layout to implement [IModel](../Pact.Web/Interfaces/IModel)
+... and the model used in the layout to implement [IModel](../Pact.Web/Interfaces/IModel.cs)
 
 * The error page currently has content switches for: 400; 401; 403; 404; with anything else described as "Unexpected".
 * A Json response is returned if the request is an Ajax call.
