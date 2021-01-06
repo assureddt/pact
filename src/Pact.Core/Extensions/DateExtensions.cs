@@ -132,8 +132,18 @@ namespace Pact.Core.Extensions
         /// <returns>Whichever is the latest</returns>
         public static DateTime Latest(params DateTime[] dt) => dt.Max();
 
+        /// <summary>
+        /// If the value is within the valid SQL Server range for dates, it is returned unchanged, otherwise returns null
+        /// </summary>
+        /// <param name="dateTime"></param>
+        /// <returns></returns>
         public static DateTime? NullifySqlDateTimeIfInvalid(this DateTime dateTime) => IsValidSqlDateTime(dateTime) ? dateTime : (DateTime?)null;
 
+        /// <summary>
+        /// Checks the provided value for SQL Server date range validity
+        /// </summary>
+        /// <param name="dateTime"></param>
+        /// <returns></returns>
         public static bool IsValidSqlDateTime(this DateTime dateTime) => dateTime >= (DateTime)SqlDateTime.MinValue && dateTime <= (DateTime)SqlDateTime.MaxValue;
     }
 }
