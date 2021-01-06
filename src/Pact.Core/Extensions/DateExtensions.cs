@@ -132,7 +132,7 @@ namespace Pact.Core.Extensions
         /// <returns>Whichever is the latest</returns>
         public static DateTime Latest(params DateTime[] dt) => dt.Max();
 
-        public static DateTime? NullifySqlDateTimeIfInvalid(this DateTime dateTime) => IsValidSqlDateTime(dateTime) ? dateTime : null;
+        public static DateTime? NullifySqlDateTimeIfInvalid(this DateTime dateTime) => IsValidSqlDateTime(dateTime) ? dateTime : (DateTime?)null;
 
         public static bool IsValidSqlDateTime(this DateTime dateTime) => dateTime >= (DateTime)SqlDateTime.MinValue && dateTime <= (DateTime)SqlDateTime.MaxValue;
     }
