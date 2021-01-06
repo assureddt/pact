@@ -53,5 +53,31 @@ namespace Pact.Core.Tests
         {
             DateExtensions.Latest(_lastWednesdayEvening, _nextWednesdayEvening).ShouldBe(_nextWednesdayEvening);
         }
+
+        [Fact]
+        public void IsValidSql_OK()
+        {
+            new DateTime(1975, 11, 10).IsValidSqlDateTime().ShouldBeTrue();
+        }
+
+        [Fact]
+        public void IsValidSql_Low_Fail()
+        {
+            new DateTime(1750, 11, 10).IsValidSqlDateTime().ShouldBeFalse();
+        }
+
+
+        [Fact]
+        public void NullifyInvalidSql_OK_NotNull()
+        {
+            var dt = new DateTime(1975, 11, 10);
+            dt.NullifySqlDateTimeIfInvalid().ShouldBe(dt);
+        }
+
+        [Fact]
+        public void NullifyInvalidSql_Low_Null()
+        {
+            new DateTime(1750, 11, 10).NullifySqlDateTimeIfInvalid().ShouldBeNull();
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 
 namespace Pact.Core.Extensions
@@ -130,5 +131,9 @@ namespace Pact.Core.Extensions
         /// <param name="dt"></param>
         /// <returns>Whichever is the latest</returns>
         public static DateTime Latest(params DateTime[] dt) => dt.Max();
+
+        public static DateTime? NullifySqlDateTimeIfInvalid(this DateTime dateTime) => IsValidSqlDateTime(dateTime) ? dateTime : null;
+
+        public static bool IsValidSqlDateTime(this DateTime dateTime) => dateTime >= (DateTime)SqlDateTime.MinValue && dateTime <= (DateTime)SqlDateTime.MaxValue;
     }
 }
