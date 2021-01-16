@@ -7,7 +7,6 @@ using Microsoft.Win32.SafeHandles;
 
 namespace Pact.Impersonation
 {
-    /// <inheritdoc />
     /// <summary>
     /// Windows-specific impersonation implementation
     /// Jonny: Was going to try and make this so we can support async.
@@ -26,7 +25,8 @@ namespace Pact.Impersonation
         [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         private static extern bool LogonUser(string lpszUsername, string lpszDomain, string lpszPassword,
             int dwLogonType, int dwLogonProvider, out SafeAccessTokenHandle phToken);
-
+        
+        /// <inheritdoc />
         public void ExecuteAction(ImpersonationSettings settings, Action action)
         {
             _logger.LogInformation("Setting up for impersonation");

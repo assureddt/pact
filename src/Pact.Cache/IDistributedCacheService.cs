@@ -94,7 +94,7 @@ namespace Pact.Cache
         /// <returns></returns>
         Task<T> GetAsync<T>(string key) where T : class;
         /// <summary>
-        /// Retrieves an string value against the specified key
+        /// Retrieves a string value against the specified key
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>

@@ -7,8 +7,6 @@ namespace Pact.Sms
     /// </summary>
     public interface ISmsSender
     {
-        SmsSettings Settings { get; set; }
-
         /// <summary>
         /// Indicates that the <see cref="SendVoiceAsync"/> call is supported
         /// </summary>

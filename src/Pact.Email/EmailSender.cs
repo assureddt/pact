@@ -16,23 +16,24 @@ namespace Pact.Email
     {
         private readonly ILogger<EmailSender> _logger;
         private readonly IServiceProvider _serviceProvider;
+        private readonly EmailSettings _settings;
 
         public EmailSender(IOptions<EmailSettings> emailSettings, ILogger<EmailSender> logger, IServiceProvider serviceProvider)
         {
-            Settings = emailSettings.Value;
+            _settings = emailSettings.Value;
             _logger = logger;
             _serviceProvider = serviceProvider;
         }
 
-        public EmailSettings Settings { get; set; }
-
+        /// <inheritdoc/>
         public Task SendEmailAsync(string recipients, string subject, string message, params MimePart[] attachments)
         {
             return SendEmailAsync(recipients, subject, message,
-                new MailboxAddress(Settings.FromName, Settings.FromAddress),
+                new MailboxAddress(_settings.FromName, _settings.FromAddress),
                 attachments);
         }
 
+        /// <inheritdoc/>
         public Task SendEmailAsync(string recipients, string subject, string message, MailboxAddress from, params MimePart[] attachments)
         {
             return SendEmailAsync(recipients, subject, message,
@@ -41,6 +42,7 @@ namespace Pact.Email
                 attachments);
         }
 
+        /// <inheritdoc/>
         public async Task SendEmailAsync(string recipients, string subject, string message, MailboxAddress from, MailboxAddress sender, params MimePart[] attachments)
         {
             var client = _serviceProvider.GetService<ISmtpClient>();
@@ -51,7 +53,7 @@ namespace Pact.Email
                 if (client != null)
                 {
                     await client
-                        .ConnectAsync(Settings.SmtpUri, Settings.SmtpPort)
+                        .ConnectAsync(_settings.SmtpUri, _settings.SmtpPort)
                         .ConfigureAwait(false);
                 }
 
@@ -64,11 +66,11 @@ namespace Pact.Email
                         emailMessage.From.Add(from);
                         emailMessage.Sender = sender;
 
-                        var redirection = !string.IsNullOrWhiteSpace(Settings.OverrideToAddress);
-                        var recipientIsWhitelisted = Settings.OverrideWhitelist != null && Settings.OverrideWhitelist.Contains(recipient);
+                        var redirection = !string.IsNullOrWhiteSpace(_settings.OverrideToAddress);
+                        var recipientIsWhitelisted = _settings.OverrideWhitelist != null && _settings.OverrideWhitelist.Contains(recipient);
 
                         emailMessage.To.Add(redirection && !recipientIsWhitelisted
-                            ? new MailboxAddress((string)null, Settings.OverrideToAddress)
+                            ? new MailboxAddress((string)null, _settings.OverrideToAddress)
                             : new MailboxAddress((string)null, recipient));
 
                         emailMessage.Subject = subject;

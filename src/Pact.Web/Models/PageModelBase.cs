@@ -13,9 +13,15 @@ namespace Pact.Web.Models
     /// </summary>
     public abstract class PageModelBase : PageModel, IModel
     {
-        public ILogger Logger { get; }
+        /// <summary>
+        /// A logger instance
+        /// </summary>
+        protected ILogger Logger { get; }
+
+        ///<inheritdoc/>
         public IAntiforgery Xsrf { get; }
 
+        ///<inheritdoc/>
         public string Title { get; protected set; }
 
         protected PageModelBase(ILogger logger, IAntiforgery xsrf)
@@ -24,20 +30,38 @@ namespace Pact.Web.Models
             Xsrf = xsrf;
         }
 
+        ///<inheritdoc/>
         public AntiforgeryTokenSet GetAntiXsrfRequestToken(HttpContext context) => ((IModel)this).GetAntiXsrfRequestToken(context);
 
+        /// <summary>
+        /// An error message temp-data container for ease of display in the layout following a redirect
+        /// </summary>
         [TempData]
         public string Error { get; set; }
 
+        /// <summary>
+        /// An informative message temp-data container for ease of display in the layout following a redirect
+        /// </summary>
         [TempData]
         public string Info { get; set; }
 
+        /// <summary>
+        /// A success message temp-data container for ease of display in the layout following a redirect
+        /// </summary>
         [TempData]
         public string Success { get; set; }
 
+        /// <summary>
+        /// A warning message temp-data container for ease of display in the layout following a redirect
+        /// </summary>
         [TempData]
         public string Warning { get; set; }
 
+        /// <summary>
+        /// Adds a simple Forbid response option to the default Razor Pages model
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
         protected ForbidResult Forbid(string message)
         {
             Error = message;

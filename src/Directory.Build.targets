@@ -4,6 +4,13 @@
     <PackageId>$(ProjectName)</PackageId>
   </PropertyGroup>
 
+  <ItemGroup Condition="'$(DocGen)'=='true'">
+    <PackageReference Include="DefaultDocumentation" Version="0.6.13">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
   <PropertyGroup Condition="'$(DocGen)'=='true'">
     <DefaultDocumentationFileNameMode>FullName</DefaultDocumentationFileNameMode>
     <DefaultDocumentationInvalidCharReplacement>-</DefaultDocumentationInvalidCharReplacement>
@@ -12,4 +19,5 @@
     <DocumentationFile>bin/$(Configuration)/$(TargetFramework)/$(ProjectName).xml</DocumentationFile>
     <DefaultDocumentationHome>$(ProjectName)-Index</DefaultDocumentationHome>
   </PropertyGroup>
+
 </Project>
