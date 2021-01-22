@@ -1,4 +1,5 @@
 using System.Linq;
+using Pact.Core.Comparers;
 using Pact.Core.Extensions;
 using Shouldly;
 using Xunit;
@@ -221,6 +222,29 @@ namespace Pact.Core.Tests
 
             // assert
             results.Distinct().Count().ShouldBeGreaterThan(1);
+        }
+
+        [Fact]
+        public void GenericComparer_AsExpected()
+        {
+            // arrange
+            var items = new[]
+            {
+                new MyClass { Id = 1, Order = 8 },
+                new MyClass { Id = 2, Order = 1 },
+                new MyClass { Id = 2, Order = 44 },
+                new MyClass { Id = 3, Order = 1008 },
+                new MyClass { Id = 3, Order = 1008 }
+            };
+
+            // act
+            var comparer = GenericComparer<MyClass>.Create(x => x.Order);
+
+            // assert
+            comparer.Compare(items[0], items[1]).ShouldBeGreaterThan(0);
+            comparer.Compare(items[1], items[2]).ShouldBeLessThan(0);
+            comparer.Compare(items[2], items[3]).ShouldBeLessThan(0);
+            comparer.Compare(items[3], items[4]).ShouldBe(0);
         }
     }
 }

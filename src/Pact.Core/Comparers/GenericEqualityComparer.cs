@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Pact.Core
+namespace Pact.Core.Comparers
 {
     /// <summary>
     /// Provides equality comparison for a type based on the resolved value of a provided projection
@@ -14,7 +14,7 @@ namespace Pact.Core
 
         public static GenericEqualityComparer<T> Create<TValue>(Func<T, TValue> projection)
         {
-            return new GenericEqualityComparer<T>((t1, t2) => EqualityComparer<TValue>.Default.Equals( projection(t1), projection(t2)));
+            return new((t1, t2) => EqualityComparer<TValue>.Default.Equals( projection(t1), projection(t2)));
         }
 
         public GenericEqualityComparer(Func<T, T, bool> projection)
