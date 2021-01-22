@@ -14,7 +14,7 @@ namespace Pact.Core.Comparers
 
         public static GenericComparer<T> Create<TValue>(Func<T, TValue> projection)
         {
-            return new((t1, t2) => Comparer<TValue>.Default.Compare(projection(t1), projection(t2)));
+            return new GenericComparer<T>((t1, t2) => Comparer<TValue>.Default.Compare(projection(t1), projection(t2)));
         }
 
         public GenericComparer(Func<T, T, int> projection)
