@@ -18,6 +18,39 @@ namespace Pact.Core.Tests
         }
 
         [Fact]
+        public void GetJson_CaseSensitive_AsExpected()
+        {
+            // arrange
+            var item = new { Id = 1, Name = "Test" };
+
+            // assert
+            // should behave any differently
+            item.ToJson(caseInsensitive: false).ShouldBe("{\"Id\":1,\"Name\":\"Test\"}");
+        }
+
+        [Fact]
+        public void GetJson_CaseSensitive_Lower_AsExpected()
+        {
+            // arrange
+            var item = new { id = 1, name = "Test" };
+
+            // assert
+            // should behave any differently
+            item.ToJson(caseInsensitive: false).ShouldBe("{\"id\":1,\"name\":\"Test\"}");
+        }
+
+        [Fact]
+        public void GetJson_CaseInsensitive_Lower_AsExpected()
+        {
+            // arrange
+            var item = new { id = 1, name = "Test" };
+
+            // assert
+            // should behave any differently
+            item.ToJson().ShouldBe("{\"id\":1,\"name\":\"Test\"}");
+        }
+
+        [Fact]
         public void GetJson_Indented_AsExpected()
         {
             // arrange

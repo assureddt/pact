@@ -21,6 +21,30 @@ namespace Pact.Core.Tests
         }
 
         [Fact]
+        public void FromJson_CaseSensitive_Fail()
+        {
+            // act
+            var result = "{ \"id\": 1, \"name\": \"test\" }".FromJson<MyClass>(caseInsensitive: false);
+
+            // assert
+            result.ShouldSatisfyAllConditions(
+                () => result.Id.ShouldBe(0),
+                () => result.Name.ShouldBe(null));
+        }
+
+        [Fact]
+        public void FromJson_CaseInSensitive_OK()
+        {
+            // act
+            var result = "{ \"id\": 1, \"name\": \"Test\" }".FromJson<MyClass>();
+
+            // assert
+            result.ShouldSatisfyAllConditions(
+                () => result.Id.ShouldBe(1),
+                () => result.Name.ShouldBe("Test"));
+        }
+
+        [Fact]
         public void FromJson_BadArray_Throws()
         {
             // assert

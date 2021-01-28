@@ -17,19 +17,27 @@ namespace Pact.Core.Extensions
         /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
         /// <param name="relaxedArrayEnclosure">If true, isn't picky about square brackets wrapping a comma-separated list of objects</param>
+        /// <param name="caseInsensitive">Ignore character casing of property names</param>
+        /// <param name="ignoreNull">Ignore null values</param>
         /// <returns></returns>
-        public static T FromJson<T>(this string value, bool relaxedArrayEnclosure = false)
+        public static T FromJson<T>(this string value, bool relaxedArrayEnclosure = false, bool caseInsensitive = true, bool ignoreNull = false)
         {
             // NOTE: newtonsoft.json would return null if this is passed in. System.Text.Json (correctly) throws an exception as an empty string is invalid json
             // ... as such, checking separately
             if (string.IsNullOrWhiteSpace(value)) return default;
 
-            if (!relaxedArrayEnclosure || !typeof(T).IsArray) return JsonSerializer.Deserialize<T>(value);
+            var opts = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = caseInsensitive,
+                IgnoreNullValues = ignoreNull
+            };
+
+            if (!relaxedArrayEnclosure || !typeof(T).IsArray) return JsonSerializer.Deserialize<T>(value, opts);
 
             if (!value.TrimStart().StartsWith("[")) value = "[" + value;
             if (!value.TrimEnd().EndsWith("]")) value += "]";
 
-            return JsonSerializer.Deserialize<T>(value);
+            return JsonSerializer.Deserialize<T>(value, opts);
         }
 
         /// <summary>

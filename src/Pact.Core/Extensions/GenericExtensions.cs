@@ -16,13 +16,15 @@ namespace Pact.Core.Extensions
         /// <param name="indent">Prettify the output</param>
         /// <param name="ignoreNull">If true, properties with null values will be omitted from the output</param>
         /// <param name="stringEscape">If true, HTML content is escaped (at your own risk!)</param>
+        /// <param name="caseInsensitive">Ignore character casing of property name</param>
         /// <returns></returns>
-        public static string ToJson<T>(this T obj, bool indent = false, bool ignoreNull = false, bool stringEscape = true)
+        public static string ToJson<T>(this T obj, bool indent = false, bool ignoreNull = false, bool stringEscape = true, bool caseInsensitive = true)
         {
             var options = new JsonSerializerOptions
             {
                 WriteIndented = indent,
-                IgnoreNullValues = ignoreNull
+                IgnoreNullValues = ignoreNull,
+                PropertyNameCaseInsensitive = caseInsensitive
             };
 
             // NOTE: string escaping is very much encouraged, see: https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-character-encoding
