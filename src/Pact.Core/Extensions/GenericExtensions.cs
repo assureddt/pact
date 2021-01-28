@@ -3,6 +3,8 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Pact.Core.Extensions
 {
@@ -11,15 +13,24 @@ namespace Pact.Core.Extensions
         /// <summary>
         /// Returns a Json formatted string representation of the object
         /// </summary>
+        /// <remarks>Internally, this uses either Newtonsoft or System.Text.Json, depending on <see cref="JsonSerialization.Serializer"/>. Defaults to STJ.</remarks>
         /// <typeparam name="T"></typeparam>
         /// <param name="obj"></param>
         /// <param name="indent">Prettify the output</param>
         /// <param name="ignoreNull">If true, properties with null values will be omitted from the output</param>
-        /// <param name="stringEscape">If true, HTML content is escaped (at your own risk!)</param>
-        /// <param name="caseInsensitive">Ignore character casing of property name</param>
+        /// <param name="stringEscape">If true, HTML content is escaped (disable at your own risk!)</param>
+        /// <param name="caseInsensitive">Ignore character casing of property name (ignored by Newtonsoft - always insensitive)</param>
         /// <returns></returns>
         public static string ToJson<T>(this T obj, bool indent = false, bool ignoreNull = false, bool stringEscape = true, bool caseInsensitive = true)
         {
+            if (JsonSerialization.Serializer == JsonImplementation.Newtonsoft)
+                return JsonConvert.SerializeObject(obj, new JsonSerializerSettings
+                {
+                    Formatting = indent ? Formatting.Indented : Formatting.None,
+                    NullValueHandling = ignoreNull ? NullValueHandling.Ignore : NullValueHandling.Include,
+                    StringEscapeHandling = stringEscape ? StringEscapeHandling.EscapeHtml : StringEscapeHandling.Default
+                });
+
             var options = new JsonSerializerOptions
             {
                 WriteIndented = indent,

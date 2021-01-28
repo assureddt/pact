@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Pact.Core.Extensions
 {
@@ -14,10 +16,11 @@ namespace Pact.Core.Extensions
         /// <summary>
         /// Converts a Json string to its representative object of the defined type
         /// </summary>
+        /// <remarks>Internally, this uses either Newtonsoft or System.Text.Json, depending on <see cref="JsonSerialization.Serializer"/>. Defaults to STJ.</remarks>
         /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
         /// <param name="relaxedArrayEnclosure">If true, isn't picky about square brackets wrapping a comma-separated list of objects</param>
-        /// <param name="caseInsensitive">Ignore character casing of property names</param>
+        /// <param name="caseInsensitive">Ignore character casing of property names (ignored by Newtonsoft - always insensitive)</param>
         /// <param name="ignoreNull">Ignore null values</param>
         /// <returns></returns>
         public static T FromJson<T>(this string value, bool relaxedArrayEnclosure = false, bool caseInsensitive = true, bool ignoreNull = false)
@@ -26,16 +29,25 @@ namespace Pact.Core.Extensions
             // ... as such, checking separately
             if (string.IsNullOrWhiteSpace(value)) return default;
 
+            if (relaxedArrayEnclosure && typeof(T).IsArray)
+            {
+                if (!value.TrimStart().StartsWith("[")) value = "[" + value;
+                if (!value.TrimEnd().EndsWith("]")) value += "]";
+            }
+
+            if (JsonSerialization.Serializer == JsonImplementation.Newtonsoft)
+            {
+                return JsonConvert.DeserializeObject<T>(value, new JsonSerializerSettings
+                {
+                    NullValueHandling = ignoreNull ? NullValueHandling.Ignore : NullValueHandling.Include
+                });
+            }
+
             var opts = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = caseInsensitive,
                 IgnoreNullValues = ignoreNull
             };
-
-            if (!relaxedArrayEnclosure || !typeof(T).IsArray) return JsonSerializer.Deserialize<T>(value, opts);
-
-            if (!value.TrimStart().StartsWith("[")) value = "[" + value;
-            if (!value.TrimEnd().EndsWith("]")) value += "]";
 
             return JsonSerializer.Deserialize<T>(value, opts);
         }

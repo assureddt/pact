@@ -3,8 +3,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using Moq;
+using Pact.Core;
+using Shouldly;
 using Xunit;
 
 namespace Pact.Cache.Tests
@@ -220,6 +224,47 @@ namespace Pact.Cache.Tests
             // assert
             cache.Verify(m => m.Remove("test"));
             cache.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task GetAsyncGeneric_Integration_Microsoft_OK()
+        {
+            // arrange
+            // NOTE: default settings applied to ToJson under the hood should disable case sensitivity, so it should still deserialize fine
+            JsonSerialization.Serializer = JsonImplementation.Microsoft;
+
+            var cache = new MemoryDistributedCache(new OptionsWrapper<MemoryDistributedCacheOptions>(new MemoryDistributedCacheOptions()));
+            await cache.SetStringAsync("test", "{ \"id\": 1, \"Name\": \"Test\" }");
+
+            var svc = new DistributedCacheService(cache, new NullLogger<DistributedCacheService>());
+
+            // act
+            var result = await svc.GetAsync<MyClass>("test");
+
+            // assert
+            result.ShouldNotBeNull();
+            result.Id.ShouldBe(1);
+            result.Name.ShouldBe("Test");
+        }
+
+        [Fact]
+        public async Task GetAsyncGeneric_Integration_Newtonsoft_OK()
+        {
+            // arrange
+            JsonSerialization.Serializer = JsonImplementation.Newtonsoft;
+
+            var cache = new MemoryDistributedCache(new OptionsWrapper<MemoryDistributedCacheOptions>(new MemoryDistributedCacheOptions()));
+            await cache.SetStringAsync("test", "{ \"id\": 1, \"Name\": \"Test\" }");
+
+            var svc = new DistributedCacheService(cache, new NullLogger<DistributedCacheService>());
+
+            // act
+            var result = await svc.GetAsync<MyClass>("test");
+
+            // assert
+            result.ShouldNotBeNull();
+            result.Id.ShouldBe(1);
+            result.Name.ShouldBe("Test");
         }
 
         private class MyClass
