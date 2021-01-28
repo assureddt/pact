@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
     <Description>🕸 Web helpers</Description>
     <PackageTags>Web</PackageTags>
   </PropertyGroup>
@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Unidecode.NET" Version="2.0.0" />
+    <PackageReference Include="Unidecode.NET" Version="2.1.0" />
     <PackageReference Include="NetEscapades.AspNetCore.SecurityHeaders" Version="0.12.1" />
   </ItemGroup>
 

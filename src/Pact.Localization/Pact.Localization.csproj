@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <Description>🌍 Extensions to ASP.NET Core Dynamic Localization</Description>
     <PackageTags>Localization</PackageTags>
