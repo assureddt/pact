@@ -12,16 +12,6 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'NETCOREAPP3_1' ">
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.1.9" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.1.9" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'NET5_0' ">
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.2 " />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.2" />
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Pact.Web\Pact.Web.csproj" />
   </ItemGroup>

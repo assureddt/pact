@@ -4,8 +4,8 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json;
 
 namespace Pact.Core.Extensions
 {
@@ -20,12 +20,16 @@ namespace Pact.Core.Extensions
         /// <returns></returns>
         public static T FromJson<T>(this string value, bool relaxedArrayEnclosure = false)
         {
-            if (!relaxedArrayEnclosure || !typeof(T).IsArray) return JsonConvert.DeserializeObject<T>(value);
+            // NOTE: newtonsoft.json would return null if this is passed in. System.Text.Json (correctly) throws an exception as an empty string is invalid json
+            // ... as such, checking separately
+            if (string.IsNullOrWhiteSpace(value)) return default;
+
+            if (!relaxedArrayEnclosure || !typeof(T).IsArray) return JsonSerializer.Deserialize<T>(value);
 
             if (!value.TrimStart().StartsWith("[")) value = "[" + value;
             if (!value.TrimEnd().EndsWith("]")) value += "]";
 
-            return JsonConvert.DeserializeObject<T>(value);
+            return JsonSerializer.Deserialize<T>(value);
         }
 
         /// <summary>

@@ -1,5 +1,5 @@
 using System.Runtime.InteropServices;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Pact.Core.Extensions;
 using Shouldly;
 using Xunit;
@@ -24,7 +24,7 @@ namespace Pact.Core.Tests
         public void FromJson_BadArray_Throws()
         {
             // assert
-            Assert.Throws<JsonReaderException>(() => "{ \"Id\": 1, \"Name\": \"Test\" }, { \"Id\": 2, \"Name\": \"Test2\" }".FromJson<MyClass>());
+            Assert.Throws<JsonException>(() => "{ \"Id\": 1, \"Name\": \"Test\" }, { \"Id\": 2, \"Name\": \"Test2\" }".FromJson<MyClass>());
         }
 
         [Fact]

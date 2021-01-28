@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
-using Newtonsoft.Json;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 
 namespace Pact.Core.Extensions
 {
@@ -14,16 +15,21 @@ namespace Pact.Core.Extensions
         /// <param name="obj"></param>
         /// <param name="indent">Prettify the output</param>
         /// <param name="ignoreNull">If true, properties with null values will be omitted from the output</param>
-        /// <param name="stringEscape">If true, HTML content is escaped</param>
+        /// <param name="stringEscape">If true, HTML content is escaped (at your own risk!)</param>
         /// <returns></returns>
         public static string ToJson<T>(this T obj, bool indent = false, bool ignoreNull = false, bool stringEscape = true)
         {
-            return JsonConvert.SerializeObject(obj, new JsonSerializerSettings
+            var options = new JsonSerializerOptions
             {
-                Formatting = indent ? Formatting.Indented : Formatting.None,
-                NullValueHandling = ignoreNull ? NullValueHandling.Ignore : NullValueHandling.Include,
-                StringEscapeHandling = stringEscape ? StringEscapeHandling.EscapeHtml : StringEscapeHandling.Default
-            });
+                WriteIndented = indent,
+                IgnoreNullValues = ignoreNull
+            };
+
+            // NOTE: string escaping is very much encouraged, see: https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-character-encoding
+            if (!stringEscape)
+                options.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+
+            return JsonSerializer.Serialize(obj, options);
         }
 
         /// <summary>

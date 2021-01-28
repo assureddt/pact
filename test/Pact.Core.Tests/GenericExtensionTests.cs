@@ -34,7 +34,7 @@ namespace Pact.Core.Tests
             var item = new {Id = 1, Name = "<p>Test</p>"};
 
             // assert
-            item.ToJson(stringEscape: true).ShouldBe("{\"Id\":1,\"Name\":\"\\u003cp\\u003eTest\\u003c/p\\u003e\"}");
+            item.ToJson(stringEscape: true).ShouldBe("{\"Id\":1,\"Name\":\"\\u003Cp\\u003ETest\\u003C/p\\u003E\"}");
         }
 
         [Fact]
