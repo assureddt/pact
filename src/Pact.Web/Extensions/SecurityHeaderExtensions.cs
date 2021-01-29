@@ -118,9 +118,7 @@ namespace Pact.Web.Extensions
             else
                 head.AddContentSecurityPolicy(cspBuilder);
 
-            app.UseSecurityHeaders(head);
-
-            return app;
+            return app.UseSecurityHeaders(head);
         }
 
         /// <summary>
@@ -135,7 +133,7 @@ namespace Pact.Web.Extensions
         /// <returns></returns>
         public static IApplicationBuilder UseCspWithPactDefaults(this IApplicationBuilder app)
         {
-            app.UseCspWithFeaturePolicy(false, csp =>
+            return app.UseCspWithFeaturePolicy(false, csp =>
             {
                 csp.AddDefaultCsp(null);
                 csp.AddFrameSource().Self().FromGoogleRecaptcha();
@@ -145,8 +143,6 @@ namespace Pact.Web.Extensions
                 csp.AddStyleSrc().Self().FromGoogleFonts().UnsafeInline();
                 csp.AddScriptSrc().Self().UnsafeEval().UnsafeInline().ReportSample().FromGoogleAnalytics().FromGoogleRecaptcha();
             });
-
-            return app;
         }
     }
 }
