@@ -13,7 +13,7 @@ namespace Pact.Web.Extensions
         /// <param name="app">The application builder</param>
         /// <param name="days">Number of days to set the Max Age with</param>
         /// <returns>The application builder for fluent usage</returns>
-        public static IApplicationBuilder UseStaticFilesWithMaxAge(this IApplicationBuilder app, int days)
+        public static IApplicationBuilder UseStaticFilesWithMaxAge(this IApplicationBuilder app, int days = 365)
             => app.UseStaticFilesWithMaxAge(TimeSpan.FromDays(days));
 
         /// <summary>

@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Builder;
 using NetEscapades.AspNetCore.SecurityHeaders.Headers.ContentSecurityPolicy;
+using NetEscapades.AspNetCore.SecurityHeaders.Headers.FeaturePolicy;
 
 namespace Pact.Web.Extensions
 {
@@ -14,7 +15,6 @@ namespace Pact.Web.Extensions
         public static FeaturePolicyBuilder AddDefaultFeaturePolicy(this FeaturePolicyBuilder builder)
         {
             builder.AddAccelerometer().None();
-            builder.AddAmbientLightSensor().None();
             builder.AddAutoplay().None();
             builder.AddCamera().None();
             builder.AddEncryptedMedia().None();
@@ -26,13 +26,19 @@ namespace Pact.Web.Extensions
             builder.AddMidi().None();
             builder.AddPayment().None();
             builder.AddPictureInPicture().None();
-            builder.AddSpeaker().None();
             builder.AddSyncXHR() .None();
             builder.AddUsb().None();
-            builder.AddVR().None();
+            builder.AddXR().None();
 
             return builder;
         }
+
+        /// <summary>
+        /// This replaces the deprecated VR Feature
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <returns></returns>
+        public static CustomFeaturePolicyDirectiveBuilder AddXR(this FeaturePolicyBuilder builder) => builder.AddCustomFeature("xr-spatial-tracking");
 
         /// <summary>
         /// Adds default CSP From urls for Google Analytics

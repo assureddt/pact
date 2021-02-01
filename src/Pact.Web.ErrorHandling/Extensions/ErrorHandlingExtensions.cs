@@ -13,6 +13,11 @@ namespace Pact.Web.ErrorHandling.Extensions
     public static class ErrorHandlingExtensions
     {
         /// <summary>
+        /// Assigned to the result property of a Json error response - perhaps needs to be overridable...
+        /// </summary>
+        public const string JsonErrorResult = "ERROR";
+
+        /// <summary>
         /// Adds opinionated Razor Pages automated error handling functionality
         /// </summary>
         /// <param name="builder"></param>
@@ -37,7 +42,7 @@ namespace Pact.Web.ErrorHandling.Extensions
             if (context.HttpContext.Request.IsAjaxRequest())
             {
                 logger.LogWarning("Json status code response ({Code})", returnCode);
-                context.Result = new JsonResult(new {message = details});
+                context.Result = new JsonResult(new { result = JsonErrorResult, message = details});
             }
             else
             {
