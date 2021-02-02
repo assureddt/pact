@@ -9,6 +9,7 @@ services.AddRazorPages();
 In Startup.cs Configure:
 ```c#
 app.UsePactErrorHandling();
+app.UseEndpoints(endpoints => endpoints.MapRazorPages());
 ```
 
 Then it just needs a Layout defined in the Pages/Error/_ViewStart.cshtml path of the web application:
