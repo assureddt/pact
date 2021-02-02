@@ -147,7 +147,7 @@ namespace Pact.Web.Extensions
                 csp.AddConnectSrc().Self().FromGoogleAnalytics();
                 csp.AddFontSrc().Self().Data().FromGoogleFonts();
                 csp.AddStyleSrc().Self().FromGoogleFonts().UnsafeInline();
-                csp.AddScriptSrc().Self().UnsafeEval().UnsafeInline().ReportSample().FromGoogleAnalytics().FromGoogleRecaptcha();
+                csp.AddScriptSrc().Self().UnsafeEval().UnsafeInline().WithNonce().ReportSample().FromGoogleAnalytics().FromGoogleRecaptcha();
             });
         }
     }
