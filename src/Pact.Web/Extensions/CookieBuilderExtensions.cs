@@ -17,6 +17,8 @@ namespace Pact.Web.Extensions
                 CookieType.OpenId => SameSiteMode.None,
                 CookieType.External => SameSiteMode.None,
                 CookieType.CookieConsent => SameSiteMode.None,
+                CookieType.Nonce => SameSiteMode.None,
+                CookieType.Correlation => SameSiteMode.None,
                 _ => SameSiteMode.Strict
             };
 
@@ -57,6 +59,8 @@ namespace Pact.Web.Extensions
         Session,
         TwoFactorRememberMe,
         TwoFactorId,
-        OpenId
+        OpenId,
+        Correlation,
+        Nonce
     }
 }
