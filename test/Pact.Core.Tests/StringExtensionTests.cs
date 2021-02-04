@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using Pact.Core.Extensions;
@@ -227,6 +228,41 @@ namespace Pact.Core.Tests
         {
             // assert
             "large sentence that we don't want to wrap".Ellipsis(16).ShouldBe("large sentenc...");
+        }
+
+        [Fact]
+        public void ParseIntegerArray_Messy_AsExpected()
+        {
+            // assert
+            "  1,,,34;,,   26; 45 ,".ParseIntegerArray().ShouldBe(new [] {1, 34, 26, 45});
+        }
+
+        [Fact]
+        public void ParseIntegerArray_Empty_ReturnsEmpty()
+        {
+            // assert
+            "".ParseIntegerArray().ShouldBe(Array.Empty<int>());
+        }
+
+        [Fact]
+        public void ParseIntegerArray_Whitespace_ReturnsEmpty()
+        {
+            // assert
+            "   ".ParseIntegerArray().ShouldBe(Array.Empty<int>());
+        }
+
+        [Fact]
+        public void ParseIntegerArray_Null_ReturnsEmpty()
+        {
+            // assert
+            ((string)null).ParseIntegerArray().ShouldBe(Array.Empty<int>());
+        }
+
+        [Fact]
+        public void ParseIntegerArray_Bad_ThrowsException()
+        {
+            // assert
+            Assert.Throws<FormatException>(() => "  1,,,34;,,BAD   26; 45 ,".ParseIntegerArray());
         }
     }
 }

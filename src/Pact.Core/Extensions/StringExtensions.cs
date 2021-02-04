@@ -214,5 +214,32 @@ namespace Pact.Core.Extensions
 
             return lines.ToArray();
         }
+
+        /// <summary>
+        /// Convenience extension to get an array of integers from a comma/semi-colon delimited string
+        /// </summary>
+        /// <remarks>Will throw a format exception if any characters other than integers, whitespace or designated separators are parsed</remarks>
+        /// <param name="value">The source string</param>
+        /// <returns>An array of integers found, in the order they were parsed</returns>
+        public static int[] ParseIntegerArray(this string value) => value.ParseIntegerArray(',', ';');
+
+        /// <summary>
+        /// Convenience extension to get an array of integers from a delimited string with specified separators
+        /// </summary>
+        /// <remarks>
+        /// Will throw a format exception if any characters other than integers, whitespace or designated separators are parsed - deliberately not using TryParse & skipping failures due to ambiguous results.
+        /// Consciously not doing this as a generic due to likely performance hit for conversion given this functionality will almost always just be used for integers anyway.
+        /// </remarks>
+        /// <param name="value">The source string</param>
+        /// <param name="separators">The separator characters to split on</param>
+        /// <returns>An array of integers found, in the order they were parsed</returns>
+        public static int[] ParseIntegerArray(this string value, params char[] separators)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return Array.Empty<int>();
+
+            return value.Split(separators, StringSplitOptions.RemoveEmptyEntries)
+                .Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => int.Parse(x.Trim())).ToArray();
+        }
     }
 }
