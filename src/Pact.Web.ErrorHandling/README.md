@@ -1,9 +1,20 @@
 # Pact.Web.ErrorHandling 💀
-Intended to simplify graceful exception handling in ASP.NET Core+ web applications (requires Razor Pages).
+Intended to simplify graceful exception handling in ASP.NET Core+ web applications (requires Razor Pages to be enabled).
+
+The behaviour of the JsonResult responses can be configured via ErrorHandlerSettings, as per the example below.
+The example would return a HTTP 200 result (instead of the appropriate status code) with the exception message and the specified formatting of the response body.
 
 In Startup.cs ConfigureServices:
 ```c#
 services.AddRazorPages();
+// optional overrides
+services.Configure<ErrorHandlerSettings>(opts => {
+    opts.AjaxErrorsAsSuccess = true;
+    opts.AjaxIncludeExceptionMessage = true;
+    opts.JsonResponseFormatter = model => new {result = "ERROR", message = model.Details, code = model.Code};
+});
+// or
+services.Configure<ErrorHandlerSettings>(ErrorHandlerSettings.LaxDefaults);
 ```
 
 In Startup.cs Configure:
