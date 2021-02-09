@@ -9,12 +9,9 @@ In Startup.cs ConfigureServices:
 services.AddRazorPages();
 // optional overrides
 services.Configure<ErrorHandlerSettings>(opts => {
-    opts.AjaxErrorsAsSuccess = true;
-    opts.AjaxIncludeExceptionMessage = true;
-    opts.JsonResponseFormatter = model => new {result = "ERROR", message = model.Details, code = model.Code};
+    opts.AjaxErrorsAsSuccess = false;
+    opts.JsonResponseFormatter = model => new {message = model.Details};
 });
-// or
-services.Configure<ErrorHandlerSettings>(ErrorHandlerSettings.LaxDefaults);
 ```
 
 In Startup.cs Configure:

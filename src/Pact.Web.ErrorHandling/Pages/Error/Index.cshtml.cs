@@ -37,14 +37,14 @@ namespace Pact.Web.ErrorHandling.Pages.Error
         {
             try
             {
-                var isAjax = context.HttpContext.Request.IsAjaxRequest();
-
                 Code = StatusCodes.Status500InternalServerError;
-                Details = GetErrorMessage(context.HttpContext, isAjax);
+                Details = GetErrorMessage(context.HttpContext);
 
                 context.RouteData.Values.TryGetValue("code", out var val);
                 if (int.TryParse(val?.ToString(), out var code))
                     Code = code;
+
+                var isAjax = context.HttpContext.Request.IsAjaxRequest();
 
                 if (isAjax)
                 {
@@ -71,18 +71,14 @@ namespace Pact.Web.ErrorHandling.Pages.Error
             await base.OnPageHandlerExecutionAsync(context, next);
         }
 
-        private string GetErrorMessage(HttpContext context, bool isAjax)
+        private static string GetErrorMessage(HttpContext context)
         {
             try
             {
                 var exceptionFeature = context.Features.Get<IExceptionHandlerPathFeature>();
                 var error = exceptionFeature?.Error;
 
-                return error is FriendlyException fe
-                    ? fe.Message
-                    : (isAjax && _settings.Value.AjaxIncludeExceptionMessage
-                        ? error?.Message
-                        : null);
+                return error is FriendlyException fe ? fe.Message : null;
             }
             catch
             {

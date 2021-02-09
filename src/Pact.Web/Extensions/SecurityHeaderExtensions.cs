@@ -132,6 +132,7 @@ namespace Pact.Web.Extensions
         /// * Restrictive Feature Policy
         /// * Allowed Google services (Analytics, Fonts, Recaptcha)
         /// * No reporting
+        /// * Script Nonces
         /// * Everything else sensibly restrictive
         /// Should be good for most simple-but-secure sites
         /// </summary>
@@ -148,6 +149,32 @@ namespace Pact.Web.Extensions
                 csp.AddFontSrc().Self().Data().FromGoogleFonts();
                 csp.AddStyleSrc().Self().FromGoogleFonts().UnsafeInline();
                 csp.AddScriptSrc().Self().UnsafeEval().UnsafeInline().WithNonce().ReportSample().FromGoogleAnalytics().FromGoogleRecaptcha();
+            });
+        }
+
+        /// <summary>
+        /// Adds CSP with:
+        /// * Restrictive Feature Policy
+        /// * No google resource allowance
+        /// * No reporting
+        /// * Script Nonces
+        /// * No Frames
+        /// * Everything else sensibly restrictive
+        /// Should be good for most simple-but-secure sites (that don't use google resources)
+        /// </summary>
+        /// <param name="app"></param>
+        /// <returns></returns>
+        public static IApplicationBuilder UseCspWithPactDefaultsNoGoogle(this IApplicationBuilder app)
+        {
+            return app.UseCspWithFeaturePolicy(false, csp =>
+            {
+                csp.AddDefaultCsp(null);
+                csp.AddFrameSource().None();
+                csp.AddImgSrc().Self().Data();
+                csp.AddConnectSrc().Self();
+                csp.AddFontSrc().Self().Data();
+                csp.AddStyleSrc().Self().UnsafeInline();
+                csp.AddScriptSrc().Self().UnsafeEval().UnsafeInline().WithNonce().ReportSample();
             });
         }
     }
