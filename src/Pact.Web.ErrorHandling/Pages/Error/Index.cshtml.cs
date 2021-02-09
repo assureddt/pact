@@ -51,7 +51,7 @@ namespace Pact.Web.ErrorHandling.Pages.Error
                     if (_settings.Value.AjaxErrorsAsSuccess)
                         context.HttpContext.Response.StatusCode = StatusCodes.Status200OK;
 
-                    Logger.LogWarning("Json status code response ({Code}) [{ErrorsAsSuccess]", Code, _settings.Value.AjaxErrorsAsSuccess);
+                    Logger.LogWarning("Json status code response ({Code}) [{ErrorsAsSuccess}]", Code, _settings.Value.AjaxErrorsAsSuccess);
 
                     context.Result = new JsonResult(_settings.Value.JsonResponseFormatter(this));
                 }
