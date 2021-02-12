@@ -11,13 +11,29 @@
     <Copyright>© 2020 ADT. All rights reserved</Copyright>
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryType>git</RepositoryType>
-	  <PackageLicenseExpression>UNLICENSED</PackageLicenseExpression>
-	  <LangVersion>latest</LangVersion>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <LangVersion>latest</LangVersion>
     <RepositoryUrl>https://github.com/assureddt/pact</RepositoryUrl>
+    <!-- Source link enablement #1 -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <!-- NOTE: GitHub Package Registry does not support .snupkg format (separate symbols package, so these are disabled & the symbols go into the same package -->
+    <!--
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <IncludeSymbols>true</IncludeSymbols>
+    -->
+    <!-- Toggle to produce markdown documentation -->
     <DocGen>false</DocGen>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="$(SolutionDir)/icon.png" Pack="true" PackagePath="\" Visible="false"/>
   </ItemGroup>
+
+  <ItemGroup>
+    <!-- Source link enablement #2 -->
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
+  </ItemGroup>
+
 </Project>
