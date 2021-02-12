@@ -46,8 +46,11 @@ jobs:
         shell: pwsh
         
       # Build
-      - name: Set version from release tag in props (sans v)
-        run: sed -i 's/<Version>.*<\/Version>/<Version>${{ env.RELEASE_VERSION }}<\/Version>/g' src/Directory.Build.props
+      - name: Set version from release tag in props (sans v) and some other props
+        run: |
+          sed -i 's/<Version>.*<\/Version>/<Version>${{ env.RELEASE_VERSION }}<\/Version>/g' src/Directory.Build.props
+          sed -i 's/<ContinuousIntegrationBuild>.*<\/ContinuousIntegrationBuild>/<ContinuousIntegrationBuild>true<\/ContinuousIntegrationBuild>/g' src/Directory.Build.props
+          sed -i 's/<DeterministicSourcePaths>.*<\/DeterministicSourcePaths>/<DeterministicSourcePaths>true<\/DeterministicSourcePaths>/g' src/Directory.Build.props
           
       - name: Restore
         run: dotnet restore
