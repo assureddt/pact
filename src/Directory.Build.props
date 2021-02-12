@@ -27,8 +27,8 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-    <ContinuousIntegrationBuild>false</ContinuousIntegrationBuild>
-    <DeterministicSourcePaths>false</DeterministicSourcePaths>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <DeterministicSourcePaths>true</DeterministicSourcePaths>
     <!-- NOTE: GitHub Package Registry does not support .snupkg format (separate symbols package, so these are disabled & the symbols go into the same package -->
     <!--
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
