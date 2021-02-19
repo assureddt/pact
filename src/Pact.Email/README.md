@@ -4,7 +4,19 @@ The implementation supports attachments and also the option of an override deliv
 
 DI service extensions for both variations can be found in [ServiceCollectionExtensions](./ServiceCollectionExtensions.cs).
 
-An example usage of the SendEmailAsync method follows:
+Configuring an SMTP Maildrop folder-based delivery would look as follows, in Startup.Configure:
+
+```c#
+services.AddTransient<IEmailSender, EmailSender>();
+services.AddTransient<IMaildropProvider, MaildropProvider>();
+services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
+```
+
+Alternatively, you could replace the IMaildropProvider implementation with an ISmtpClient one to use an SMTP service directly.
+Providing neither will just force the sender to act as a "Null" delivery service (where it'll pretend to send the email and log it, but actually do nothing - for development scenarios).
+
+An example usage of the SendEmailAsync method with an attachment, would then be:
+
 ```c#
 var attachment = new MimePart
 {
@@ -16,4 +28,5 @@ var attachment = new MimePart
   
 await _emailSender.SendEmailAsync("fred.smith@foo.bar; george.davis@foo.bar", "Hello World!", "Howdy", attachment);
 ```
+
 The API Wiki can be found [here](https://github.com/assureddt/pact/wiki/Pact-Email-Index)
