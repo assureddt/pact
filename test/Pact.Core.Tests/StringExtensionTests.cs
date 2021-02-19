@@ -167,11 +167,19 @@ namespace Pact.Core.Tests
         }
 
         [Fact]
+        public void EmailAddress_OK()
+        {
+            // assert
+            "fred.smith@test.com".GetEmailAddresses().ShouldBe(new [] {"fred.smith@test.com"});
+        }
+
+        [Fact]
         public void EmailAddresses_OK()
         {
             // assert
-            "fred.smith@test.com <freddy smith, sales>, jon.smith@test.com".GetEmailAddresses().ShouldBe(new [] {"fred.smith@test.com", "jon.smith@test.com"});
+            "fred.smith@test.com <freddy smith, sales>, jon.smith@test.com".GetEmailAddresses().ShouldBe(new[] { "fred.smith@test.com", "jon.smith@test.com" });
         }
+
 
         [Fact]
         public void IsUppercaseCharacter_OK()
