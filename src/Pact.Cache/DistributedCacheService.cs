@@ -19,28 +19,20 @@ namespace Pact.Cache
         }
 
         /// <inheritdoc/>
-        public void Remove(params string[] keys)
-        {
-            CacheLogContext(() =>
-            {
-                foreach (var key in keys)
-                {
-                    _cache.Remove(key);
-                }
-            });
-        }
-
-        /// <inheritdoc/>
         public T Get<T>(string key) where T : class
-        {
-            return Get(key)?.FromJson<T>();
-        }
+            => CacheLogContext(() => _cache.GetString(key)?.FromJson<T>());
 
         /// <inheritdoc/>
-        public string Get(string key)
-        {
-            return CacheLogContext(() => _cache.GetString(key));
-        }
+        public async Task<T> GetAsync<T>(string key) where T : class
+            => await CacheLogContext(async () => (await _cache.GetStringAsync(key))?.FromJson<T>());
+
+        /// <inheritdoc/>
+        public T? GetValue<T>(string key) where T : struct
+            => CacheLogContext(() => _cache.GetString(key).ToNullable<T>());
+
+        /// <inheritdoc/>
+        public Task<T?> GetValueAsync<T>(string key) where T : struct
+            => CacheLogContext(async () => (await _cache.GetStringAsync(key).ConfigureAwait(false)).ToNullable<T>());
 
         /// <inheritdoc/>
         public T Set<T>(string key, T value, DistributedCacheEntryOptions options) where T : class
@@ -51,20 +43,6 @@ namespace Pact.Cache
             CacheLogContext(() =>
             {
                 _cache.SetString(key, value.ToJson(), options ?? new DistributedCacheEntryOptions());
-            });
-
-            return value;
-        }
-
-        /// <inheritdoc/>
-        public string Set(string key, string value, DistributedCacheEntryOptions options)
-        {
-            if (value == null)
-                return null;
-
-            CacheLogContext(() =>
-            {
-                _cache.SetString(key, value, options ?? new DistributedCacheEntryOptions());
             });
 
             return value;
@@ -83,74 +61,11 @@ namespace Pact.Cache
         }
 
         /// <inheritdoc/>
-        public string Set(string key, Func<DistributedCacheEntryOptions, string> factory)
-        {
-            var opts = new DistributedCacheEntryOptions();
-
-            var result = factory(opts);
-
-            Set(key, result, opts);
-
-            return result;
-        }
-
-        /// <inheritdoc/>
-        public T GetOrCreate<T>(string key, Func<DistributedCacheEntryOptions, T> factory) where T : class
-        {
-            var result = Get<T>(key);
-
-            return result ?? Set(key, factory);
-        }
-
-        /// <inheritdoc/>
-        public string GetOrCreate(string key, Func<DistributedCacheEntryOptions, string> factory)
-        {
-            var result = Get(key);
-
-            return result ?? Set(key, factory);
-        }
-
-        /// <inheritdoc/>
-        public Task RemoveAsync(params string[] keys)
-        {
-            return CacheLogContext(async () =>
-            {
-                foreach (var key in keys)
-                {
-                    await _cache.RemoveAsync(key).ConfigureAwait(false);
-                }
-            });
-        }
-
-        /// <inheritdoc/>
-        public async Task<T> GetAsync<T>(string key) where T : class
-        {
-            return (await GetAsync(key))?.FromJson<T>();
-        }
-
-        /// <inheritdoc/>
-        public Task<string> GetAsync(string key)
-        {
-            return CacheLogContext(async () => (await _cache.GetStringAsync(key).ConfigureAwait(false)));
-        }
-
-        /// <inheritdoc/>
         public async Task<T> SetAsync<T>(string key, T value, DistributedCacheEntryOptions options) where T : class
         {
             await CacheLogContext(async () =>
             {
                 await _cache.SetStringAsync(key, value.ToJson(), options ?? new DistributedCacheEntryOptions()).ConfigureAwait(false);
-            }).ConfigureAwait(false);
-
-            return value;
-        }
-
-        /// <inheritdoc/>
-        public async Task<string> SetAsync(string key, string value, DistributedCacheEntryOptions options)
-        {
-            await CacheLogContext(async () =>
-            {
-                await _cache.SetStringAsync(key, value, options ?? new DistributedCacheEntryOptions()).ConfigureAwait(false);
             }).ConfigureAwait(false);
 
             return value;
@@ -168,14 +83,56 @@ namespace Pact.Cache
         }
 
         /// <inheritdoc/>
-        public async Task<string> SetAsync(string key, Func<DistributedCacheEntryOptions, Task<string>> factory)
+        public T? SetValue<T>(string key, T value, DistributedCacheEntryOptions options) where T : struct
+        {
+            CacheLogContext(() =>
+            {
+                _cache.SetString(key, value.ToString(), options ?? new DistributedCacheEntryOptions());
+            });
+
+            return value;
+        }
+
+        /// <inheritdoc/>
+        public T? SetValue<T>(string key, Func<DistributedCacheEntryOptions, T> factory) where T : struct
+        {
+            var opts = new DistributedCacheEntryOptions();
+
+            var result = factory(opts);
+
+            SetValue(key, result, opts);
+
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public async Task<T?> SetValueAsync<T>(string key, T value, DistributedCacheEntryOptions options) where T : struct
+        {
+            await CacheLogContext(async () =>
+            {
+                await _cache.SetStringAsync(key, value.ToString(), options ?? new DistributedCacheEntryOptions()).ConfigureAwait(false);
+            }).ConfigureAwait(false);
+
+            return value;
+        }
+
+        /// <inheritdoc/>
+        public async Task<T?> SetValueAsync<T>(string key, Func<DistributedCacheEntryOptions, Task<T>> factory) where T : struct
         {
             var opts = new DistributedCacheEntryOptions();
 
             var result = await factory(opts).ConfigureAwait(false);
-            await SetAsync(key, result, opts).ConfigureAwait(false);
+            await SetValueAsync(key, result, opts).ConfigureAwait(false);
 
             return result;
+        }
+
+        /// <inheritdoc/>
+        public T GetOrCreate<T>(string key, Func<DistributedCacheEntryOptions, T> factory) where T : class
+        {
+            var result = Get<T>(key);
+
+            return result ?? Set(key, factory);
         }
 
         /// <inheritdoc/>
@@ -187,11 +144,43 @@ namespace Pact.Cache
         }
 
         /// <inheritdoc/>
-        public async Task<string> GetOrCreateAsync(string key, Func<DistributedCacheEntryOptions, Task<string>> factory)
+        public T? GetOrCreateValue<T>(string key, Func<DistributedCacheEntryOptions, T> factory) where T : struct
         {
-            var result = await GetAsync(key).ConfigureAwait(false);
+            var result = GetValue<T>(key);
 
-            return result ?? await SetAsync(key, factory).ConfigureAwait(false);
+            return result ?? SetValue(key, factory);
+        }
+
+        /// <inheritdoc/>
+        public async Task<T?> GetOrCreateValueAsync<T>(string key, Func<DistributedCacheEntryOptions, Task<T>> factory) where T : struct
+        {
+            var result = await GetValueAsync<T>(key).ConfigureAwait(false);
+
+            return result ?? await SetValueAsync(key, factory).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        public void Remove(params string[] keys)
+        {
+            CacheLogContext(() =>
+            {
+                foreach (var key in keys)
+                {
+                    _cache.Remove(key);
+                }
+            });
+        }
+
+        /// <inheritdoc/>
+        public Task RemoveAsync(params string[] keys)
+        {
+            return CacheLogContext(async () =>
+            {
+                foreach (var key in keys)
+                {
+                    await _cache.RemoveAsync(key).ConfigureAwait(false);
+                }
+            });
         }
 
         private void CacheLogContext(Action action)
