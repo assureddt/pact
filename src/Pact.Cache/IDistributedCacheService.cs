@@ -16,22 +16,26 @@ namespace Pact.Cache
         void Remove(params string[] keys);
 
         /// <summary>
-        /// Get the value of a specified key and convert it to an object
+        /// Get the value of a specified key and convert it to a reference type
         /// </summary>
+        /// <remarks>Internally deserializes from JSON</remarks>
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <returns></returns>
         T Get<T>(string key) where T : class;
         /// <summary>
-        /// Get the string value of a specified key
+        /// Get the value type of a specified key
         /// </summary>
+        /// <remarks>Does NOT internally deserialize from JSON</remarks>
+        /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <returns></returns>
-        string Get(string key);
+        T? GetValue<T>(string key) where T: struct;
 
         /// <summary>
-        /// Convert an object to a json string and store it against the specified key
+        /// Convert a reference type to a json string and store it against the specified key
         /// </summary>
+        /// <remarks>Internally serializes to JSON</remarks>
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <param name="value"></param>
@@ -39,45 +43,53 @@ namespace Pact.Cache
         /// <returns></returns>
         T Set<T>(string key, T value, DistributedCacheEntryOptions options) where T : class;
         /// <summary>
-        /// Store a string value against the specified key
+        /// Store a value type against the specified key
         /// </summary>
+        /// <remarks>Does NOT internally serialize to JSON</remarks>
+        /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <param name="value"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        string Set(string key, string value, DistributedCacheEntryOptions options);
+        T? SetValue<T>(string key, T value, DistributedCacheEntryOptions options) where T: struct;
 
         /// <summary>
-        /// Convert an object to a json string and store it against the specified key
+        /// Convert a reference type to a json string and store it against the specified key
         /// </summary>
+        /// <remarks>Internally serializes to JSON</remarks>
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <param name="factory"></param>
         /// <returns></returns>
         T Set<T>(string key, Func<DistributedCacheEntryOptions, T> factory) where T : class;
         /// <summary>
-        /// Store a string value against the specified key
+        /// Store a value type against the specified key
         /// </summary>
+        /// <remarks>Does NOT internally serialize to JSON</remarks>
+        /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <param name="factory"></param>
         /// <returns></returns>
-        string Set(string key, Func<DistributedCacheEntryOptions, string> factory);
+        T? SetValue<T>(string key, Func<DistributedCacheEntryOptions, T> factory) where T: struct;
 
         /// <summary>
-        /// Retrieves or creates an object in json format against the specified key
+        /// Retrieves or creates a reference type in json format against the specified key
         /// </summary>
+        /// <remarks>Internally (de)serializes (from)/to JSON</remarks>
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <param name="factory"></param>
         /// <returns></returns>
         T GetOrCreate<T>(string key, Func<DistributedCacheEntryOptions, T> factory) where T : class;
         /// <summary>
-        /// Retrieves or creates a string value against the specified key
+        /// Retrieves or creates a value type against the specified key
         /// </summary>
+        /// <remarks>Does NOT internally (de)serialize (from)/to JSON</remarks>
+        /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <param name="factory"></param>
         /// <returns></returns>
-        string GetOrCreate(string key, Func<DistributedCacheEntryOptions, string> factory);
+        T? GetOrCreateValue<T>(string key, Func<DistributedCacheEntryOptions, T> factory) where T : struct;
 
         /// <summary>
         /// Remove specified keys
@@ -87,22 +99,26 @@ namespace Pact.Cache
         Task RemoveAsync(params string[] keys);
 
         /// <summary>
-        /// Retrieves an object from json format against the specified key
+        /// Retrieves a reference type from json format against the specified key
         /// </summary>
+        /// <remarks>Internally deserializes from JSON</remarks>
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <returns></returns>
         Task<T> GetAsync<T>(string key) where T : class;
         /// <summary>
-        /// Retrieves a string value against the specified key
+        /// Retrieves a value type against the specified key
         /// </summary>
+        /// <remarks>Does NOT internally deserialize from JSON</remarks>
+        /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <returns></returns>
-        Task<string> GetAsync(string key);
+        Task<T?> GetValueAsync<T>(string key) where T: struct;
 
         /// <summary>
-        /// Convert an object to a json string and store it against the specified key
+        /// Convert a reference type to a json string and store it against the specified key
         /// </summary>
+        /// <remarks>Internally serializes to JSON</remarks>
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <param name="value"></param>
@@ -110,44 +126,52 @@ namespace Pact.Cache
         /// <returns></returns>
         Task<T> SetAsync<T>(string key, T value, DistributedCacheEntryOptions options) where T : class;
         /// <summary>
-        /// Store a string value against the specified key
+        /// Store a value type against the specified key
         /// </summary>
+        /// <remarks>Does NOT internally serialize to JSON</remarks>
+        /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <param name="value"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        Task<string> SetAsync(string key, string value, DistributedCacheEntryOptions options);
+        Task<T?> SetValueAsync<T>(string key, T value, DistributedCacheEntryOptions options) where T: struct;
 
         /// <summary>
-        /// Convert an object to a json string and store it against the specified key
+        /// Convert a reference type to a json string and store it against the specified key
         /// </summary>
+        /// <remarks>Internally serializes to JSON</remarks>
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <param name="factory"></param>
         /// <returns></returns>
         Task<T> SetAsync<T>(string key, Func<DistributedCacheEntryOptions, Task<T>> factory) where T : class;
         /// <summary>
-        /// Store a string value against the specified key
+        /// Store a value type against the specified key
         /// </summary>
+        /// <remarks>Does NOT internally serialize to JSON</remarks>
+        /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <param name="factory"></param>
         /// <returns></returns>
-        Task<string> SetAsync(string key, Func<DistributedCacheEntryOptions, Task<string>> factory);
+        Task<T?> SetValueAsync<T>(string key, Func<DistributedCacheEntryOptions, Task<T>> factory) where T: struct;
 
         /// <summary>
-        /// Retrieves or creates an object in json format against the specified key
+        /// Retrieves or creates a reference type in json format against the specified key
         /// </summary>
+        /// <remarks>Internally (de)serializes (from)/to JSON</remarks>
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <param name="factory"></param>
         /// <returns></returns>
         Task<T> GetOrCreateAsync<T>(string key, Func<DistributedCacheEntryOptions, Task<T>> factory) where T : class;
         /// <summary>
-        /// Retrieves or creates a string value against the specified key
+        /// Retrieves or creates a value type against the specified key
         /// </summary>
+        /// <remarks>Does NOT internally (de)serialize (from)/to JSON</remarks>
+        /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <param name="factory"></param>
         /// <returns></returns>
-        Task<string> GetOrCreateAsync(string key, Func<DistributedCacheEntryOptions, Task<string>> factory);
+        Task<T?> GetOrCreateValueAsync<T>(string key, Func<DistributedCacheEntryOptions, Task<T>> factory) where T: struct;
     }
 }

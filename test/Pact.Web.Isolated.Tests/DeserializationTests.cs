@@ -1,6 +1,7 @@
 using System.IO;
 using System.Text;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Pact.Core.Extensions;
 using Pact.Web.Converters;
@@ -18,6 +19,7 @@ namespace Pact.Web.Isolated.Tests
             // arrange
             var configJson = new
             {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
                 KnownNetworks = new[] {"123.45.222.19/24"},
                 KnownProxies = new[] {"48.95.73.145"}
             }.ToJson();
@@ -50,7 +52,7 @@ namespace Pact.Web.Isolated.Tests
             opts.AllowedHosts.ShouldBe(nakedOpts.AllowedHosts);
             opts.ForwardLimit.ShouldBe(nakedOpts.ForwardLimit);
             opts.ForwardedForHeaderName.ShouldBe(nakedOpts.ForwardedForHeaderName);
-            opts.ForwardedHeaders.ShouldBe(nakedOpts.ForwardedHeaders);
+            opts.ForwardedHeaders.ShouldBe(ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto);
             opts.ForwardedHostHeaderName.ShouldBe(nakedOpts.ForwardedHostHeaderName);
             opts.ForwardedProtoHeaderName.ShouldBe(nakedOpts.ForwardedProtoHeaderName);
             opts.OriginalForHeaderName.ShouldBe(nakedOpts.OriginalForHeaderName);

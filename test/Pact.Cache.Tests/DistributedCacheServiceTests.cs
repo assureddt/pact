@@ -23,7 +23,7 @@ namespace Pact.Cache.Tests
             var svc = new DistributedCacheService(cache.Object, new NullLogger<DistributedCacheService>());
 
             // act
-            var _ = await svc.GetAsync("test");
+            var _ = await svc.GetAsync<string>("test");
 
             // assert
             cache.Verify(m => m.GetAsync("test", It.IsAny<CancellationToken>()));
@@ -53,7 +53,7 @@ namespace Pact.Cache.Tests
             var svc = new DistributedCacheService(cache.Object, new NullLogger<DistributedCacheService>());
 
             // act
-            var _ = svc.Get("test");
+            var _ = svc.Get<string>("test");
 
             // assert
             cache.Verify(m => m.Get("test"));
@@ -82,7 +82,7 @@ namespace Pact.Cache.Tests
         public async Task GetOrCreateAsync_OK()
         {
             // arrange
-            var expectedBytes = Encoding.UTF8.GetBytes("blob");
+            var expectedBytes = Encoding.UTF8.GetBytes("\"blob\"");
             var cache = new Mock<IDistributedCache>();
             cache.Setup(m => m.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync((byte[])null);
             var svc = new DistributedCacheService(cache.Object, new NullLogger<DistributedCacheService>());
@@ -118,7 +118,7 @@ namespace Pact.Cache.Tests
         public void GetOrCreate_OK()
         {
             // arrange
-            var expectedBytes = Encoding.UTF8.GetBytes("blob");
+            var expectedBytes = Encoding.UTF8.GetBytes("\"blob\"");
             var cache = new Mock<IDistributedCache>();
             cache.Setup(m => m.Get(It.IsAny<string>())).Returns((byte[])null);
             var svc = new DistributedCacheService(cache.Object, new NullLogger<DistributedCacheService>());
@@ -152,7 +152,7 @@ namespace Pact.Cache.Tests
         public async Task SetAsync_OK()
         {
             // arrange
-            var expectedBytes = Encoding.UTF8.GetBytes("blob");
+            var expectedBytes = Encoding.UTF8.GetBytes("\"blob\"");
             var cache = new Mock<IDistributedCache>();
             var svc = new DistributedCacheService(cache.Object, new NullLogger<DistributedCacheService>());
 
@@ -184,7 +184,7 @@ namespace Pact.Cache.Tests
         public void Set_OK()
         {
             // arrange
-            var expectedBytes = Encoding.UTF8.GetBytes("blob");
+            var expectedBytes = Encoding.UTF8.GetBytes("\"blob\"");
             var cache = new Mock<IDistributedCache>();
             var svc = new DistributedCacheService(cache.Object, new NullLogger<DistributedCacheService>());
 

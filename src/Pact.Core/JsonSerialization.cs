@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pact.Core
+﻿namespace Pact.Core
 {
     public static class JsonSerialization
     {
@@ -19,7 +17,6 @@ namespace Pact.Core
         /// JsonSerialization.Serializer = JsonImplementation.Newtonsoft;
         /// </code>
         /// </example>
-        [Obsolete("We are hoping to move away from the Newtonsoft.Json serializer at some point - use with caution")]
         public static JsonImplementation Serializer { get; set; } = JsonImplementation.Microsoft;
     }
 
