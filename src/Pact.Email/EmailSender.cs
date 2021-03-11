@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -53,7 +54,7 @@ namespace Pact.Email
                 if (client != null)
                 {
                     await client
-                        .ConnectAsync(_settings.SmtpUri, _settings.SmtpPort)
+                        .ConnectAsync(_settings.SmtpUri, _settings.SmtpPort, _settings.SmtpSslMode)
                         .ConfigureAwait(false);
                 }
 
