@@ -36,5 +36,5 @@ jobs:
         run: dotnet pack -c Release --no-restore -o nupkg /p:Version=${{ env.RELEASE_VERSION }}
       
       # Push
-      - name: Push generated package to GitHub registry
+      - name: Push generated package to nuget.org
         run: dotnet nuget push './nupkg/*.nupkg' -s https://api.nuget.org/v3/index.json --skip-duplicate -k ${{ secrets.NUGET_API_KEY }}

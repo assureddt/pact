@@ -3,7 +3,7 @@
   <PropertyGroup>
     <PackageId>$(ProjectName)</PackageId>
     <Title>$(ProjectName)</Title>
-    <PackageProjectUrl>https://github.com/assureddt/pact/src/$(ProjectName)</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/assureddt/pact/tree/main/src/$(ProjectName)</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(DocGen)'=='true'">
