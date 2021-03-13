@@ -2,6 +2,8 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <PackageId>$(ProjectName)</PackageId>
+    <Title>$(ProjectName)</Title>
+    <PackageProjectUrl>https://github.com/assureddt/src/$(ProjectName)</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(DocGen)'=='true'">

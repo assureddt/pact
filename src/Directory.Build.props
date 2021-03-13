@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <Version>0.0.1</Version>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Authors>ADT</Authors>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-    <Copyright>© 2020 ADT. All rights reserved</Copyright>
+    <Copyright>© 2021 ADT. All rights reserved</Copyright>
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -26,14 +25,10 @@
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     <DeterministicSourcePaths>true</DeterministicSourcePaths>
-    <!-- NOTE: GitHub Package Registry does not support .snupkg format (separate symbols package, so these are disabled & the symbols go into the same package -->
-    <!--
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <IncludeSymbols>true</IncludeSymbols>
-    -->
   </PropertyGroup>
 
   <!-- Source link enablement #2 -->

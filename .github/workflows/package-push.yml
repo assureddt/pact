@@ -27,37 +27,17 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
            dotnet-version: '5.0.x'
-
-      - name: Add Private Nuget Feed
-        run: Out-File -FilePath "nuget.config" -InputObject "<?xml version=`"1.0`" encoding=`"utf-8`"?>
-         <configuration>
-               <packageSources>
-                    <clear />
-                    <add key=`"github`" value=`"https://nuget.pkg.github.com/assureddt/index.json`" />
-                    <add key=`"nuget`" value=`"https://api.nuget.org/v3/index.json`" />
-                </packageSources>
-                <packageSourceCredentials>
-                    <github>
-                        <add key=`"Username`" value=`"assureddt`" />
-                        <add key=`"ClearTextPassword`" value=`"${{ secrets.GITHUB_TOKEN }}`" />
-                    </github>
-                </packageSourceCredentials>
-         </configuration>"
-        shell: pwsh
         
-      # Build
-      - name: Set version from release tag in props (sans v)
-        run: sed -i 's/<Version>.*<\/Version>/<Version>${{ env.RELEASE_VERSION }}<\/Version>/g' src/Directory.Build.props
-          
+      # Build          
       - name: Restore
         run: dotnet restore
         
       - name: Build
-        run: dotnet build -c Release --no-restore
+        run: dotnet build -c Release --no-restore /p:Version=${{ env.RELEASE_VERSION }}
        
       - name: Pack
         run: dotnet pack -c Release --no-restore -o nupkg
       
       # Push
       - name: Push generated package to GitHub registry
-        run: dotnet nuget push './nupkg/*.nupkg' -s github --skip-duplicate -k ${{ secrets.GITHUB_TOKEN }}
+        run: dotnet nuget push './nupkg/*.nupkg' -s https://api.nuget.org/v3/index.json --skip-duplicate -k ${{ secrets.NUGET_API_KEY }}
