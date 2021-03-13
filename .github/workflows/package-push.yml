@@ -31,12 +31,9 @@ jobs:
       # Build          
       - name: Restore
         run: dotnet restore
-        
-      - name: Build
-        run: dotnet build -c Release --no-restore /p:Version=${{ env.RELEASE_VERSION }}
-       
+               
       - name: Pack
-        run: dotnet pack -c Release --no-restore -o nupkg
+        run: dotnet pack -c Release --no-restore -o nupkg /p:Version=${{ env.RELEASE_VERSION }}
       
       # Push
       - name: Push generated package to GitHub registry

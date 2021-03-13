@@ -3,11 +3,11 @@
   <PropertyGroup>
     <PackageId>$(ProjectName)</PackageId>
     <Title>$(ProjectName)</Title>
-    <PackageProjectUrl>https://github.com/assureddt/src/$(ProjectName)</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/assureddt/pact/src/$(ProjectName)</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(DocGen)'=='true'">
-    <PackageReference Include="DefaultDocumentation" Version="0.6.13">
+    <PackageReference Include="DefaultDocumentation" Version="0.6.14">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
