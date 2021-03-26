@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using Pact.Core.Comparers;
+using Pact.Core.Models;
 
 namespace Pact.Core.Extensions
 {
@@ -180,6 +182,236 @@ namespace Pact.Core.Extensions
                 list[k] = list[n];  
                 list[n] = value;  
             }  
+        }
+
+        /// <summary>
+        /// Removes soft delete items if the "SoftDelete" property is present and true
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> SoftDelete<T>(this IEnumerable<T> source) where T : class
+        {
+            var softDeleteProp = typeof(T).GetProperty("SoftDelete", typeof(bool));
+            if (softDeleteProp == null) return source;
+
+            var item = Expression.Parameter(typeof(T), "x");
+            var prop = Expression.Property(item, "SoftDelete");
+            var falseConstant = Expression.Constant(false);
+            var equal = Expression.Equal(prop, falseConstant);
+            var lambda = Expression.Lambda<Func<T, bool>>(equal, item);
+            source = source.Where(lambda.Compile());
+
+            return source;
+        }
+
+        /// <summary>
+        /// Filters enumerable using the search term.
+        /// If <see cref="FilterAttribute"/> & <see cref="IgnoreFilterAttribute"/> are present on the class these are used to determine what properties to filter on.
+        /// If no filter arbitrates are present it checks all string fields.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="search"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> TextFilter<T>(this IEnumerable<T> source, string search)
+        {
+            if (string.IsNullOrWhiteSpace(search))
+                return source;
+
+            search = search.Trim().ToLower();
+
+            //Look for specifically set properties to filter on
+            var propertyInfos = typeof(T).GetProperties().Where(w => (w.PropertyType == typeof(string) || w.PropertyType == typeof(List<string>)) && w.CustomAttributes.Count(c => c.AttributeType == typeof(FilterAttribute)) > 0).ToList();
+
+            //If none found use all strings which are not filtered out.
+            if (propertyInfos.Count < 1)
+                propertyInfos = typeof(T).GetProperties().Where(w => (w.PropertyType == typeof(string) || w.PropertyType == typeof(List<string>)) && w.CustomAttributes.Count(c => c.AttributeType == typeof(IgnoreFilterAttribute)) < 1).ToList();
+
+            var output = new List<T>();
+            if (!propertyInfos.Any()) return output;
+
+            foreach (var item in source)
+            {
+                foreach (var prop in propertyInfos)
+                {
+                    if (prop.PropertyType == typeof(string))
+                    {
+                        var value = (string)prop.GetValue(item, null);
+                        if (value == null || !value.ToLower().Contains(search)) continue;
+
+                        output.Add(item);
+                        break;
+                    }
+
+                    if (prop.PropertyType != typeof(List<string>)) continue;
+
+                    var added = false;
+                    var values = (List<string>)prop.GetValue(item, null);
+                    if (values != null && values.Any())
+                    {
+                        if (values.Any(value => !string.IsNullOrWhiteSpace(value) && value.ToLower().Contains(search)))
+                        {
+                            output.Add(item);
+                            added = true;
+                        }
+                    }
+
+                    if (added)
+                        break;
+                }
+            }
+            return output;
+        }
+
+        /// <summary>
+        /// Extends method which allow to sort by string field name.
+        /// Allow to use a relative object definition for sorting (ex:LinkedObject.FieldsName1)
+        /// </summary>
+        /// <typeparam name="T">Current Object type for query</typeparam>
+        /// <param name="source">list of defined object</param>
+        /// <param name="sortExpression">string name of the field we want to sort by</param>
+        /// <returns>Query sorted by sortExpression</returns>
+        public static IEnumerable<T> OrderBy<T>(this IEnumerable<T> source, string sortExpression) where T : class
+        {
+            var expressionParts = sortExpression.Split(' ');
+            var orderByProperty = expressionParts[0];
+
+            var propertyInfo = typeof(T).GetProperties().FirstOrDefault(x => x.Name.ToLowerInvariant() == orderByProperty.ToLowerInvariant());
+
+            if (propertyInfo == null)
+                throw new Exception("Cant find property '" + orderByProperty + "' on type '" + typeof(T).Name + "'");
+
+            if (expressionParts.Length > 1 && expressionParts[1] == "DESC")
+                return source.OrderByDescending(x => propertyInfo.GetValue(x, null));
+            return source.OrderBy(x => propertyInfo.GetValue(x, null));
+        }
+
+        /// <summary>
+        /// Removes soft delete items if the "SoftDelete" property is present and true
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static IQueryable<T> SoftDelete<T>(this IQueryable<T> source) where T : class
+        {
+            var softDeleteProp = typeof(T).GetProperty("SoftDelete", typeof(bool));
+            if (softDeleteProp != null)
+            {
+                var item = Expression.Parameter(typeof(T), "x");
+                var prop = Expression.Property(item, "SoftDelete");
+                var falseConstant = Expression.Constant(false);
+                var equal = Expression.Equal(prop, falseConstant);
+                var lambda = Expression.Lambda<Func<T, bool>>(equal, item);
+                source = source.Where(lambda);
+            }
+
+            return source;
+        }
+
+        /// <summary>
+        /// Extends method which allow to sort by string field name.
+        /// Allow to use a relative object definition for sorting (ex:LinkedObject.FieldsName1)
+        /// </summary>
+        /// <typeparam name="TEntity">Current Object type for query</typeparam>
+        /// <param name="source">list of defined object</param>
+        /// <param name="sortExpression">string name of the field we want to sort by</param>
+        /// <returns>Query sorted by sortExpression</returns>
+        public static IQueryable<TEntity> OrderBy<TEntity>(this IQueryable<TEntity> source, string sortExpression) where TEntity : class
+        {
+            var type = typeof(TEntity);
+            // Remember that for ascending order GridView just returns the column name and
+            // for descending it returns column name followed by DESC keyword
+            // Therefore we need to examine the sortExpression and separate out Column Name and
+            // order (ASC/DESC)
+            var expressionParts = sortExpression.Split(' '); // Assuming sortExpression is like [ColumnName DESC] or [ColumnName]
+            var orderByProperty = expressionParts[0];
+            var methodName = "OrderBy";
+            //if sortDirection is descending
+            if (expressionParts.Length > 1 && expressionParts[1] == "DESC")
+            {
+                const string sortDirection = "Descending";
+                methodName += sortDirection; // Add sort direction at the end of Method name
+            }
+
+            MethodCallExpression resultExp;
+            if (!orderByProperty.Contains("."))
+            {
+                var property = type.GetProperty(orderByProperty, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                var parameter = Expression.Parameter(type, "p");
+                var propertyAccess = Expression.MakeMemberAccess(parameter, property);
+                var orderByExp = Expression.Lambda(propertyAccess, parameter);
+                resultExp = Expression.Call(typeof(Queryable), methodName,
+                new[] { type, property.PropertyType },
+                source.Expression, Expression.Quote(orderByExp));
+            }
+            else
+            {
+                var relationType = type.GetProperty(orderByProperty.Split('.')[0], BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance).PropertyType;
+                var relationProperty = type.GetProperty(orderByProperty.Split('.')[0], BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                var relationProperty2 = relationType.GetProperty(orderByProperty.Split('.')[1], BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                var parameter = Expression.Parameter(type, "p");
+                var propertyAccess = Expression.MakeMemberAccess(parameter, relationProperty);
+                var propertyAccess2 = Expression.MakeMemberAccess(propertyAccess, relationProperty2);
+                var orderByExp = Expression.Lambda(propertyAccess2, parameter);
+                resultExp = Expression.Call(typeof(Queryable), methodName,
+                new[] { type, relationProperty2.PropertyType },
+                source.Expression, Expression.Quote(orderByExp));
+            }
+
+            return source.Provider.CreateQuery<TEntity>(resultExp);
+        }
+
+        /// <summary>
+        /// Allow to add another sorting on a query with a string representation of the field to sort by.
+        /// </summary>
+        /// <typeparam name="TEntity">Current Object type for query</typeparam>
+        /// <param name="source">list of defined object</param>
+        /// <param name="sortExpression">string name of the field we want to sort by</param>
+        /// <returns>Query sorted by sortExpression</returns>
+        public static IQueryable<TEntity> ThenBy<TEntity>(this IQueryable<TEntity> source, string sortExpression) where TEntity : class
+        {
+            var type = typeof(TEntity);
+            // Remember that for ascending order GridView just returns the column name and
+            // for descending it returns column name followed by DESC keyword
+            // Therefore we need to examine the sortExpression and separate out Column Name and
+            // order (ASC/DESC)
+            var expressionParts = sortExpression.Split(' '); // Assuming sortExpression is like [ColumnName DESC] or [ColumnName]
+            var orderByProperty = expressionParts[0];
+            var methodName = "ThenBy";
+            //if sortDirection is descending
+            if (expressionParts.Length > 1 && expressionParts[1] == "DESC")
+            {
+                const string sortDirection = "Descending";
+                methodName += sortDirection; // Add sort direction at the end of Method name
+            }
+
+            MethodCallExpression resultExp;
+            if (!orderByProperty.Contains("."))
+            {
+                var property = type.GetProperty(orderByProperty, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                var parameter = Expression.Parameter(type, "p");
+                var propertyAccess = Expression.MakeMemberAccess(parameter, property);
+                var orderByExp = Expression.Lambda(propertyAccess, parameter);
+                resultExp = Expression.Call(typeof(Queryable), methodName,
+                new[] { type, property.PropertyType },
+                source.Expression, Expression.Quote(orderByExp));
+            }
+            else
+            {
+                var relationType = type.GetProperty(orderByProperty.Split('.')[0], BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance).PropertyType;
+                var relationProperty = type.GetProperty(orderByProperty.Split('.')[0], BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                var relationProperty2 = relationType.GetProperty(orderByProperty.Split('.')[1], BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                var parameter = Expression.Parameter(type, "p");
+                var propertyAccess = Expression.MakeMemberAccess(parameter, relationProperty);
+                var propertyAccess2 = Expression.MakeMemberAccess(propertyAccess, relationProperty2);
+                var orderByExp = Expression.Lambda(propertyAccess2, parameter);
+                resultExp = Expression.Call(typeof(Queryable), methodName,
+                new[] { type, relationProperty2.PropertyType },
+                source.Expression, Expression.Quote(orderByExp));
+            }
+
+            return (IOrderedQueryable<TEntity>)source.Provider.CreateQuery<TEntity>(resultExp);
         }
     }
 }

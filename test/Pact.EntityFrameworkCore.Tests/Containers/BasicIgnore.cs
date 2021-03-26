@@ -1,4 +1,6 @@
-﻿namespace Pact.Kendo.Tests.Containers
+﻿using Pact.Core.Models;
+
+namespace Pact.EntityFrameworkCore.Tests.Containers
 {
     public class BasicIgnore
     {

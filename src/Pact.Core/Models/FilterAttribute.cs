@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Pact.Kendo
+namespace Pact.Core.Models
 {
     /// <summary>
     /// Apply to property to say we are going to filter on it.

@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Pact.Web\Pact.Web.csproj" />
+    <ProjectReference Include="..\..\src\Pact.EntityFrameworkCore\Pact.EntityFrameworkCore.csproj" />
   </ItemGroup>
 
 </Project>

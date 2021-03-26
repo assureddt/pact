@@ -50,4 +50,12 @@ jobs:
         run: dotnet build -c Debug --no-restore
        
       - name: Test
-        run: dotnet test -c Debug --no-restore
+        run: dotnet test -c Debug --no-restore --logger "trx;LogFileName=test-results.trx"
+      
+      - name: Report Results
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Results
+          path: "**/*.trx"
+          reporter: dotnet-trx
