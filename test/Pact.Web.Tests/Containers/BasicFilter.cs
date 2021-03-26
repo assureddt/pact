@@ -1,4 +1,6 @@
-﻿namespace Pact.Kendo.Tests.Containers
+﻿using Pact.Web.Models;
+
+namespace Pact.Web.Tests.Containers
 {
     public class BasicFilter
     {
