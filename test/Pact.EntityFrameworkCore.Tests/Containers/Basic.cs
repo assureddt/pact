@@ -1,4 +1,4 @@
-﻿namespace Pact.Web.Tests.Containers
+﻿namespace Pact.EntityFrameworkCore.Tests.Containers
 {
     public class Basic
     {

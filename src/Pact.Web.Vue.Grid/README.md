@@ -1,2 +1,2 @@
 # Pact.Web.Vue.Grid 🟩
-A backend controller system for creating easy CRUD tables in .Net core.
+A back end controller system for creating easy CRUD tables in .Net core.

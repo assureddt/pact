@@ -19,15 +19,15 @@ namespace Pact.Kendo
         public static IEnumerable<T> Kendo<T>(this IEnumerable<T> source, KendoDataRequest kendoDataRequest) where T : class
         {
             //Remove soft delete
-            source = Web.Extensions.EnumerableExtensions.SoftDelete(source);
+            source = Core.Extensions.CollectionExtensions.SoftDelete(source);
 
             //Kendo text filter
-            source = Web.Extensions.EnumerableExtensions.TextFilter(source, kendoDataRequest.TextFilter);
+            source = Core.Extensions.CollectionExtensions.TextFilter(source, kendoDataRequest.TextFilter);
 
             //Sort
             if (kendoDataRequest.Sort == null) return source;
             if (kendoDataRequest.Sort.Count > 0)
-                source = Web.Extensions.EnumerableExtensions.OrderBy(source, kendoDataRequest.Sort.First().ToString());
+                source = Core.Extensions.CollectionExtensions.OrderBy(source, kendoDataRequest.Sort.First().ToString());
 
             return source;
         }

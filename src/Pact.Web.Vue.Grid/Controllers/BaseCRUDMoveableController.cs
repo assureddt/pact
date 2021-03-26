@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Pact.Web.Vue.Grid.Interfaces;
-using Pact.Web.Extensions;
+using Pact.Core.Extensions;
 using AutoMapper;
 using System.Collections.Generic;
 

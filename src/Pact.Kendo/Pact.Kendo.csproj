@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Pact.Web\Pact.Web.csproj" />
+    <ProjectReference Include="..\Pact.EntityFrameworkCore\Pact.EntityFrameworkCore.csproj" />
   </ItemGroup>
 
 </Project>

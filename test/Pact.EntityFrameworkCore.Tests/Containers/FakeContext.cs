@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Pact.Web.Tests.Containers
+namespace Pact.EntityFrameworkCore.Tests.Containers
 {
     public class FakeContext : DbContext
     {

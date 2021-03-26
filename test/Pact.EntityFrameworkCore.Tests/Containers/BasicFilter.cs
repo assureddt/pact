@@ -1,6 +1,6 @@
-﻿using Pact.Web.Models;
+﻿using Pact.Core.Models;
 
-namespace Pact.Web.Tests.Containers
+namespace Pact.EntityFrameworkCore.Tests.Containers
 {
     public class BasicFilter
     {

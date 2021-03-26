@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Pact.Web.Extensions;
-using Pact.Web.Tests.Containers;
+using Pact.EntityFrameworkCore.Extensions;
+using Pact.EntityFrameworkCore.Tests.Containers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Pact.Web.Tests
+namespace Pact.EntityFrameworkCore.Tests
 {
     public class QueryableExtensionsTests
     {
@@ -18,43 +18,6 @@ namespace Pact.Web.Tests
             .Options;
 
             return new FakeContext(options);
-        }
-
-        [Fact]
-        public void SoftDelete_All_Gone()
-        {
-            var items = new List<Basic>();
-            items.Add(new Basic { Id = 1, Name = "Cat", SoftDelete = true });
-            items.Add(new Basic { Id = 2, Name = "Dog", SoftDelete = true });
-
-            var result = items.AsQueryable().SoftDelete();
-
-            Assert.Empty(result);
-        }
-
-        [Fact]
-        public void SoftDelete_Correct_Removed()
-        {
-            var items = new List<Basic>();
-            items.Add(new Basic { Id = 1, Name = "Cat", SoftDelete = true });
-            items.Add(new Basic { Id = 2, Name = "Dog" });
-
-            var result = items.AsQueryable().SoftDelete();
-
-            var resultItem = Assert.Single(result);
-            Assert.True(resultItem.Id == 2);
-        }
-
-        [Fact]
-        public void SoftDelete_None_Removed()
-        {
-            var items = new List<Basic>();
-            items.Add(new Basic { Id = 1, Name = "Cat" });
-            items.Add(new Basic { Id = 2, Name = "Dog" });
-
-            var result = items.AsQueryable().SoftDelete();
-
-            Assert.True(result.Count() == 2);
         }
 
         [Theory]

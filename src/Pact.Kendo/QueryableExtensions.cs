@@ -17,18 +17,18 @@ namespace Pact.Kendo
         public static IQueryable<T> Kendo<T>(this IQueryable<T> source, KendoDataRequest kendoDataRequest) where T : class
         {
             //Remove soft delete
-            source = Web.Extensions.QueryableExtensions.SoftDelete(source);
+            source = Core.Extensions.CollectionExtensions.SoftDelete(source);
 
             //Kendo text filter
-            source = Web.Extensions.QueryableExtensions.TextFilter(source, kendoDataRequest.TextFilter);
+            source = EntityFrameworkCore.Extensions.QueryableExtensions.TextFilter(source, kendoDataRequest.TextFilter);
 
             //Sort
             if (kendoDataRequest.Sort != null)
             {
                 if (kendoDataRequest.Sort.Count > 0)
-                    source = Web.Extensions.QueryableExtensions.OrderBy(source, kendoDataRequest.Sort.First().ToString());
+                    source = Core.Extensions.CollectionExtensions.OrderBy(source, kendoDataRequest.Sort.First().ToString());
                 if (kendoDataRequest.Sort.Count > 1)
-                    source = Web.Extensions.QueryableExtensions.ThenBy(source, kendoDataRequest.Sort[0].ToString());
+                    source = Core.Extensions.CollectionExtensions.ThenBy(source, kendoDataRequest.Sort[0].ToString());
             }
 
             return source;

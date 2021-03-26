@@ -8,7 +8,8 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Pact.Web.Vue.Grid.Interfaces;
 using Pact.Web.Vue.Grid.Models;
-using Pact.Web.Extensions;
+using Pact.Core.Extensions;
+using Pact.EntityFrameworkCore.Extensions;
 using AutoMapper;
 
 namespace Pact.Web.Vue.Grid.Controllers

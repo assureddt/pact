@@ -25,6 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Pact.Core\Pact.Core.csproj" />
     <ProjectReference Include="..\Pact.Web\Pact.Web.csproj" />
+    <ProjectReference Include="..\Pact.EntityFrameworkCore\Pact.EntityFrameworkCore.csproj" />
   </ItemGroup>
 
 </Project>
