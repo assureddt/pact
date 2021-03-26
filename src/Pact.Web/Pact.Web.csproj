@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <PackageReference Include="IPNetwork2" Version="2.5.226" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.0" />
     <PackageReference Include="Unidecode.NET" Version="2.1.0" />
     <PackageReference Include="NetEscapades.AspNetCore.SecurityHeaders" Version="0.13.0" />
   </ItemGroup>
