@@ -25,6 +25,9 @@ namespace Pact.Web.Converters
         {
             if (value is string s)
             {
+                // NOTE: dependency on IPNetwork2 here is due to lack of support for parsing CIDR notation in-framework
+                // see: https://github.com/dotnet/aspnetcore/issues/8606
+                // the parsing is quite involved and the library is small and exclusively focused on this purpose
                 var ipn = System.Net.IPNetwork.Parse(s);
                 return new Microsoft.AspNetCore.HttpOverrides.IPNetwork(ipn.Network, ipn.Cidr);
             }

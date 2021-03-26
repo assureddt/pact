@@ -11,8 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="IPNetwork2" Version="2.5.226" />
-    <PackageReference Include="Unidecode.NET" Version="2.1.0" />
+    <PackageReference Include="IPNetwork2" Version="2.5.292" />
     <PackageReference Include="NetEscapades.AspNetCore.SecurityHeaders" Version="0.13.0" />
   </ItemGroup>
 
@@ -27,7 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Pact.Core\Pact.Core.csproj" />
     <ProjectReference Include="..\Pact.Logging\Pact.Logging.csproj" />
   </ItemGroup>
 

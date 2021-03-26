@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.AspNetCore.Html;
@@ -7,26 +7,30 @@ using Moq;
 using Pact.Core.Extensions;
 using Pact.Web.Extensions;
 using Shouldly;
-using Unidecode.NET;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Pact.Web.Tests
 {
     public class StringExtensionTests
     {
+        private readonly ITestOutputHelper _testOutputHelper;
+
+        public StringExtensionTests(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
+
         [Fact]
         public void Attachment_OK()
         {
-            const string filename = "Some@Of:these\\/should-not_be;here, right?!.pdf";
+            const string filename = "Some@Of:these\\/should-not_be;here,😁 right?!.pdf";
 
-            // these are tested elsewhere so not repeating that here
-            var safename = filename.MakeSafeFilename();
-            var ascii = safename.Unidecode();
-            var escaped = Uri.EscapeDataString(safename);
+            var escaped = Uri.EscapeDataString(filename);
 
             // assert
             filename.MakeSafeAttachmentHeader()
-                .ShouldBe($"attachment; filename=\"{ascii}\"; filename*=UTF-8''{escaped}");
+                .ShouldBe($"attachment; filename*=UTF-8''{escaped}");
         }
 
         [Fact]
