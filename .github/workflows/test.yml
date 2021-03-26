@@ -57,5 +57,5 @@ jobs:
         if: success() || failure()
         with:
           name: Results
-          path: src/**/*.trx
+          path: **/*.trx
           reporter: dotnet-trx
