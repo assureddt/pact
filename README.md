@@ -41,7 +41,7 @@ The API Wiki, containing automatically generated documentation, can be found [he
 Omitting framework dependencies for brevity _[Last updated: 2021-03-26]_
 
 | Reference                                              | Version | Licence Type    | License                                                                              |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|--------------------------------------------------------|---------|-----------------|--------------------------------------------------------------------------------------|
 | AutoMapper                                             | 10.1.1  | MIT             | https://licenses.nuget.org/MIT                                                       |
 | coverlet.collector                                     | 3.0.3   | MIT             | https://licenses.nuget.org/MIT                                                       |
 | IPNetwork2                                             | 2.5.292 |                 | https://github.com/lduchosal/ipnetwork/blob/master/LICENSE                           |
