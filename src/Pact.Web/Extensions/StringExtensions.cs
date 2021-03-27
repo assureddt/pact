@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Pact.Core.Extensions;
-using Unidecode.NET;
 
 namespace Pact.Web.Extensions
 {
@@ -12,15 +11,12 @@ namespace Pact.Web.Extensions
         /// Prepares the content of the attachment header with safe escaping
         /// </summary>
         /// <param name="filename"></param>
-        /// <param name="replaceChar"></param>
         /// <returns></returns>
-        public static string MakeSafeAttachmentHeader(this string filename, char replaceChar = '_')
+        public static string MakeSafeAttachmentHeader(this string filename)
         {
-            var safename = filename.MakeSafeFilename(replaceChar);
-            var ascii = safename.Unidecode();
-
+            // NOTE: was doing a bunch of stuff here to make things work for old browsers, but we're ditching them anyway
             // https://stackoverflow.com/questions/93551/how-to-encode-the-filename-parameter-of-content-disposition-header-in-http
-            return $"attachment; filename=\"{ascii}\"; filename*=UTF-8''{Uri.EscapeDataString(safename)}";
+            return $"attachment; filename*=UTF-8''{Uri.EscapeDataString(filename)}";
         }
 
         /// <summary>
