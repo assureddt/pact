@@ -2,7 +2,7 @@
 
 namespace Pact.Web.Vue.Grid.Tests.Containers
 {
-    public class OrderDatabaseObject : IMoveableDatabaseObject
+    public class OrderDatabaseObject : IMoveable
     {
         public int Id { get; set; }
         public string Name { get; set; }
