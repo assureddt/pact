@@ -10,7 +10,7 @@ using System.Collections.Generic;
 namespace Pact.Web.Vue.Grid.Controllers
 {
     public abstract class BaseCRUDMoveableController<MoveableDatabaseDTO, GridRowDTO, EditDTO> : BaseCRUDController<MoveableDatabaseDTO, GridRowDTO, EditDTO>
-        where MoveableDatabaseDTO : class, IMoveableDatabaseObject
+        where MoveableDatabaseDTO : class, IMoveable
         where GridRowDTO : class, IGridRow, new()
         where EditDTO : class, IEdit, new()
     {
