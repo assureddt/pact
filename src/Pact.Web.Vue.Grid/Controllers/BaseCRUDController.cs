@@ -30,7 +30,7 @@ namespace Pact.Web.Vue.Grid.Controllers
 
         public ViewResult Index() => View("Index");
 
-        public async Task<JsonResult> Read(int page, int size, string order, int direction, string filter) => await GetGridDataSet(page, size, order, direction, filter);
+        public async virtual Task<JsonResult> Read(int page, int size, string order, int direction, string filter) => await GetGridDataSet(page, size, order, direction, filter);
 
         [NonAction]
         public async Task<JsonResult> GetGridDataSet(int page, int size, string order, int direction, string filter, Expression<Func<DatabaseDTO, bool>> whereClause = null)
@@ -45,7 +45,7 @@ namespace Pact.Web.Vue.Grid.Controllers
             return new JsonResult(new GenericGridResult<GridRowDTO> { Result = "OK", Records = items.Skip(page * size).Take(size).ToList(), Count = items.Count });
         }
 
-        public async Task<JsonResult> Data(int id)
+        public async virtual Task<JsonResult> Data(int id)
         {
             var databaseObject = await Context.Set<DatabaseDTO>().FirstAsync(x => x.Id == id);
             var data = Mapper.Map<DatabaseDTO, EditDTO>(databaseObject);
@@ -71,12 +71,19 @@ namespace Pact.Web.Vue.Grid.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> Edit([FromBody] EditDTO model)
+        public async virtual Task<JsonResult> Edit([FromBody] EditDTO model) => await ProcessEdit(model, ModelState);
+
+        [NonAction]
+        public async Task<JsonResult> ProcessEdit(EditDTO model, ModelStateDictionary modelState, Func<DatabaseDTO, Task> customStep = null)
         {
-            if (!ModelState.IsValid) return JsonMessage("Submitted model didn't validate, please check entered values");
+            if (!modelState.IsValid) return JsonMessage("Submitted model didn't validate, please check entered values");
             var databaseObject = await Context.Set<DatabaseDTO>().FirstAsync(x => x.Id == model.Id);
             Context.Attach(databaseObject);
             Mapper.Map(model, databaseObject);
+
+            if (customStep != null)
+                await customStep(databaseObject);
+
             await Context.SaveChangesAsync();
             return JsonOK();
         }
