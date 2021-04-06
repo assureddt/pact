@@ -44,14 +44,14 @@ namespace Pact.Web.ErrorHandling.Pages.Error
                 if (int.TryParse(val?.ToString(), out var code))
                     Code = code;
 
-                var isAjax = context.HttpContext.Request.IsAjaxRequest();
+                var asJson = !context.HttpContext.Request.AcceptsHtml();
 
-                if (isAjax)
+                if (asJson)
                 {
-                    if (_settings.Value.AjaxErrorsAsSuccess)
+                    if (_settings.Value.JsonErrorsAsSuccess)
                         context.HttpContext.Response.StatusCode = StatusCodes.Status200OK;
 
-                    Logger.LogWarning("Json status code response ({Code}) [{ErrorsAsSuccess}]", Code, _settings.Value.AjaxErrorsAsSuccess);
+                    Logger.LogWarning("Json status code response ({Code}) [{ErrorsAsSuccess}]", Code, _settings.Value.JsonErrorsAsSuccess);
 
                     context.Result = new JsonResult(_settings.Value.JsonResponseFormatter(this));
                 }

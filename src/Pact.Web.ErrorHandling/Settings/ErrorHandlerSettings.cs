@@ -3,12 +3,12 @@ using Pact.Web.ErrorHandling.Interfaces;
 
 namespace Pact.Web.ErrorHandling.Settings
 {
-    public class ErrorHandlerSettings
+    public record ErrorHandlerSettings
     {
         /// <summary>
         /// If you'd prefer the Json responses are returned as HTTP 200 for you to handle differently, enable this
         /// </summary>
-        public bool AjaxErrorsAsSuccess { get; set; } = true;
+        public bool JsonErrorsAsSuccess { get; set; } = true;
 
         /// <summary>
         /// Determines the response body returned for Json responses
@@ -21,6 +21,15 @@ namespace Pact.Web.ErrorHandling.Settings
             result = "ERROR",
             message = !string.IsNullOrWhiteSpace(model.Details) ? model.Details : "An error occurred with your request",
             code = model.Code
+        };
+
+        public static ErrorHandlerSettings WithJsonStatusCodes => new ErrorHandlerSettings
+        {
+            JsonErrorsAsSuccess = false,
+            JsonResponseFormatter = model => new
+            {
+                message = model.Details
+            }
         };
     }
 }
