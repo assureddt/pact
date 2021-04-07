@@ -13,6 +13,7 @@ using Xunit;
 
 namespace Pact.Cache.Tests
 {
+    [Collection("JsonSerializerSequential")]
     public class DistributedCacheServiceTests
     {
         [Fact]

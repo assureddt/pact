@@ -23,13 +23,16 @@ namespace Pact.Web.ErrorHandling.Settings
             code = model.Code
         };
 
-        public static ErrorHandlerSettings WithJsonStatusCodes => new ErrorHandlerSettings
+        /// <summary>
+        /// Convenience configuration for Json responses with true status codes
+        /// </summary>
+        public static Action<ErrorHandlerSettings> WithJsonStatusCodes => opts =>
         {
-            JsonErrorsAsSuccess = false,
-            JsonResponseFormatter = model => new
+            opts.JsonErrorsAsSuccess = false;
+            opts.JsonResponseFormatter = model => new
             {
                 message = model.Details
-            }
+            };
         };
     }
 }

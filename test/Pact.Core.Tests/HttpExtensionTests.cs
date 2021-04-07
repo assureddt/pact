@@ -161,6 +161,72 @@ namespace Pact.Core.Tests
             context.Request.IsAjaxRequest().ShouldBeFalse();
         }
 
+        [Fact]
+        public void HttpRequest_AcceptsHtml_Yes_Multiple_True()
+        {
+            // arrange
+            var context = new DefaultHttpContext();
+            context.Request.Headers[HttpRequestHeader.Accept.ToString()] = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
+
+            // act & assert
+            context.Request.AcceptsHtml().ShouldBeTrue();
+        }
+
+        [Fact]
+        public void HttpRequest_AcceptsHtml_Yes_Single_True()
+        {
+            // arrange
+            var context = new DefaultHttpContext();
+            context.Request.Headers[HttpRequestHeader.Accept.ToString()] = "text/html";
+
+            // act & assert
+            context.Request.AcceptsHtml().ShouldBeTrue();
+        }
+
+        [Fact]
+        public void HttpRequest_AcceptsHtml_No_Multiple_False()
+        {
+            // arrange
+            var context = new DefaultHttpContext();
+            context.Request.Headers[HttpRequestHeader.Accept.ToString()] = "text/plain,text/json";
+
+            // act & assert
+            context.Request.AcceptsHtml().ShouldBeFalse();
+        }
+
+        [Fact]
+        public void HttpRequest_AcceptsHtml_No_Single_False()
+        {
+            // arrange
+            var context = new DefaultHttpContext();
+            context.Request.Headers[HttpRequestHeader.Accept.ToString()] = "text/plain";
+
+            // act & assert
+            context.Request.AcceptsHtml().ShouldBeFalse();
+        }
+
+
+        [Fact]
+        public void HttpRequest_AcceptsHtml_Wildcard_False()
+        {
+            // arrange
+            var context = new DefaultHttpContext();
+            context.Request.Headers[HttpRequestHeader.Accept.ToString()] = "*/*";
+
+            // act & assert
+            context.Request.AcceptsHtml().ShouldBeFalse();
+        }
+
+        [Fact]
+        public void HttpRequest_AcceptsHtml_NotSet_False()
+        {
+            // arrange
+            var context = new DefaultHttpContext();
+
+            // act & assert
+            context.Request.AcceptsHtml().ShouldBeFalse();
+        }
+
         private class MyClass
         {
             public int Id { get; set; }

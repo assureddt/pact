@@ -44,7 +44,7 @@ namespace Pact.Core.Extensions
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
 
-            return request.Headers != null && request.Headers[HttpRequestHeader.Accept.ToString()].Contains("text/html");
+            return request.Headers != null && request.Headers.GetCommaSeparatedValues(HttpRequestHeader.Accept.ToString()).Contains("text/html");
         }
     }
 }
