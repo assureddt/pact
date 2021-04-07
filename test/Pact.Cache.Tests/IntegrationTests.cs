@@ -10,6 +10,7 @@ using Xunit;
 
 namespace Pact.Cache.Tests
 {
+    [Collection("JsonSerializerSequential")]
     public class IntegrationTests
     {
         private readonly IOptions<MemoryDistributedCacheOptions> _opts = new OptionsWrapper<MemoryDistributedCacheOptions>(new MemoryDistributedCacheOptions());

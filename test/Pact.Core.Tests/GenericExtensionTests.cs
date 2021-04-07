@@ -4,6 +4,7 @@ using Xunit;
 
 namespace Pact.Core.Tests
 {
+    [Collection("JsonSerializerSequential")]
     public class GenericExtensionTests
     {
         [Fact]
