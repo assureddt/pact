@@ -15,11 +15,17 @@ namespace Pact.Web.Vue.Grid.Tests
         {
             public TestController(FakeContext context, IMapper mapper) : base(context, mapper)
             {
+                PostChangeAction = () => {
+                    WasPostChangeActionCalled = true;
+                    return Task.CompletedTask;
+                };
             }
+
+            public bool WasPostChangeActionCalled = false;
         }
 
         [Fact]
-        public async Task Up()
+        public async Task Up_Basic()
         {
             // arrange
             var testController = mocker.CreateInstance<TestController>();
@@ -51,6 +57,37 @@ namespace Pact.Web.Vue.Grid.Tests
         }
 
         [Fact]
+        public async Task Up_Check_Post_Action_Called()
+        {
+            // arrange
+            var testController = mocker.CreateInstance<TestController>();
+
+            await _context.Orders.AddAsync(new OrderDatabaseObject
+            {
+                Name = "Cake A",
+                Order = 0,
+                Id = 1
+            });
+            await _context.Orders.AddAsync(new OrderDatabaseObject
+            {
+                Name = "Cake B",
+                Order = 1,
+                Id = 2
+            });
+            await _context.SaveChangesAsync();
+            _context.ChangeTracker.Clear();
+
+            // act
+            var reuslt = await testController.Up(2);
+
+            // assert
+            var dataItems = reuslt.Value.ShouldBeAssignableTo<GeneralJsonOK>();
+            dataItems.Result.ShouldBe("OK");
+
+            testController.WasPostChangeActionCalled.ShouldBeTrue();
+        }
+
+        [Fact]
         public async Task Up_At_Bottom()
         {
             // arrange
@@ -77,7 +114,7 @@ namespace Pact.Web.Vue.Grid.Tests
 
 
         [Fact]
-        public async Task Down()
+        public async Task Down_Basic()
         {
             // arrange
             var testController = mocker.CreateInstance<TestController>();
@@ -106,6 +143,37 @@ namespace Pact.Web.Vue.Grid.Tests
 
             (await _context.Orders.FirstAsync(x => x.Id == 1)).Order.ShouldBe(1);
             (await _context.Orders.FirstAsync(x => x.Id == 2)).Order.ShouldBe(0);
+        }
+
+        [Fact]
+        public async Task Down_Check_Post_Action_Called()
+        {
+            // arrange
+            var testController = mocker.CreateInstance<TestController>();
+
+            await _context.Orders.AddAsync(new OrderDatabaseObject
+            {
+                Name = "Cake A",
+                Order = 0,
+                Id = 1
+            });
+            await _context.Orders.AddAsync(new OrderDatabaseObject
+            {
+                Name = "Cake B",
+                Order = 1,
+                Id = 2
+            });
+            await _context.SaveChangesAsync();
+            _context.ChangeTracker.Clear();
+
+            // act
+            var reuslt = await testController.Down(1);
+
+            // assert
+            var dataItems = reuslt.Value.ShouldBeAssignableTo<GeneralJsonOK>();
+            dataItems.Result.ShouldBe("OK");
+
+            testController.WasPostChangeActionCalled.ShouldBeTrue();
         }
 
         [Fact]

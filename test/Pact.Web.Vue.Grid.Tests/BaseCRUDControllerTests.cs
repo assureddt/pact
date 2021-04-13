@@ -17,7 +17,13 @@ namespace Pact.Web.Vue.Grid.Tests
         {
             public TestController(FakeContext context, IMapper mapper) : base(context, mapper)
             {
+                PostChangeAction = () => {
+                    WasPostChangeActionCalled = true;
+                    return Task.CompletedTask;
+                };
             }
+
+            public bool WasPostChangeActionCalled = false;
         }
 
         [Fact]
@@ -77,7 +83,7 @@ namespace Pact.Web.Vue.Grid.Tests
         }
 
         [Fact]
-        public async Task Add()
+        public async Task Add_Basic()
         {
             // arrange
             var testController = mocker.CreateInstance<TestController>();
@@ -112,7 +118,26 @@ namespace Pact.Web.Vue.Grid.Tests
         }
 
         [Fact]
-        public async Task Edit()
+        public async Task Add_Check_Post_Action_Called()
+        {
+            // arrange
+            var testController = mocker.CreateInstance<TestController>();
+
+            // act
+            var reuslt = await testController.Add(new EditOutput
+            {
+                Name = "Cake C"
+            });
+
+            // assert
+            var dataItems = reuslt.Value.ShouldBeAssignableTo<GeneralJsonOK>();
+            dataItems.Result.ShouldBe("OK");
+
+            testController.WasPostChangeActionCalled.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task Edit_Basic()
         {
             // arrange
             var testController = mocker.CreateInstance<TestController>();
@@ -156,7 +181,35 @@ namespace Pact.Web.Vue.Grid.Tests
         }
 
         [Fact]
-        public async Task Remove()
+        public async Task Edit_Check_Post_Action_Called()
+        {
+            // arrange
+            var testController = mocker.CreateInstance<TestController>();
+
+            await _context.Basics.AddAsync(new BasicDatabaseObject
+            {
+                Name = "Cake A",
+                Id = 1
+            });
+            await _context.SaveChangesAsync();
+            _context.ChangeTracker.Clear();
+
+            // act
+            var reuslt = await testController.Edit(new EditOutput
+            {
+                Id = 1,
+                Name = "Cake C"
+            });
+
+            // assert
+            var dataItems = reuslt.Value.ShouldBeAssignableTo<GeneralJsonOK>();
+            dataItems.Result.ShouldBe("OK");
+
+            testController.WasPostChangeActionCalled.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task Remove_Basic()
         {
             // arrange
             var testController = mocker.CreateInstance<TestController>();
@@ -177,6 +230,30 @@ namespace Pact.Web.Vue.Grid.Tests
             dataItems.Result.ShouldBe("OK");
 
             (await _context.Basics.CountAsync()).ShouldBe(0);
+        }
+
+        [Fact]
+        public async Task Remove_Check_Post_Action_Called()
+        {
+            // arrange
+            var testController = mocker.CreateInstance<TestController>();
+
+            await _context.Basics.AddAsync(new BasicDatabaseObject
+            {
+                Name = "Cake A",
+                Id = 1
+            });
+            await _context.SaveChangesAsync();
+            _context.ChangeTracker.Clear();
+
+            // act
+            var reuslt = await testController.Remove(1);
+
+            // assert
+            var dataItems = reuslt.Value.ShouldBeAssignableTo<GeneralJsonOK>();
+            dataItems.Result.ShouldBe("OK");
+
+            testController.WasPostChangeActionCalled.ShouldBeTrue();
         }
     }
 }
