@@ -17,7 +17,13 @@ namespace Pact.Web.Vue.Grid.Tests
         {
             public TestController(FakeContext context, IMapper mapper) : base(context, mapper)
             {
+                PostChangeAction = () => {
+                    WasPostChangeActionCalled = true;
+                    return Task.CompletedTask;
+                };
             }
+
+            public bool WasPostChangeActionCalled = false;
         }
 
         [Fact]
@@ -49,7 +55,7 @@ namespace Pact.Web.Vue.Grid.Tests
 
 
         [Fact]
-        public async Task Remove()
+        public async Task Remove_Basic()
         {
             // arrange
             var testController = mocker.CreateInstance<TestController>();
@@ -71,6 +77,30 @@ namespace Pact.Web.Vue.Grid.Tests
 
             (await _context.SoftDeletes.CountAsync()).ShouldBe(1);
             (await _context.SoftDeletes.FirstAsync()).SoftDelete.ShouldBe(true);
+        }
+
+        [Fact]
+        public async Task Remove_Check_Post_Action_Called()
+        {
+            // arrange
+            var testController = mocker.CreateInstance<TestController>();
+
+            await _context.SoftDeletes.AddAsync(new SoftDeleteDatabaseObject
+            {
+                Name = "Cake A",
+                Id = 1
+            });
+            await _context.SaveChangesAsync();
+            _context.ChangeTracker.Clear();
+
+            // act
+            var reuslt = await testController.Remove(1);
+
+            // assert
+            var dataItems = reuslt.Value.ShouldBeAssignableTo<GeneralJsonOK>();
+            dataItems.Result.ShouldBe("OK");
+
+            testController.WasPostChangeActionCalled.ShouldBeTrue();
         }
     }
 }

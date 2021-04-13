@@ -28,6 +28,12 @@ namespace Pact.Web.Vue.Grid.Controllers
             Mapper = mapper;
         }
 
+        /// <summary>
+        /// Used to help setup a general post change function
+        /// The general idea this is used for a general action post a dataset change like clearing caching.
+        /// </summary>
+        public Func<Task> PostChangeAction { get; set; }
+
         public ViewResult Index() => View("Index");
 
         public async virtual Task<JsonResult> Read(int page, int size, string order, int direction, string filter) => await GetGridDataSet(page, size, order, direction, filter);
@@ -67,6 +73,10 @@ namespace Pact.Web.Vue.Grid.Controllers
 
             await Context.Set<DatabaseDTO>().AddAsync(databaseObject);
             await Context.SaveChangesAsync();
+
+            if (PostChangeAction != null)
+                await PostChangeAction();
+
             return JsonOK();
         }
 
@@ -85,6 +95,10 @@ namespace Pact.Web.Vue.Grid.Controllers
                 await customStep(databaseObject);
 
             await Context.SaveChangesAsync();
+
+            if (PostChangeAction != null)
+                await PostChangeAction();
+
             return JsonOK();
         }
 
@@ -108,6 +122,9 @@ namespace Pact.Web.Vue.Grid.Controllers
 
             if (customStep != null)
                 await customStep(item);
+
+            if (PostChangeAction != null)
+                await PostChangeAction();
 
             return JsonOK();
         }

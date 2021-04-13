@@ -63,6 +63,10 @@ namespace Pact.Web.Vue.Grid.Controllers
             swapped.Order = swapped.Order + 1;
 
             await Context.SaveChangesAsync();
+
+            if (PostChangeAction != null)
+                await PostChangeAction();
+
             return JsonOK();
         }
 
@@ -87,6 +91,10 @@ namespace Pact.Web.Vue.Grid.Controllers
             swapped.Order = swapped.Order - 1;
 
             await Context.SaveChangesAsync();
+
+            if (PostChangeAction != null)
+                await PostChangeAction();
+
             return JsonOK();
         }
     }
