@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="IPNetwork2" Version="2.5.292" />
+    <PackageReference Include="IPNetwork2" Version="2.5.300" />
     <PackageReference Include="NetEscapades.AspNetCore.SecurityHeaders" Version="0.13.0" />
   </ItemGroup>
 

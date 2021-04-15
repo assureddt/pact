@@ -1,6 +1,8 @@
 # Pact.TagHelpers 🏷
 Contains several general purpose ASP.NET Core TagHelpers (which replaced the old @helper Razor MVC feature).
 
+Also contains a shared Razor Pages for the `Account/AccessDenied` route and an `Alerts` partial view, utilizing the AlertTagHelper.
+
 Some examples follow:
 ## [AlertTagHelper](./AlertTagHelper.cs)
 Renders a Bootstrap 4 compatible alert (dead simple and fairly pointless but reduces ceremony somewhat)

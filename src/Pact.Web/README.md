@@ -1,9 +1,13 @@
 # Pact.Web 🕸
+
 Provides a number of useful extension methods and services for web applications.
 
 Some examples follow:
+
 ## [TempDataService](./TempDataService/TempDataService.cs)
-Simplifies the storing of objects in TempData
+
+Simplifies the storing of objects in TempData.
+
 ```c#
 var svc = provider.GetService<ITempDataService>();
 var theThing = new Thing();
@@ -13,18 +17,30 @@ var retrievedThing = svc.Get<Thing>("ThingKey");
 ```
 
 ## [LoggingActionFilter](./Filters/LoggingActionFilter.cs) & [LoggingPageFilter](./Filters/LoggingPageFilter.cs) 
+
 When registered in the pipeline, these enrich the logging context with information from web requests.
 In Startup.cs ConfigureServices:
+
 ```c#
 services.AddControllers(options => options.AddLogEnrichmentFilters());
 ```
 
+## [PageModelBase](./Models/PageModelBase.cs)
+
+Extends the framework Razor Pages PageModel with some minor quality-of-life re-usables:
+
+* TempData-based alerts for: `Info`; `Success`; `Warning` & `Error` to be displayed after redirects (optimally, used in conjunction with the associated partial view in Pact.TagHelpers)
+* A formal `Title` property to be populated by inheriting Models & consumed by the layout instead of the weakly-typed `ViewData["Title"]` norm
+
 ## [Content Security Policy](./Extensions/SecurityHeaderExtensions.cs)
+
 Provides some default enablements of CSP & Feature Policy headers for web requests. 
 In Startup.cs Configure:
+
 ```c#
 app.UseCspWithPactDefaults();
 ```
+
 The Pact defaults are notably configured with Script Nonces enabled (which overrides the Inline Scripts enablement if the browser supports it, hence both applied).
 Internally, we're using the [NetEscapades.AspNetCore.SecurityHeaders](https://github.com/andrewlock/NetEscapades.AspNetCore.SecurityHeaders) library.
 
