@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.Http
 @model Pact.Web.ErrorHandling.Pages.Error.IndexModel
 @{
-    ViewData["Title"] = "Error";
+    ViewData["Title"] = Model.Title;
 
     switch (Model.Code)
     {

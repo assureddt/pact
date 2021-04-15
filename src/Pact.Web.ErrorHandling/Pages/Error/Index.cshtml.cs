@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
@@ -12,22 +11,21 @@ using Pact.Core;
 using Pact.Core.Extensions;
 using Pact.Web.ErrorHandling.Interfaces;
 using Pact.Web.ErrorHandling.Settings;
-using Pact.Web.Interfaces;
+using Pact.Web.Models;
 
 namespace Pact.Web.ErrorHandling.Pages.Error
 {
     [IgnoreAntiforgeryToken]
     [AllowAnonymous]
-    public class IndexModel : PageModel, IModel, IErrorDetails
+    public class IndexModel : PageModelBase, IErrorDetails
     {
+        private readonly ILogger<IndexModel> _logger;
         private readonly IOptions<ErrorHandlerSettings> _settings;
 
-        public IndexModel(ILogger<IndexModel> logger, IAntiforgery xsrf, IOptions<ErrorHandlerSettings> settings)
+        public IndexModel(ILogger<IndexModel> logger, IOptions<ErrorHandlerSettings> settings)
         {
+            _logger = logger;
             _settings = settings;
-            Logger = logger;
-            Xsrf = xsrf;
-            Title = "Error";
         }
 
         public int? Code { get; private set; }
@@ -51,13 +49,13 @@ namespace Pact.Web.ErrorHandling.Pages.Error
                     if (_settings.Value.JsonErrorsAsSuccess)
                         context.HttpContext.Response.StatusCode = StatusCodes.Status200OK;
 
-                    Logger.LogWarning("Json status code response ({Code}) [{ErrorsAsSuccess}]", Code, _settings.Value.JsonErrorsAsSuccess);
+                    _logger.LogWarning("Json status code response ({Code}) [{ErrorsAsSuccess}]", Code, _settings.Value.JsonErrorsAsSuccess);
 
                     context.Result = new JsonResult(_settings.Value.JsonResponseFormatter(this));
                 }
                 else
                 {
-                    Logger.LogWarning("Html status code response ({Code})", Code);
+                    _logger.LogWarning("Html status code response ({Code})", Code);
                     context.Result = new PageResult();
                 }
 
@@ -88,8 +86,6 @@ namespace Pact.Web.ErrorHandling.Pages.Error
             return null;
         }
 
-        public ILogger Logger { get; }
-        public string Title { get; }
-        public IAntiforgery Xsrf { get; }
+        public override string Title => "Error";
     }
 }

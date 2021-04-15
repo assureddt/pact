@@ -1,0 +1,5 @@
+﻿@using Pact.Web.Interfaces
+<alert alert-type="success" condition="@TempData.ContainsKey(nameof(IAlertsModel.Success))">@Html.Raw(TempData[nameof(IAlertsModel.Success)])</alert>
+<alert alert-type="info" condition="@TempData.ContainsKey(nameof(IAlertsModel.Info))">@Html.Raw(TempData[nameof(IAlertsModel.Info)])</alert>
+<alert alert-type="warning" condition="@TempData.ContainsKey(nameof(IAlertsModel.Warning))">@Html.Raw(TempData[nameof(IAlertsModel.Warning)])</alert>
+<alert alert-type="danger" condition="@TempData.ContainsKey(nameof(IAlertsModel.Error))">@Html.Raw(TempData[nameof(IAlertsModel.Error)])</alert>
