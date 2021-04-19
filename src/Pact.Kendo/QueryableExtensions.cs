@@ -23,13 +23,10 @@ namespace Pact.Kendo
             source = EntityFrameworkCore.Extensions.QueryableExtensions.TextFilter(source, kendoDataRequest.TextFilter);
 
             //Sort
-            if (kendoDataRequest.Sort != null)
-            {
-                if (kendoDataRequest.Sort.Count > 0)
-                    source = Core.Extensions.CollectionExtensions.OrderBy(source, kendoDataRequest.Sort.First().ToString());
-                if (kendoDataRequest.Sort.Count > 1)
-                    source = Core.Extensions.CollectionExtensions.ThenBy(source, kendoDataRequest.Sort[0].ToString());
-            }
+            if (kendoDataRequest.Sort?.Any() != true) return source;
+
+            source = Core.Extensions.CollectionExtensions.OrderBy(source, kendoDataRequest.Sort.First().ToString());
+            source = kendoDataRequest.Sort.Skip(1).Aggregate(source, (current, sort) => Core.Extensions.CollectionExtensions.ThenBy(current, sort.ToString()));
 
             return source;
         }

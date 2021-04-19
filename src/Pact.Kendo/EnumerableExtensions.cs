@@ -25,11 +25,12 @@ namespace Pact.Kendo
             source = Core.Extensions.CollectionExtensions.TextFilter(source, kendoDataRequest.TextFilter);
 
             //Sort
-            if (kendoDataRequest.Sort == null) return source;
-            if (kendoDataRequest.Sort.Count > 0)
-                source = Core.Extensions.CollectionExtensions.OrderBy(source, kendoDataRequest.Sort.First().ToString());
+            if (kendoDataRequest.Sort?.Any() != true) return source;
 
-            return source;
+            var ordered = Core.Extensions.CollectionExtensions.OrderBy(source, kendoDataRequest.Sort.First().ToString());
+            ordered = kendoDataRequest.Sort.Skip(1).Aggregate(ordered, (current, sort) => Core.Extensions.CollectionExtensions.ThenBy(current, sort.ToString()));
+
+            return ordered;
         }
 
         /// <summary>
