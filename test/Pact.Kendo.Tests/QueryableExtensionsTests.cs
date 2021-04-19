@@ -65,6 +65,33 @@ namespace Pact.Kendo.Tests
         }
 
         [Fact]
+        public void Kendo_Multi_Sort()
+        {
+            var items = new List<Basic>();
+            items.Add(new Basic { Id = 1, Name = "Cat", Order = 0 });
+            items.Add(new Basic { Id = 2, Name = "Dog", Order = 1 });
+            items.Add(new Basic { Id = 3, Name = "Aardvark", Order = 1 });
+
+            var request = new KendoDataRequest
+            {
+                Page = 0,
+                PageSize = 5,
+                Skip = 0,
+                Take = 5,
+                Sort = new List<KendoDataRequestSort>
+                {
+                    new KendoDataRequestSort {Dir = "ASC", Field = "Order"},
+                    new KendoDataRequestSort {Dir = "ASC", Field = "Name"}
+                }
+            };
+
+            var results = items.AsQueryable().Kendo(request);
+            Assert.True(results.First().Name == "Cat");
+            Assert.True(results.Skip(1).First().Name == "Aardvark");
+            Assert.True(results.Skip(2).First().Name == "Dog");
+        }
+
+        [Fact]
         public async Task KendoResult_Standard()
         {
             using (var context = GetFakeContext())

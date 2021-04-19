@@ -272,7 +272,7 @@ namespace Pact.Core.Extensions
         /// <param name="source">list of defined object</param>
         /// <param name="sortExpression">string name of the field we want to sort by</param>
         /// <returns>Query sorted by sortExpression</returns>
-        public static IEnumerable<T> OrderBy<T>(this IEnumerable<T> source, string sortExpression) where T : class
+        public static IOrderedEnumerable<T> OrderBy<T>(this IEnumerable<T> source, string sortExpression) where T : class
         {
             var expressionParts = sortExpression.Split(' ');
             var orderByProperty = expressionParts[0];
@@ -285,6 +285,29 @@ namespace Pact.Core.Extensions
             if (expressionParts.Length > 1 && expressionParts[1] == "DESC")
                 return source.OrderByDescending(x => propertyInfo.GetValue(x, null));
             return source.OrderBy(x => propertyInfo.GetValue(x, null));
+        }
+
+        /// <summary>
+        /// Extends method which allow to sort further by additional string field name.
+        /// Allow to use a relative object definition for sorting (ex:LinkedObject.FieldsName1)
+        /// </summary>
+        /// <typeparam name="T">Current Object type for query</typeparam>
+        /// <param name="source">list of defined object</param>
+        /// <param name="sortExpression">string name of the field we want to sort by</param>
+        /// <returns>Query sorted by sortExpression</returns>
+        public static IOrderedEnumerable<T> ThenBy<T>(this IOrderedEnumerable<T> source, string sortExpression) where T : class
+        {
+            var expressionParts = sortExpression.Split(' ');
+            var orderByProperty = expressionParts[0];
+
+            var propertyInfo = typeof(T).GetProperties().FirstOrDefault(x => x.Name.ToLowerInvariant() == orderByProperty.ToLowerInvariant());
+
+            if (propertyInfo == null)
+                throw new Exception("Cant find property '" + orderByProperty + "' on type '" + typeof(T).Name + "'");
+
+            if (expressionParts.Length > 1 && expressionParts[1] == "DESC")
+                return source.ThenByDescending(x => propertyInfo.GetValue(x, null));
+            return source.ThenBy(x => propertyInfo.GetValue(x, null));
         }
 
         /// <summary>
