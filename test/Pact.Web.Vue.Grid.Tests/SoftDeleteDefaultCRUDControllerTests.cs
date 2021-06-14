@@ -10,10 +10,10 @@ using System.Linq;
 
 namespace Pact.Web.Vue.Grid.Tests
 {
-    public class SoftDeleteCRUDControllerTests : BaseTest
+    public class SoftDeleteDefaultCRUDControllerTests : BaseTest
     {
         //This is the rolled up class used for all the tests in this file..
-        internal class TestController : BaseCRUDController<SoftDeleteDatabaseObject, GridRowOutput, EditOutput>
+        internal class TestController : DefaultCRUDController<SoftDeleteDatabaseObject, GridRowOutput, EditOutput>
         {
             public TestController(FakeContext context, IMapper mapper) : base(context, mapper)
             {
@@ -23,7 +23,7 @@ namespace Pact.Web.Vue.Grid.Tests
                 };
             }
 
-            public bool WasPostChangeActionCalled = false;
+            public bool WasPostChangeActionCalled;
         }
 
         [Fact]
@@ -44,11 +44,11 @@ namespace Pact.Web.Vue.Grid.Tests
             await _context.SaveChangesAsync();
 
             // act
-            var reuslt = await testController.Read(0, 10, "name", 0, null);
+            var result = await testController.Read(0, 10, "name", 0, null);
 
             // assert
-            var dataItems = reuslt.Value.ShouldBeAssignableTo<GenericGridResult<GridRowOutput>>();
-            dataItems.Result.ShouldBe("OK");
+            var dataItems = result.Value.ShouldBeAssignableTo<GenericGridResult<GridRowOutput>>();
+            dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
             dataItems.Count.ShouldBe(1);
             dataItems.Records.First().Name.ShouldBe("Cake A");
         }
@@ -69,11 +69,11 @@ namespace Pact.Web.Vue.Grid.Tests
             _context.ChangeTracker.Clear();
 
             // act
-            var reuslt = await testController.Remove(1);
+            var result = await testController.Remove(1);
 
             // assert
-            var dataItems = reuslt.Value.ShouldBeAssignableTo<GeneralJsonOK>();
-            dataItems.Result.ShouldBe("OK");
+            var dataItems = result.Value.ShouldBeAssignableTo<GeneralJsonOK>();
+            dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
 
             (await _context.SoftDeletes.CountAsync()).ShouldBe(1);
             (await _context.SoftDeletes.FirstAsync()).SoftDelete.ShouldBe(true);
@@ -94,11 +94,11 @@ namespace Pact.Web.Vue.Grid.Tests
             _context.ChangeTracker.Clear();
 
             // act
-            var reuslt = await testController.Remove(1);
+            var result = await testController.Remove(1);
 
             // assert
-            var dataItems = reuslt.Value.ShouldBeAssignableTo<GeneralJsonOK>();
-            dataItems.Result.ShouldBe("OK");
+            var dataItems = result.Value.ShouldBeAssignableTo<GeneralJsonOK>();
+            dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
 
             testController.WasPostChangeActionCalled.ShouldBeTrue();
         }

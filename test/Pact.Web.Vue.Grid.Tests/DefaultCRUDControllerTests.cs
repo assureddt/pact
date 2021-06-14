@@ -10,10 +10,10 @@ using System.Linq;
 
 namespace Pact.Web.Vue.Grid.Tests
 {
-    public class BaseCRUDControllerTests : BaseTest
+    public class DefaultCRUDControllerTests : BaseTest
     {
         //This is the rolled up class used for all the tests in this file..
-        internal class TestController : BaseCRUDController<BasicDatabaseObject, GridRowOutput, EditOutput>
+        internal class TestController : DefaultCRUDController<BasicDatabaseObject, GridRowOutput, EditOutput>
         {
             public TestController(FakeContext context, IMapper mapper) : base(context, mapper)
             {
@@ -23,7 +23,7 @@ namespace Pact.Web.Vue.Grid.Tests
                 };
             }
 
-            public bool WasPostChangeActionCalled = false;
+            public bool WasPostChangeActionCalled;
         }
 
         [Fact]
@@ -33,10 +33,10 @@ namespace Pact.Web.Vue.Grid.Tests
             var testController = mocker.CreateInstance<TestController>();
 
             // act
-            var reuslt = testController.Index();
+            var result = testController.Index();
 
             // assert
-            reuslt.ViewName.ShouldBe("Index");
+            result.ViewName.ShouldBe("Index");
         }
 
         [Fact]
@@ -52,11 +52,11 @@ namespace Pact.Web.Vue.Grid.Tests
             await _context.SaveChangesAsync();
 
             // act
-            var reuslt = await testController.Read(0, 10, "name", 0, null);
+            var result = await testController.Read(0, 10, "name", 0, null);
 
             // assert
-            var dataItems = reuslt.Value.ShouldBeAssignableTo<GenericGridResult<GridRowOutput>>();
-            dataItems.Result.ShouldBe("OK");
+            var dataItems = result.Value.ShouldBeAssignableTo<GenericGridResult<GridRowOutput>>();
+            dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
             dataItems.Count.ShouldBe(1);
             dataItems.Records.First().Name.ShouldBe("Cake A");
         }
@@ -74,11 +74,11 @@ namespace Pact.Web.Vue.Grid.Tests
             await _context.SaveChangesAsync();
 
             // act
-            var reuslt = await testController.Data(1);
+            var result = await testController.Data(1);
 
             // assert
-            var dataItems = reuslt.Value.ShouldBeAssignableTo<SingleDataResult<EditOutput>>();
-            dataItems.Result.ShouldBe("OK");
+            var dataItems = result.Value.ShouldBeAssignableTo<SingleDataResult<EditOutput>>();
+            dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
             dataItems.Record.Name.ShouldBe("Cake A");
         }
 
@@ -89,14 +89,14 @@ namespace Pact.Web.Vue.Grid.Tests
             var testController = mocker.CreateInstance<TestController>();
 
             // act
-            var reuslt = await testController.Add(new EditOutput
+            var result = await testController.Add(new EditOutput
             {
                 Name = "Cake C"
             });
 
             // assert
-            var dataItems = reuslt.Value.ShouldBeAssignableTo<GeneralJsonOK>();
-            dataItems.Result.ShouldBe("OK");
+            var dataItems = result.Value.ShouldBeAssignableTo<GeneralJsonOK>();
+            dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
 
             (await _context.Basics.CountAsync()).ShouldBe(1);
             (await _context.Basics.FirstAsync()).Name.ShouldBe("Cake C");
@@ -110,11 +110,11 @@ namespace Pact.Web.Vue.Grid.Tests
             testController.ModelState.AddModelError("test", "not shown");
 
             // act
-            var reuslt = await testController.Add(new EditOutput());
+            var result = await testController.Add(new EditOutput());
 
             // assert
-            var dataItems = reuslt.Value.ShouldBeAssignableTo<GeneralJsonMessage>();
-            dataItems.Result.ShouldBe("FAIL");
+            var dataItems = result.Value.ShouldBeAssignableTo<GeneralJsonMessage>();
+            dataItems.ShouldNotBeNull().Result.ShouldBe("FAIL");
         }
 
         [Fact]
@@ -124,14 +124,14 @@ namespace Pact.Web.Vue.Grid.Tests
             var testController = mocker.CreateInstance<TestController>();
 
             // act
-            var reuslt = await testController.Add(new EditOutput
+            var result = await testController.Add(new EditOutput
             {
                 Name = "Cake C"
             });
 
             // assert
-            var dataItems = reuslt.Value.ShouldBeAssignableTo<GeneralJsonOK>();
-            dataItems.Result.ShouldBe("OK");
+            var dataItems = result.Value.ShouldBeAssignableTo<GeneralJsonOK>();
+            dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
 
             testController.WasPostChangeActionCalled.ShouldBeTrue();
         }
@@ -151,15 +151,15 @@ namespace Pact.Web.Vue.Grid.Tests
             _context.ChangeTracker.Clear();
 
             // act
-            var reuslt = await testController.Edit(new EditOutput
+            var result = await testController.Edit(new EditOutput
             {
                 Id = 1,
                 Name = "Cake C"
             });
 
             // assert
-            var dataItems = reuslt.Value.ShouldBeAssignableTo<GeneralJsonOK>();
-            dataItems.Result.ShouldBe("OK");
+            var dataItems = result.Value.ShouldBeAssignableTo<GeneralJsonOK>();
+            dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
 
             (await _context.Basics.CountAsync()).ShouldBe(1);
             (await _context.Basics.FirstAsync()).Name.ShouldBe("Cake C");
@@ -173,11 +173,11 @@ namespace Pact.Web.Vue.Grid.Tests
             testController.ModelState.AddModelError("test", "not shown");
 
             // act
-            var reuslt = await testController.Edit(new EditOutput());
+            var result = await testController.Edit(new EditOutput());
 
             // assert
-            var dataItems = reuslt.Value.ShouldBeAssignableTo<GeneralJsonMessage>();
-            dataItems.Result.ShouldBe("FAIL");
+            var dataItems = result.Value.ShouldBeAssignableTo<GeneralJsonMessage>();
+            dataItems.ShouldNotBeNull().Result.ShouldBe("FAIL");
         }
 
         [Fact]
@@ -195,15 +195,15 @@ namespace Pact.Web.Vue.Grid.Tests
             _context.ChangeTracker.Clear();
 
             // act
-            var reuslt = await testController.Edit(new EditOutput
+            var result = await testController.Edit(new EditOutput
             {
                 Id = 1,
                 Name = "Cake C"
             });
 
             // assert
-            var dataItems = reuslt.Value.ShouldBeAssignableTo<GeneralJsonOK>();
-            dataItems.Result.ShouldBe("OK");
+            var dataItems = result.Value.ShouldBeAssignableTo<GeneralJsonOK>();
+            dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
 
             testController.WasPostChangeActionCalled.ShouldBeTrue();
         }
@@ -223,11 +223,11 @@ namespace Pact.Web.Vue.Grid.Tests
             _context.ChangeTracker.Clear();
 
             // act
-            var reuslt = await testController.Remove(1);
+            var result = await testController.Remove(1);
 
             // assert
-            var dataItems = reuslt.Value.ShouldBeAssignableTo<GeneralJsonOK>();
-            dataItems.Result.ShouldBe("OK");
+            var dataItems = result.Value.ShouldBeAssignableTo<GeneralJsonOK>();
+            dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
 
             (await _context.Basics.CountAsync()).ShouldBe(0);
         }
@@ -247,11 +247,11 @@ namespace Pact.Web.Vue.Grid.Tests
             _context.ChangeTracker.Clear();
 
             // act
-            var reuslt = await testController.Remove(1);
+            var result = await testController.Remove(1);
 
             // assert
-            var dataItems = reuslt.Value.ShouldBeAssignableTo<GeneralJsonOK>();
-            dataItems.Result.ShouldBe("OK");
+            var dataItems = result.Value.ShouldBeAssignableTo<GeneralJsonOK>();
+            dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
 
             testController.WasPostChangeActionCalled.ShouldBeTrue();
         }
