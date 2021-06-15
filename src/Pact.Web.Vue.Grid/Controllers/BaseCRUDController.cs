@@ -25,10 +25,10 @@ namespace Pact.Web.Vue.Grid.Controllers
         where TGridRowDTO : class, IGridRow, new()
         where TEditDTO : class, IEdit, new()
     {
-        public readonly DbContext Context;
-        public readonly IMapper Mapper;
+        protected readonly DbContext Context;
+        protected readonly IMapper Mapper;
 
-        public BaseCRUDController(DbContext context, IMapper mapper)
+        protected BaseCRUDController(DbContext context, IMapper mapper)
         {
             Context = context;
             Mapper = mapper;
@@ -38,7 +38,7 @@ namespace Pact.Web.Vue.Grid.Controllers
         /// Used to help setup a general post change function
         /// The general idea this is used for a general action post a data set change like clearing caching.
         /// </summary>
-        public Func<Task> PostChangeAction { get; set; }
+        protected Func<Task> PostChangeAction { get; set; }
 
         /// <summary>
         /// Gets a generic grid data set 
@@ -50,8 +50,7 @@ namespace Pact.Web.Vue.Grid.Controllers
         /// <param name="filter">generic text filter applied to source data set</param>
         /// <param name="whereClause">extra sql where clause</param>
         /// <returns></returns>
-        [NonAction]
-        public async Task<JsonResult> GetGridDataSet(int page, int size, string order, int direction, string filter, Expression<Func<TDatabaseDTO, bool>> whereClause = null)
+        protected async Task<JsonResult> GetGridDataSet(int page, int size, string order, int direction, string filter, Expression<Func<TDatabaseDTO, bool>> whereClause = null)
         {
             var query = Context.Set<TDatabaseDTO>().SoftDelete();
             if (whereClause != null)
@@ -68,8 +67,7 @@ namespace Pact.Web.Vue.Grid.Controllers
         /// </summary>
         /// <param name="id">id of data to return</param>
         /// <returns></returns>
-        [NonAction]
-        public async Task<JsonResult> ProcessData(int id)
+        protected async Task<JsonResult> ProcessData(int id)
         {
             var databaseObject = await Context.Set<TDatabaseDTO>().FirstAsync(x => x.Id == id);
             var data = Mapper.Map<TDatabaseDTO, TEditDTO>(databaseObject);
@@ -83,8 +81,7 @@ namespace Pact.Web.Vue.Grid.Controllers
         /// <param name="modelState">controller model state</param>
         /// <param name="customStep">custom step before data is saved</param>
         /// <returns></returns>
-        [NonAction]
-        public async Task<JsonResult> ProcessAdd(TEditDTO model, ModelStateDictionary modelState, Func<TDatabaseDTO, Task> customStep = null)
+        protected async Task<JsonResult> ProcessAdd(TEditDTO model, ModelStateDictionary modelState, Func<TDatabaseDTO, Task> customStep = null)
         {
             if (!modelState.IsValid) return JsonMessage("Submitted model didn't validate, please check entered values");
 
@@ -109,8 +106,7 @@ namespace Pact.Web.Vue.Grid.Controllers
         /// <param name="modelState">controller model state</param>
         /// <param name="customStep">custom step before data is saved</param>
         /// <returns></returns>
-        [NonAction]
-        public async Task<JsonResult> ProcessEdit(TEditDTO model, ModelStateDictionary modelState, Func<TDatabaseDTO, Task> customStep = null)
+        protected async Task<JsonResult> ProcessEdit(TEditDTO model, ModelStateDictionary modelState, Func<TDatabaseDTO, Task> customStep = null)
         {
             if (!modelState.IsValid) return JsonMessage("Submitted model didn't validate, please check entered values");
             var databaseObject = await Context.Set<TDatabaseDTO>().FirstAsync(x => x.Id == model.Id);
@@ -134,8 +130,7 @@ namespace Pact.Web.Vue.Grid.Controllers
         /// <param name="id">id of item to be removed</param>
         /// <param name="customStep">custom step post item being removed</param>
         /// <returns></returns>
-        [NonAction]
-        public async Task<JsonResult> ProcessRemove(int id, Func<TDatabaseDTO, Task> customStep = null)
+        protected async Task<JsonResult> ProcessRemove(int id, Func<TDatabaseDTO, Task> customStep = null)
         {
             var item = await Context.Set<TDatabaseDTO>().FirstAsync(x => x.Id == id);
 
@@ -159,7 +154,7 @@ namespace Pact.Web.Vue.Grid.Controllers
             return JsonOK();
         }
 
-        public JsonResult JsonOK() => Json(new GeneralJsonOK { Result = "OK" });
-        public JsonResult JsonMessage(string message) => Json(new GeneralJsonMessage { Result = "FAIL", Message = message });
+        protected JsonResult JsonOK() => Json(new GeneralJsonOK { Result = "OK" });
+        protected JsonResult JsonMessage(string message) => Json(new GeneralJsonMessage { Result = "FAIL", Message = message });
     }
 }

@@ -19,7 +19,7 @@ namespace Pact.Web.Vue.Grid.Controllers
         where TGridRowDTO : class, IGridRow, new()
         where TEditDTO : class, IEdit, new()
     {
-        public BaseCRUDMoveableController(DbContext context, IMapper mapper) : base(context, mapper)
+        protected BaseCRUDMoveableController(DbContext context, IMapper mapper) : base(context, mapper)
         {
         }
 
@@ -28,8 +28,7 @@ namespace Pact.Web.Vue.Grid.Controllers
         /// </summary>
         /// <param name="items">list of items to correct</param>
         /// <returns></returns>
-        [NonAction]
-        public async Task ProcessReordering(List<TMoveableDatabaseDTO> items)
+        protected async Task ProcessReordering(List<TMoveableDatabaseDTO> items)
         {
             var order = 0;
             foreach (var item in items.OrderBy(x => x.Order).ToList())
@@ -47,8 +46,7 @@ namespace Pact.Web.Vue.Grid.Controllers
         /// <param name="original">item being moved up</param>
         /// <param name="swapped">item being moved down</param>
         /// <returns></returns>
-        [NonAction]
-        public async Task<JsonResult> ProcessMoveUp(TMoveableDatabaseDTO original, TMoveableDatabaseDTO? swapped)
+        protected async Task<JsonResult> ProcessMoveUp(TMoveableDatabaseDTO original, TMoveableDatabaseDTO? swapped)
         {
             if (original.Order == 0 || swapped == null)
                 return JsonOK();
@@ -74,8 +72,7 @@ namespace Pact.Web.Vue.Grid.Controllers
         /// <param name="swapped">item being moved up</param>
         /// <param name="max">max items in this list</param>
         /// <returns></returns>
-        [NonAction]
-        public async Task<JsonResult> ProcessMoveDown(TMoveableDatabaseDTO original, TMoveableDatabaseDTO? swapped, int max)
+        protected async Task<JsonResult> ProcessMoveDown(TMoveableDatabaseDTO original, TMoveableDatabaseDTO? swapped, int max)
         {
             if (swapped == null || original.Order == max)
                 return JsonOK();
