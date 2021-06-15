@@ -1,40 +1,37 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Pact.Web.Vue.Grid.Interfaces;
-using Pact.Core.Extensions;
 using AutoMapper;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Pact.Web.Vue.Grid.Controllers
 {
-    public abstract class BaseCRUDMoveableController<MoveableDatabaseDTO, GridRowDTO, EditDTO> : BaseCRUDController<MoveableDatabaseDTO, GridRowDTO, EditDTO>
-        where MoveableDatabaseDTO : class, IMoveable
-        where GridRowDTO : class, IGridRow, new()
-        where EditDTO : class, IEdit, new()
+    /// <summary>
+    /// Basic CRUD Controller Setup
+    /// </summary>
+    /// <typeparam name="TMoveableDatabaseDTO">Type of moveable database object</typeparam>
+    /// <typeparam name="TGridRowDTO">Type of grid item</typeparam>
+    /// <typeparam name="TEditDTO">Type of edit item</typeparam>
+    public abstract class BaseCRUDMoveableController<TMoveableDatabaseDTO, TGridRowDTO, TEditDTO> : BaseCRUDController<TMoveableDatabaseDTO, TGridRowDTO, TEditDTO>
+        where TMoveableDatabaseDTO : class, IMoveable
+        where TGridRowDTO : class, IGridRow, new()
+        where TEditDTO : class, IEdit, new()
     {
-        public BaseCRUDMoveableController(DbContext context, IMapper mapper) : base(context, mapper)
+        protected BaseCRUDMoveableController(DbContext context, IMapper mapper) : base(context, mapper)
         {
         }
 
-        [HttpPost]
-        public async override Task<JsonResult> Add([FromBody] EditDTO model) => await ProcessAdd(model, ModelState, async (x) => { x.Order = await Context.Set<MoveableDatabaseDTO>().CountAsync(); });
-
-        public async override Task<JsonResult> Remove(int id)
-        {
-            return await ProcessRemove(id, async (removedItem) =>
-            {
-                var items = await Context.Set<MoveableDatabaseDTO>().SoftDelete().OrderBy(x => x.Order).ToListAsync();
-                await ProcessReordering(items);
-            });
-        }
-
-        [NonAction]
-        public async Task ProcessReordering(List<MoveableDatabaseDTO> items)
+        /// <summary>
+        /// Updates numeric order on list of items
+        /// </summary>
+        /// <param name="items">list of items to correct</param>
+        /// <returns></returns>
+        protected async Task ProcessReordering(List<TMoveableDatabaseDTO> items)
         {
             var order = 0;
-            foreach (var item in items)
+            foreach (var item in items.OrderBy(x => x.Order).ToList())
             {
                 Context.Attach(item);
                 item.Order = order;
@@ -43,15 +40,13 @@ namespace Pact.Web.Vue.Grid.Controllers
             await Context.SaveChangesAsync();
         }
 
-        public async virtual Task<JsonResult> Up(int id)
-        {
-            var item = await Context.Set<MoveableDatabaseDTO>().FirstAsync(x => x.Id == id);
-            var swappedItem = await Context.Set<MoveableDatabaseDTO>().FirstOrDefaultAsync(x => x.Order == item.Order - 1);
-            return await ProcessMoveUp(item, swappedItem);
-        }
-
-        [NonAction]
-        public async Task<JsonResult> ProcessMoveUp(MoveableDatabaseDTO original, MoveableDatabaseDTO? swapped)
+        /// <summary>
+        /// Moves item up
+        /// </summary>
+        /// <param name="original">item being moved up</param>
+        /// <param name="swapped">item being moved down</param>
+        /// <returns></returns>
+        protected async Task<JsonResult> ProcessMoveUp(TMoveableDatabaseDTO original, TMoveableDatabaseDTO? swapped)
         {
             if (original.Order == 0 || swapped == null)
                 return JsonOK();
@@ -70,16 +65,14 @@ namespace Pact.Web.Vue.Grid.Controllers
             return JsonOK();
         }
 
-        public async virtual Task<JsonResult> Down(int id)
-        {
-            var item = await Context.Set<MoveableDatabaseDTO>().FirstAsync(x => x.Id == id);
-            var max = await Context.Set<MoveableDatabaseDTO>().MaxAsync(x => x.Order);
-            var swappedItem = await Context.Set<MoveableDatabaseDTO>().FirstOrDefaultAsync(x => x.Order == item.Order + 1);
-            return await ProcessMoveDown(item, swappedItem, max);
-        }
-
-        [NonAction]
-        public async Task<JsonResult> ProcessMoveDown(MoveableDatabaseDTO original, MoveableDatabaseDTO? swapped, int max)
+        /// <summary>
+        /// Moves item down
+        /// </summary>
+        /// <param name="original">item being moved down</param>
+        /// <param name="swapped">item being moved up</param>
+        /// <param name="max">max items in this list</param>
+        /// <returns></returns>
+        protected async Task<JsonResult> ProcessMoveDown(TMoveableDatabaseDTO original, TMoveableDatabaseDTO? swapped, int max)
         {
             if (swapped == null || original.Order == max)
                 return JsonOK();

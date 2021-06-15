@@ -9,9 +9,9 @@ using Pact.Web.Vue.Grid.Models;
 
 namespace Pact.Web.Vue.Grid.Tests
 {
-    public class BaseCRUDMoveableControllerTests : BaseTest
+    public class DefaultMoveableCRUDControllerTests : BaseTest
     {
-        internal class TestController : BaseCRUDMoveableController<OrderDatabaseObject, GridRowOutput, EditOutput>
+        internal class TestController : DefaultMoveableCRUDController<OrderDatabaseObject, GridRowOutput, EditOutput>
         {
             public TestController(FakeContext context, IMapper mapper) : base(context, mapper)
             {
@@ -21,7 +21,7 @@ namespace Pact.Web.Vue.Grid.Tests
                 };
             }
 
-            public bool WasPostChangeActionCalled = false;
+            public bool WasPostChangeActionCalled;
         }
 
         [Fact]
@@ -46,11 +46,11 @@ namespace Pact.Web.Vue.Grid.Tests
             _context.ChangeTracker.Clear();
 
             // act
-            var reuslt = await testController.Up(2);
+            var result = await testController.Up(2);
 
             // assert
-            var dataItems = reuslt.Value.ShouldBeAssignableTo<GeneralJsonOK>();
-            dataItems.Result.ShouldBe("OK");
+            var dataItems = result.Value.ShouldBeAssignableTo<GeneralJsonOK>();
+            dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
 
             (await _context.Orders.FirstAsync(x => x.Id == 1)).Order.ShouldBe(1);
             (await _context.Orders.FirstAsync(x => x.Id == 2)).Order.ShouldBe(0);
@@ -78,11 +78,11 @@ namespace Pact.Web.Vue.Grid.Tests
             _context.ChangeTracker.Clear();
 
             // act
-            var reuslt = await testController.Up(2);
+            var result = await testController.Up(2);
 
             // assert
-            var dataItems = reuslt.Value.ShouldBeAssignableTo<GeneralJsonOK>();
-            dataItems.Result.ShouldBe("OK");
+            var dataItems = result.Value.ShouldBeAssignableTo<GeneralJsonOK>();
+            dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
 
             testController.WasPostChangeActionCalled.ShouldBeTrue();
         }
@@ -103,11 +103,11 @@ namespace Pact.Web.Vue.Grid.Tests
             _context.ChangeTracker.Clear();
 
             // act
-            var reuslt = await testController.Up(1);
+            var result = await testController.Up(1);
 
             // assert
-            var dataItems = reuslt.Value.ShouldBeAssignableTo<GeneralJsonOK>();
-            dataItems.Result.ShouldBe("OK");
+            var dataItems = result.Value.ShouldBeAssignableTo<GeneralJsonOK>();
+            dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
 
             (await _context.Orders.FirstAsync(x => x.Id == 1)).Order.ShouldBe(0);
         }
@@ -135,11 +135,11 @@ namespace Pact.Web.Vue.Grid.Tests
             _context.ChangeTracker.Clear();
 
             // act
-            var reuslt = await testController.Down(1);
+            var result = await testController.Down(1);
 
             // assert
-            var dataItems = reuslt.Value.ShouldBeAssignableTo<GeneralJsonOK>();
-            dataItems.Result.ShouldBe("OK");
+            var dataItems = result.Value.ShouldBeAssignableTo<GeneralJsonOK>();
+            dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
 
             (await _context.Orders.FirstAsync(x => x.Id == 1)).Order.ShouldBe(1);
             (await _context.Orders.FirstAsync(x => x.Id == 2)).Order.ShouldBe(0);
@@ -167,11 +167,11 @@ namespace Pact.Web.Vue.Grid.Tests
             _context.ChangeTracker.Clear();
 
             // act
-            var reuslt = await testController.Down(1);
+            var result = await testController.Down(1);
 
             // assert
-            var dataItems = reuslt.Value.ShouldBeAssignableTo<GeneralJsonOK>();
-            dataItems.Result.ShouldBe("OK");
+            var dataItems = result.Value.ShouldBeAssignableTo<GeneralJsonOK>();
+            dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
 
             testController.WasPostChangeActionCalled.ShouldBeTrue();
         }
@@ -192,11 +192,11 @@ namespace Pact.Web.Vue.Grid.Tests
             _context.ChangeTracker.Clear();
 
             // act
-            var reuslt = await testController.Down(1);
+            var result = await testController.Down(1);
 
             // assert
-            var dataItems = reuslt.Value.ShouldBeAssignableTo<GeneralJsonOK>();
-            dataItems.Result.ShouldBe("OK");
+            var dataItems = result.Value.ShouldBeAssignableTo<GeneralJsonOK>();
+            dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
 
             (await _context.Orders.FirstAsync(x => x.Id == 1)).Order.ShouldBe(0);
         }
@@ -217,11 +217,11 @@ namespace Pact.Web.Vue.Grid.Tests
             _context.ChangeTracker.Clear();
 
             // act
-            var reuslt = await testController.Add(new EditOutput { Name = "Cake B" });
+            var result = await testController.Add(new EditOutput { Name = "Cake B" });
 
             // assert
-            var dataItems = reuslt.Value.ShouldBeAssignableTo<GeneralJsonOK>();
-            dataItems.Result.ShouldBe("OK");
+            var dataItems = result.Value.ShouldBeAssignableTo<GeneralJsonOK>();
+            dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
 
             (await _context.Orders.FirstAsync(x => x.Id == 1)).Order.ShouldBe(0);
             (await _context.Orders.FirstAsync(x => x.Id == 2)).Order.ShouldBe(1);
@@ -255,11 +255,11 @@ namespace Pact.Web.Vue.Grid.Tests
             _context.ChangeTracker.Clear();
 
             // act
-            var reuslt = await testController.Remove(2);
+            var result = await testController.Remove(2);
 
             // assert
-            var dataItems = reuslt.Value.ShouldBeAssignableTo<GeneralJsonOK>();
-            dataItems.Result.ShouldBe("OK");
+            var dataItems = result.Value.ShouldBeAssignableTo<GeneralJsonOK>();
+            dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
 
             (await _context.Orders.FirstAsync(x => x.Id == 1)).Order.ShouldBe(0);
             (await _context.Orders.FirstAsync(x => x.Id == 3)).Order.ShouldBe(1);
