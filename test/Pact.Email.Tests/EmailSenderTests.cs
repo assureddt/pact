@@ -91,6 +91,7 @@ namespace Pact.Email.Tests
 
             var client = new Mock<ISmtpClient>();
             services.AddSingleton(client.Object);
+            var junkCreds = Guid.NewGuid().ToString();
             services.Configure<EmailSettings>(opts =>
             {
                 opts.FromAddress = "origin@test.com";
@@ -98,7 +99,7 @@ namespace Pact.Email.Tests
                 opts.SmtpPort = 20;
                 opts.SmtpUri = "127.0.0.1";
                 opts.Username = "test";
-                opts.Password = "password";
+                opts.Password = junkCreds;
                 opts.SmtpSslMode = SecureSocketOptions.StartTls;
             });
             services.AddScoped<IEmailSender, EmailSender>();
@@ -112,7 +113,7 @@ namespace Pact.Email.Tests
 
             // assert
             client.Verify(m => m.ConnectAsync("127.0.0.1", 20, SecureSocketOptions.StartTls, It.IsAny<CancellationToken>()));
-            client.Verify(m => m.AuthenticateAsync("test", "password", It.IsAny<CancellationToken>()));
+            client.Verify(m => m.AuthenticateAsync("test", junkCreds, It.IsAny<CancellationToken>()));
             client.Verify(m => m.SendAsync(It.Is<MimeMessage>(x => x.HtmlBody.Contains("welcome to my test")),
                 new CancellationToken(), null));
             client.Verify(m => m.DisconnectAsync(It.IsAny<bool>(), It.IsAny<CancellationToken>()));
