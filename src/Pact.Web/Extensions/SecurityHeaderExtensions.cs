@@ -143,7 +143,7 @@ namespace Pact.Web.Extensions
             return app.UseCspWithFeaturePolicy(false, csp =>
             {
                 csp.AddDefaultCsp(null);
-                csp.AddFrameSource().Self().FromGoogleRecaptcha();
+                csp.AddFrameSrc().Self().FromGoogleRecaptcha();
                 csp.AddImgSrc().Self().Data().FromGoogleAnalytics();
                 csp.AddConnectSrc().Self().FromGoogleAnalytics();
                 csp.AddFontSrc().Self().Data().FromGoogleFonts();
@@ -169,7 +169,7 @@ namespace Pact.Web.Extensions
             return app.UseCspWithFeaturePolicy(false, csp =>
             {
                 csp.AddDefaultCsp(null);
-                csp.AddFrameSource().None();
+                csp.AddFrameSrc().None();
                 csp.AddImgSrc().Self().Data();
                 csp.AddConnectSrc().Self();
                 csp.AddFontSrc().Self().Data();

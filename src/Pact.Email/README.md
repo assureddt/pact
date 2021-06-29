@@ -29,4 +29,8 @@ var attachment = new MimePart
 await _emailSender.SendEmailAsync("fred.smith@foo.bar; george.davis@foo.bar", "Hello World!", "Howdy", attachment);
 ```
 
+Now supports SMTP AUTH (for services where the mail server requires authentication e.g. M365).
+Simply provide an associated Username & Password in the EmailSettings configuration to enable that authentication step in the connection to the SMTP server.
+You will also likely need to be using the `SmtpSslMode = SecureSocketOptions.StartTls` option to support this.
+
 The API Wiki can be found [here](https://github.com/assureddt/pact/wiki/Pact-Email-Index)
