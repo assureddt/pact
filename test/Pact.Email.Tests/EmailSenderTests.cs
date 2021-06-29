@@ -82,5 +82,42 @@ namespace Pact.Email.Tests
 
             client.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task Smtp_Auth_OK()
+        {
+            // arrange
+            var services = new ServiceCollection();
+
+            var client = new Mock<ISmtpClient>();
+            services.AddSingleton(client.Object);
+            services.Configure<EmailSettings>(opts =>
+            {
+                opts.FromAddress = "origin@test.com";
+                opts.FromName = "Origin";
+                opts.SmtpPort = 20;
+                opts.SmtpUri = "127.0.0.1";
+                opts.Username = "test";
+                opts.Password = "password";
+                opts.SmtpSslMode = SecureSocketOptions.StartTls;
+            });
+            services.AddScoped<IEmailSender, EmailSender>();
+            services.AddSingleton<ILogger<EmailSender>>(new NullLogger<EmailSender>());
+            var provider = services.BuildServiceProvider();
+
+            var sender = provider.GetService<IEmailSender>();
+
+            // act
+            await sender.SendEmailAsync("test@test.com", "test", "welcome to my test");
+
+            // assert
+            client.Verify(m => m.ConnectAsync("127.0.0.1", 20, SecureSocketOptions.StartTls, It.IsAny<CancellationToken>()));
+            client.Verify(m => m.AuthenticateAsync("test", "password", It.IsAny<CancellationToken>()));
+            client.Verify(m => m.SendAsync(It.Is<MimeMessage>(x => x.HtmlBody.Contains("welcome to my test")),
+                new CancellationToken(), null));
+            client.Verify(m => m.DisconnectAsync(It.IsAny<bool>(), It.IsAny<CancellationToken>()));
+
+            client.VerifyNoOtherCalls();
+        }
     }
 }

@@ -12,5 +12,7 @@ namespace Pact.Email
         public SecureSocketOptions SmtpSslMode { get; set; } = SecureSocketOptions.Auto;
         public string OverrideToAddress { get; set; }
         public string[] OverrideWhitelist { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MailKit.Net.Smtp;
-using MailKit.Security;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -56,6 +55,14 @@ namespace Pact.Email
                     await client
                         .ConnectAsync(_settings.SmtpUri, _settings.SmtpPort, _settings.SmtpSslMode)
                         .ConfigureAwait(false);
+
+                    if (!string.IsNullOrWhiteSpace(_settings.Username) &&
+                        !string.IsNullOrWhiteSpace(_settings.Password))
+                    {
+                        await client
+                            .AuthenticateAsync(_settings.Username, _settings.Password)
+                            .ConfigureAwait(false);
+                    }
                 }
 
                 foreach (var recipient in recipients.GetEmailAddresses())
@@ -131,7 +138,6 @@ namespace Pact.Email
                     }
                 }
             }
-
             finally
             {
                 if (client != null)

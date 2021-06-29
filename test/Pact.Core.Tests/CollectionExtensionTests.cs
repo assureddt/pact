@@ -5,6 +5,7 @@ using Pact.Core.Extensions;
 using Pact.Core.Tests.Containers;
 using Shouldly;
 using Xunit;
+using CollectionExtensions = Pact.Core.Extensions.CollectionExtensions;
 
 namespace Pact.Core.Tests
 {
@@ -33,6 +34,98 @@ namespace Pact.Core.Tests
             items[2].Order.ShouldBe(3);
         }
 
+        [Fact]
+        public void UpdateOrder_Dec_Normalized_AllApplied()
+        {
+            // arrange
+            var items = new[]
+            {
+                new MyClass { Id = 2, Order = 1 },
+                new MyClass { Id = 1, Order = 8 },
+                new MyClass { Id = 3, Order = 1008 }
+            };
+
+            // act
+            items.UpdateOrderAndNormalize(1, CollectionExtensions.OrderShift.Decrement, x => x.Id, x => x.Order);
+
+            // assert
+            items[0].Id.ShouldBe(2);
+            items[0].Order.ShouldBe(2);
+            items[1].Id.ShouldBe(1);
+            items[1].Order.ShouldBe(1);
+            items[2].Id.ShouldBe(3);
+            items[2].Order.ShouldBe(3);
+        }
+
+        [Fact]
+        public void UpdateOrder_Dec_NotNormalized_AllApplied()
+        {
+            // arrange
+            var items = new[]
+            {
+                new MyClass { Id = 2, Order = 1 },
+                new MyClass { Id = 1, Order = 8 },
+                new MyClass { Id = 3, Order = 1008 }
+            };
+
+            // act
+            items.UpdateOrderAndNormalize(1, CollectionExtensions.OrderShift.Decrement, x => x.Id, x => x.Order, false);
+
+            // assert
+            items[0].Id.ShouldBe(2);
+            items[0].Order.ShouldBe(8);
+            items[1].Id.ShouldBe(1);
+            items[1].Order.ShouldBe(1);
+            items[2].Id.ShouldBe(3);
+            items[2].Order.ShouldBe(1008);
+        }
+
+
+        [Fact]
+        public void UpdateOrder_Inc_Normalized_AllApplied()
+        {
+            // arrange
+            var items = new[]
+            {
+                new MyClass { Id = 2, Order = 1 },
+                new MyClass { Id = 1, Order = 8 },
+                new MyClass { Id = 3, Order = 1008 }
+            };
+
+            // act
+            items.UpdateOrderAndNormalize(1, CollectionExtensions.OrderShift.Increment, x => x.Id, x => x.Order);
+
+            // assert
+            items[0].Id.ShouldBe(2);
+            items[0].Order.ShouldBe(1);
+            items[1].Id.ShouldBe(1);
+            items[1].Order.ShouldBe(3);
+            items[2].Id.ShouldBe(3);
+            items[2].Order.ShouldBe(2);
+        }
+
+        [Fact]
+        public void UpdateOrder_Inc_NotNormalized_AllApplied()
+        {
+            // arrange
+            var items = new[]
+            {
+                new MyClass { Id = 2, Order = 1 },
+                new MyClass { Id = 1, Order = 8 },
+                new MyClass { Id = 3, Order = 1008 }
+            };
+
+            // act
+            items.UpdateOrderAndNormalize(1, CollectionExtensions.OrderShift.Increment, x => x.Id, x => x.Order, false);
+
+            // assert
+            items[0].Id.ShouldBe(2);
+            items[0].Order.ShouldBe(1);
+            items[1].Id.ShouldBe(1);
+            items[1].Order.ShouldBe(1008);
+            items[2].Id.ShouldBe(3);
+            items[2].Order.ShouldBe(8);
+        }
         private class MyClass
         {
             public int Id { get; set; }
