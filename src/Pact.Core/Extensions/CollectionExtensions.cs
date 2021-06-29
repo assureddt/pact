@@ -29,6 +29,64 @@ namespace Pact.Core.Extensions
         }
 
         /// <summary>
+        /// Takes a source list (presuming distinct and in the existing order) and shifts the item matching an identifier either up or down in the order
+        /// then (optionally) normalizes all order values
+        /// </summary>
+        /// <typeparam name="T">The type of the list items</typeparam>
+        /// <typeparam name="TIdentifier">The type of the identifier</typeparam>
+        /// <param name="items">The source list to adapt</param>
+        /// <param name="id">The identifier value we're shifting</param>
+        /// <param name="shift">Determines direction of shift (decrement/increment) </param>
+        /// <param name="idSelector">An expression to determine the Identifier property</param>
+        /// <param name="orderSelector">An expression to determine the Order property</param>
+        /// <param name="normalize">An expression to determine the Order property</param>
+        public static void UpdateOrderAndNormalize<T, TIdentifier>(this IList<T> items,
+            TIdentifier id,
+            OrderShift shift, 
+            Expression<Func<T, TIdentifier>> idSelector,
+            Expression<Func<T, int>> orderSelector,
+            bool normalize = true)
+            where TIdentifier : struct
+        {
+            for (var i = 0; i < items.Count; i++)
+            {
+                if (!items[i].GetPropertyValue(idSelector).Equals(id)) continue;
+
+                if (shift == OrderShift.Decrement)
+                {
+                    if (i >= 1)
+                    {
+                        var newOrder = items[i - 1].GetPropertyValue(orderSelector);
+                        items[i - 1].SetPropertyValue(orderSelector, items[i].GetPropertyValue(orderSelector));
+                        items[i].SetPropertyValue(orderSelector, newOrder);
+                    }
+                    else
+                        items[i].SetPropertyValue(orderSelector, 0);
+                }
+                else
+                {
+                    if (i < items.Count - 1)
+                    {
+                        var newOrder = items[i + 1].GetPropertyValue(orderSelector);
+                        items[i + 1].SetPropertyValue(orderSelector, items[i].GetPropertyValue(orderSelector));
+                        items[i].SetPropertyValue(orderSelector, newOrder);
+                    }
+                    else
+                        items[i].SetPropertyValue(orderSelector, items.Max(x => x.GetPropertyValue(orderSelector)) + 1);
+                }
+            }
+
+            if (!normalize) return;
+
+            items.NormalizeOrder(orderSelector);
+        }
+        public enum OrderShift
+        {
+            Decrement,
+            Increment
+        }
+
+        /// <summary>
         /// Formats an unordered HTML list for the designated property in a collection
         /// </summary>
         /// <typeparam name="T"></typeparam>
