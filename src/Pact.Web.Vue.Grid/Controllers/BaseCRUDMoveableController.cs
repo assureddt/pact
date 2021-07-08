@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿#nullable enable
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Pact.Web.Vue.Grid.Interfaces;
@@ -54,8 +55,8 @@ namespace Pact.Web.Vue.Grid.Controllers
             Context.Attach(original);
             Context.Attach(swapped);
 
-            original.Order = original.Order - 1;
-            swapped.Order = swapped.Order + 1;
+            original.Order -= 1;
+            swapped.Order += 1;
 
             await Context.SaveChangesAsync();
 
@@ -80,8 +81,8 @@ namespace Pact.Web.Vue.Grid.Controllers
             Context.Attach(original);
             Context.Attach(swapped);
 
-            original.Order = original.Order + 1;
-            swapped.Order = swapped.Order - 1;
+            original.Order += 1;
+            swapped.Order -= 1;
 
             await Context.SaveChangesAsync();
 
