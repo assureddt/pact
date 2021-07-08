@@ -215,8 +215,8 @@ namespace Pact.Core.Tests
 
         private class MyHierarchy
         {
-            public int Id { get; set; }
-            public MyHierarchy [] Children { get; set; }
+            public int Id { get; init; }
+            public MyHierarchy [] Children { get; init; }
         }
 
         [Fact]
@@ -345,9 +345,11 @@ namespace Pact.Core.Tests
         [Fact]
         public void SoftDelete_All_Gone()
         {
-            var items = new List<Basic>();
-            items.Add(new Basic { Id = 1, Name = "Cat", SoftDelete = true });
-            items.Add(new Basic { Id = 2, Name = "Dog", SoftDelete = true });
+            var items = new List<Basic>
+            {
+                new() { Id = 1, Name = "Cat", SoftDelete = true },
+                new() { Id = 2, Name = "Dog", SoftDelete = true }
+            };
 
             var result = items.SoftDelete();
 
@@ -357,9 +359,11 @@ namespace Pact.Core.Tests
         [Fact]
         public void SoftDelete_Correct_Removed()
         {
-            var items = new List<Basic>();
-            items.Add(new Basic { Id = 1, Name = "Cat", SoftDelete = true });
-            items.Add(new Basic { Id = 2, Name = "Dog" });
+            var items = new List<Basic>
+            {
+                new() { Id = 1, Name = "Cat", SoftDelete = true },
+                new() { Id = 2, Name = "Dog" }
+            };
 
             var result = items.SoftDelete();
 
@@ -370,9 +374,11 @@ namespace Pact.Core.Tests
         [Fact]
         public void SoftDelete_None_Removed()
         {
-            var items = new List<Basic>();
-            items.Add(new Basic { Id = 1, Name = "Cat" });
-            items.Add(new Basic { Id = 2, Name = "Dog" });
+            var items = new List<Basic>
+            {
+                new() { Id = 1, Name = "Cat" },
+                new() { Id = 2, Name = "Dog" }
+            };
 
             var result = items.SoftDelete();
 
@@ -386,12 +392,14 @@ namespace Pact.Core.Tests
         [InlineData("   og   ")]
         public void TextFilter_No_Attributes(string filter)
         {
-            var items = new List<Basic>();
-            items.Add(new Basic { Id = 1, Name = "Cat" });
-            items.Add(new Basic { Id = 2, Name = "Dog" });
-            items.Add(new Basic { Id = 3, Name = "Apple" });
-            items.Add(new Basic { Id = 4, Name = "Fish" });
-            items.Add(new Basic { Id = 5, Name = "Cake" });
+            var items = new List<Basic>
+            {
+                new() { Id = 1, Name = "Cat" },
+                new() { Id = 2, Name = "Dog" },
+                new() { Id = 3, Name = "Apple" },
+                new() { Id = 4, Name = "Fish" },
+                new() { Id = 5, Name = "Cake" }
+            };
 
             var result = items.TextFilter(filter);
 
@@ -402,12 +410,14 @@ namespace Pact.Core.Tests
         [Fact]
         public void TextFilter_Ignore_Attribute()
         {
-            var items = new List<BasicIgnore>();
-            items.Add(new BasicIgnore { Id = 1, Name = "Cat", Ignore = "Dog" });
-            items.Add(new BasicIgnore { Id = 2, Name = "Dog", Ignore = "Fish" });
-            items.Add(new BasicIgnore { Id = 3, Name = "Apple", Ignore = "Fish" });
-            items.Add(new BasicIgnore { Id = 4, Name = "Fish", Ignore = "Dog" });
-            items.Add(new BasicIgnore { Id = 5, Name = "Cake", Ignore = "Fish" });
+            var items = new List<BasicIgnore>
+            {
+                new() { Id = 1, Name = "Cat", Ignore = "Dog" },
+                new() { Id = 2, Name = "Dog", Ignore = "Fish" },
+                new() { Id = 3, Name = "Apple", Ignore = "Fish" },
+                new() { Id = 4, Name = "Fish", Ignore = "Dog" },
+                new() { Id = 5, Name = "Cake", Ignore = "Fish" }
+            };
 
             var result = items.TextFilter("og");
 
@@ -418,12 +428,14 @@ namespace Pact.Core.Tests
         [Fact]
         public void TextFilter_Filter_Attribute()
         {
-            var items = new List<BasicFilter>();
-            items.Add(new BasicFilter { Id = 1, Name = "Cat", Filter = "Dog" });
-            items.Add(new BasicFilter { Id = 2, Name = "Dog", Filter = "Fish" });
-            items.Add(new BasicFilter { Id = 3, Name = "Apple", Filter = "Fish" });
-            items.Add(new BasicFilter { Id = 4, Name = "Fish", Filter = "Dog" });
-            items.Add(new BasicFilter { Id = 5, Name = "Cake", Filter = "Fish" });
+            var items = new List<BasicFilter>
+            {
+                new() { Id = 1, Name = "Cat", Filter = "Dog" },
+                new() { Id = 2, Name = "Dog", Filter = "Fish" },
+                new() { Id = 3, Name = "Apple", Filter = "Fish" },
+                new() { Id = 4, Name = "Fish", Filter = "Dog" },
+                new() { Id = 5, Name = "Cake", Filter = "Fish" }
+            };
 
             var result = items.TextFilter("og");
 
@@ -434,9 +446,11 @@ namespace Pact.Core.Tests
         [Fact]
         public void SoftDelete_Queryable_All_Gone()
         {
-            var items = new List<Basic>();
-            items.Add(new Basic { Id = 1, Name = "Cat", SoftDelete = true });
-            items.Add(new Basic { Id = 2, Name = "Dog", SoftDelete = true });
+            var items = new List<Basic>
+            {
+                new() { Id = 1, Name = "Cat", SoftDelete = true },
+                new() { Id = 2, Name = "Dog", SoftDelete = true }
+            };
 
             var result = items.AsQueryable().SoftDelete();
 
@@ -446,9 +460,11 @@ namespace Pact.Core.Tests
         [Fact]
         public void SoftDelete_Queryable_Correct_Removed()
         {
-            var items = new List<Basic>();
-            items.Add(new Basic { Id = 1, Name = "Cat", SoftDelete = true });
-            items.Add(new Basic { Id = 2, Name = "Dog" });
+            var items = new List<Basic>
+            {
+                new() { Id = 1, Name = "Cat", SoftDelete = true },
+                new() { Id = 2, Name = "Dog" }
+            };
 
             var result = items.AsQueryable().SoftDelete();
 
@@ -459,9 +475,11 @@ namespace Pact.Core.Tests
         [Fact]
         public void SoftDelete_Queryable_None_Removed()
         {
-            var items = new List<Basic>();
-            items.Add(new Basic { Id = 1, Name = "Cat" });
-            items.Add(new Basic { Id = 2, Name = "Dog" });
+            var items = new List<Basic>
+            {
+                new() { Id = 1, Name = "Cat" },
+                new() { Id = 2, Name = "Dog" }
+            };
 
             var result = items.AsQueryable().SoftDelete();
 

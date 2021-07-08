@@ -33,7 +33,7 @@ namespace Pact.Web.TempDataService
         ///<inheritdoc/>
         public T Get<T>(string key) where T : class
         {
-            if (!GetTempData().TryGetValue(key, out var value) || !(value is string json))
+            if (!GetTempData().TryGetValue(key, out var value) || value is not string json)
                 return default;
 
             GetTempData().Remove(key);

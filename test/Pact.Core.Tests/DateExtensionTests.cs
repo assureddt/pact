@@ -7,10 +7,10 @@ namespace Pact.Core.Tests
 {
     public class DateExtensionTests
     {
-        private readonly DateTime _fridayMorning = new DateTime(2020, 10, 16, 08, 15, 30);
-        private readonly DateTime _lastWednesdayEvening = new DateTime(2020, 10, 14, 20, 15, 30);
-        private readonly DateTime _nextWednesdayEvening = new DateTime(2020, 10, 21, 20, 15, 30);
-        private readonly DateTime _pretendHoliday = new DateTime(2020, 10, 19);
+        private readonly DateTime _fridayMorning = new(2020, 10, 16, 08, 15, 30);
+        private readonly DateTime _lastWednesdayEvening = new(2020, 10, 14, 20, 15, 30);
+        private readonly DateTime _nextWednesdayEvening = new(2020, 10, 21, 20, 15, 30);
+        private readonly DateTime _pretendHoliday = new(2020, 10, 19);
 
         [Fact]
         public void BusinessDays_Basic_OK()

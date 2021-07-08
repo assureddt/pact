@@ -27,11 +27,11 @@ namespace Pact.EntityFrameworkCore.Extensions
             search = search.Trim().ToLower();
 
             //Look for specifically set properties to filter on
-            var propertyInfos = typeof(T).GetProperties().Where(w => w.PropertyType == typeof(string) && w.CustomAttributes.Count(c => c.AttributeType == typeof(FilterAttribute)) > 0 && w.CustomAttributes.Count(c => c.AttributeType == typeof(NotMappedAttribute)) < 1).ToList();
+            var propertyInfos = typeof(T).GetProperties().Where(w => w.PropertyType == typeof(string) && w.CustomAttributes.Any(c => c.AttributeType == typeof(FilterAttribute)) && w.CustomAttributes.All(c => c.AttributeType != typeof(NotMappedAttribute))).ToList();
 
             //If none found use all strings which are not filtered out.
-            if (propertyInfos == null || propertyInfos.Count < 1)
-                propertyInfos = typeof(T).GetProperties().Where(w => w.PropertyType == typeof(string) && w.CustomAttributes.Count(c => c.AttributeType == typeof(NotMappedAttribute) || c.AttributeType == typeof(IgnoreFilterAttribute)) < 1).ToList();
+            if (propertyInfos.Count < 1)
+                propertyInfos = typeof(T).GetProperties().Where(w => w.PropertyType == typeof(string) && !w.CustomAttributes.Any(c => c.AttributeType == typeof(NotMappedAttribute) || c.AttributeType == typeof(IgnoreFilterAttribute))).ToList();
 
             var item = Expression.Parameter(typeof(T), "x");
             var searchConstant = Expression.Constant("%" + search + "%");

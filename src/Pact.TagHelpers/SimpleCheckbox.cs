@@ -23,7 +23,7 @@ namespace Pact.TagHelpers
             if (IsDisabled)
                 output.Attributes.Add("disabled", "disabled");
 
-            if(For?.Model is bool && (bool)For.Model)
+            if(For?.Model is bool model && model)
                 output.Attributes.Add("checked", "checked");
         }
     }

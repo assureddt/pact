@@ -1,7 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -18,7 +18,7 @@ namespace Pact.Localization.Tests
         [SkippableFact]
         public async Task Minimal_Defaults_enGB()
         {
-            Skip.If(RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
+            Skip.IfNot(OperatingSystem.IsWindows(), "Windows Only");
 
             // arrange
             var resolver = new Mock<ISupportedCulturesResolver>();
@@ -48,16 +48,16 @@ namespace Pact.Localization.Tests
         [SkippableFact]
         public async Task Extended_Match_frFR()
         {
-            Skip.If(RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
+            Skip.IfNot(OperatingSystem.IsWindows(), "Windows Only");
 
             // arrange
             var resolver = new Mock<ISupportedCulturesResolver>();
             resolver.Setup(m => m.GetSupportedCulturesAsync(It.IsAny<HttpContext>()))
                 .ReturnsAsync(new List<CultureInfo>
                 {
-                    new CultureInfo("en-GB"),
-                    new CultureInfo("fr-FR"),
-                    new CultureInfo("de-DE")
+                    new("en-GB"),
+                    new("fr-FR"),
+                    new("de-DE")
                 });
 
             var options = new OptionsWrapper<RequestLocalizationOptions>(new RequestLocalizationOptions());
@@ -87,16 +87,16 @@ namespace Pact.Localization.Tests
         [SkippableFact]
         public async Task Extended_NoMatch_enGB()
         {
-            Skip.If(RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
+            Skip.IfNot(OperatingSystem.IsWindows(), "Windows Only");
 
             // arrange
             var resolver = new Mock<ISupportedCulturesResolver>();
             resolver.Setup(m => m.GetSupportedCulturesAsync(It.IsAny<HttpContext>()))
                 .ReturnsAsync(new List<CultureInfo>
                 {
-                    new CultureInfo("en-GB"),
-                    new CultureInfo("fr-FR"),
-                    new CultureInfo("de-DE")
+                    new("en-GB"),
+                    new("fr-FR"),
+                    new("de-DE")
                 });
 
             var options = new OptionsWrapper<RequestLocalizationOptions>(new RequestLocalizationOptions());
@@ -126,17 +126,17 @@ namespace Pact.Localization.Tests
         [SkippableFact]
         public async Task Extended_Partial_frCA_NoFallback_enGB()
         {
-            Skip.If(RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
+            Skip.IfNot(OperatingSystem.IsWindows(), "Windows Only");
 
             // arrange
             var resolver = new Mock<ISupportedCulturesResolver>();
             resolver.Setup(m => m.GetSupportedCulturesAsync(It.IsAny<HttpContext>()))
                 .ReturnsAsync(new List<CultureInfo>
                 {
-                    new CultureInfo("en-GB"),
-                    new CultureInfo("fr"),
-                    new CultureInfo("fr-FR"),
-                    new CultureInfo("de-DE")
+                    new("en-GB"),
+                    new("fr"),
+                    new("fr-FR"),
+                    new("de-DE")
                 });
 
             var options = new OptionsWrapper<RequestLocalizationOptions>(new RequestLocalizationOptions
@@ -170,17 +170,17 @@ namespace Pact.Localization.Tests
         [SkippableFact]
         public async Task Extended_Partial_frCA_WithFallback_frFR()
         {
-            Skip.If(RuntimeInformation.IsOSPlatform(OSPlatform.Linux));
+            Skip.IfNot(OperatingSystem.IsWindows(), "Windows Only");
 
             // arrange
             var resolver = new Mock<ISupportedCulturesResolver>();
             resolver.Setup(m => m.GetSupportedCulturesAsync(It.IsAny<HttpContext>()))
                 .ReturnsAsync(new List<CultureInfo>
                 {
-                    new CultureInfo("en-GB"),
-                    new CultureInfo("fr"),
-                    new CultureInfo("fr-FR"),
-                    new CultureInfo("de-DE")
+                    new("en-GB"),
+                    new("fr"),
+                    new("fr-FR"),
+                    new("de-DE")
                 });
 
             var options = new OptionsWrapper<RequestLocalizationOptions>(new RequestLocalizationOptions());

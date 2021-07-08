@@ -58,16 +58,14 @@ namespace Pact.RabbitMQ
                 {
                     try
                     {
-                        using (var scope = _services.CreateScope())
-                        {
-                            var message = Encoding.UTF8.GetString(ea.Body.ToArray());
+                        using var scope = _services.CreateScope();
+                        var message = Encoding.UTF8.GetString(ea.Body.ToArray());
 
-                            var item = message.FromJson<T>();
+                        var item = message.FromJson<T>();
 
-                            await ProcessMessage(scope.ServiceProvider, item);
+                        await ProcessMessage(scope.ServiceProvider, item);
 
-                            client.Channel.BasicAck(ea.DeliveryTag, false);
-                        }
+                        client.Channel.BasicAck(ea.DeliveryTag, false);
                     }
                     catch (Exception exc)
                     {

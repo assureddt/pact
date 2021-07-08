@@ -223,7 +223,7 @@ namespace Pact.Core.Extensions
             return source.Except(second, GenericEqualityComparer<T>.Create(projection));
         }
 
-        private static readonly Random Rnd = new Random();  
+        private static readonly Random Rnd = new();  
 
         /// <summary>
         /// Random re-ordering of a collection
@@ -236,9 +236,7 @@ namespace Pact.Core.Extensions
             while (n > 1) {  
                 n--;  
                 var k = Rnd.Next(n + 1);  
-                var value = list[k];  
-                list[k] = list[n];  
-                list[n] = value;  
+                (list[k], list[n]) = (list[n], list[k]);
             }  
         }
 

@@ -8,19 +8,11 @@ using Pact.Core.Extensions;
 using Pact.Web.Extensions;
 using Shouldly;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Pact.Web.Tests
 {
     public class StringExtensionTests
     {
-        private readonly ITestOutputHelper _testOutputHelper;
-
-        public StringExtensionTests(ITestOutputHelper testOutputHelper)
-        {
-            _testOutputHelper = testOutputHelper;
-        }
-
         [Fact]
         public void Attachment_OK()
         {

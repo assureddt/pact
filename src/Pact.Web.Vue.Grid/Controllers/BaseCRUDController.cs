@@ -134,12 +134,10 @@ namespace Pact.Web.Vue.Grid.Controllers
         {
             var item = await Context.Set<TDatabaseDTO>().FirstAsync(x => x.Id == id);
 
-            if(item is ISoftDelete)
+            if(item is ISoftDelete softDeleteItem)
             {
-                var softDeleteItem = (ISoftDelete)item;
                 Context.Attach(softDeleteItem);
                 softDeleteItem.SoftDelete = true;
-                
             }
             else
                 Context.Set<TDatabaseDTO>().Remove(item);
