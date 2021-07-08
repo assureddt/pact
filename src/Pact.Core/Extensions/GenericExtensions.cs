@@ -55,7 +55,7 @@ namespace Pact.Core.Extensions
         /// <param name="value"></param>
         public static void SetPropertyValue<T, TValue>(this T target, Expression<Func<T, TValue>> propSelector, TValue value)
         {
-            if (!(propSelector.Body is MemberExpression memberSelectorExpression)) return;
+            if (propSelector.Body is not MemberExpression memberSelectorExpression) return;
 
             var property = memberSelectorExpression.Member as PropertyInfo;
             if (property != null)
@@ -84,7 +84,7 @@ namespace Pact.Core.Extensions
         /// <returns></returns>
         public static TValue GetPropertyValue<T, TValue>(this T target, Expression<Func<T, TValue>> propSelector)
         {
-            if (!(propSelector.Body is MemberExpression memberSelectorExpression)) return default;
+            if (propSelector.Body is not MemberExpression memberSelectorExpression) return default;
 
             var property = memberSelectorExpression.Member as PropertyInfo;
             if (property != null)

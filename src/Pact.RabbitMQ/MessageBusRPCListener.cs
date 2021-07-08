@@ -54,26 +54,24 @@ namespace Pact.RabbitMQ
                 {
                     try
                     {
-                        using (var scope = _services.CreateScope())
-                        {
-                            var messageJson = Encoding.UTF8.GetString(ea.Body.ToArray());
+                        using var scope = _services.CreateScope();
+                        var messageJson = Encoding.UTF8.GetString(ea.Body.ToArray());
 
-                            var message = messageJson.FromJson<T1>();
+                        var message = messageJson.FromJson<T1>();
 
-                            var response = await ProcessMessage(scope.ServiceProvider, message);
+                        var response = await ProcessMessage(scope.ServiceProvider, message);
 
-                            var responseJson = response.ToJson();
+                        var responseJson = response.ToJson();
 
-                            var responseData = Encoding.UTF8.GetBytes(responseJson);
+                        var responseData = Encoding.UTF8.GetBytes(responseJson);
 
-                            //Send result
-                            var replyProps = client.Channel.CreateBasicProperties();
-                            replyProps.CorrelationId = ea.BasicProperties.CorrelationId;
+                        //Send result
+                        var replyProps = client.Channel.CreateBasicProperties();
+                        replyProps.CorrelationId = ea.BasicProperties.CorrelationId;
 
-                            client.Channel.BasicPublish("", ea.BasicProperties.ReplyTo, replyProps, responseData);
+                        client.Channel.BasicPublish("", ea.BasicProperties.ReplyTo, replyProps, responseData);
 
-                            client.Channel.BasicAck(ea.DeliveryTag, false);
-                        }
+                        client.Channel.BasicAck(ea.DeliveryTag, false);
                     }
                     catch (Exception exc)
                     {

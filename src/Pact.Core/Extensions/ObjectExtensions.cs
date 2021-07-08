@@ -53,16 +53,14 @@ namespace Pact.Core.Extensions
                 throw new ArgumentException("The type must be serializable.", nameof(source));
 
             // Don't serialize a null object, simply return the default for that object
-            if (ReferenceEquals(source, null))
-                return default(T);
+            if (source is null)
+                return default;
 
             var formatter = new BinaryFormatter();
-            using (var stream = new MemoryStream())
-            {
-                formatter.Serialize(stream, source);
-                stream.Seek(0, SeekOrigin.Begin);
-                return (T)formatter.Deserialize(stream);
-            }
+            using var stream = new MemoryStream();
+            formatter.Serialize(stream, source);
+            stream.Seek(0, SeekOrigin.Begin);
+            return (T)formatter.Deserialize(stream);
         }
     }
 }

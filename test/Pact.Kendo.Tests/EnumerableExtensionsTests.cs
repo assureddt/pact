@@ -11,9 +11,11 @@ namespace Pact.Kendo.Tests
         [Fact]
         public void Kendo_CoverAll_No_Sort()
         {
-            var items = new List<Basic>();
-            items.Add(new Basic { Id = 1, Name = "Cat" });
-            items.Add(new Basic { Id = 2, Name = "Dog" });
+            var items = new List<Basic>
+            {
+                new() { Id = 1, Name = "Cat" },
+                new() { Id = 2, Name = "Dog" }
+            };
 
             var request = new KendoDataRequest
             {
@@ -30,9 +32,11 @@ namespace Pact.Kendo.Tests
         [Fact]
         public void Kendo_CoverAll_Sort()
         {
-            var items = new List<Basic>();
-            items.Add(new Basic { Id = 1, Name = "Cat" });
-            items.Add(new Basic { Id = 2, Name = "Dog" });
+            var items = new List<Basic>
+            {
+                new() { Id = 1, Name = "Cat" },
+                new() { Id = 2, Name = "Dog" }
+            };
 
             var request = new KendoDataRequest
             {
@@ -42,7 +46,7 @@ namespace Pact.Kendo.Tests
                 Take = 5,
                 Sort = new List<KendoDataRequestSort>
                 {
-                    new KendoDataRequestSort {Dir = "ASC", Field = "Name"}
+                    new() {Dir = "ASC", Field = "Name"}
                 }
             };
 
@@ -53,10 +57,12 @@ namespace Pact.Kendo.Tests
         [Fact]
         public void Kendo_Multi_Sort()
         {
-            var items = new List<Basic>();
-            items.Add(new Basic { Id = 1, Name = "Cat", Order = 0 });
-            items.Add(new Basic { Id = 2, Name = "Dog", Order = 1 });
-            items.Add(new Basic { Id = 3, Name = "Aardvark", Order = 1 });
+            var items = new List<Basic>
+            {
+                new() { Id = 1, Name = "Cat", Order = 0 },
+                new() { Id = 2, Name = "Dog", Order = 1 },
+                new() { Id = 3, Name = "Aardvark", Order = 1 }
+            };
 
             var request = new KendoDataRequest
             {
@@ -66,8 +72,8 @@ namespace Pact.Kendo.Tests
                 Take = 5,
                 Sort = new List<KendoDataRequestSort>
                 {
-                    new KendoDataRequestSort {Dir = "ASC", Field = "Order"},
-                    new KendoDataRequestSort {Dir = "ASC", Field = "Name"}
+                    new() {Dir = "ASC", Field = "Order"},
+                    new() {Dir = "ASC", Field = "Name"}
                 }
             };
 
@@ -80,9 +86,11 @@ namespace Pact.Kendo.Tests
         [Fact]
         public void KendoResult_Standard()
         {
-            var items = new List<Basic>();
-            items.Add(new Basic { Id = 1, Name = "Cat" });
-            items.Add(new Basic { Id = 2, Name = "Dog" });
+            var items = new List<Basic>
+            {
+                new() { Id = 1, Name = "Cat" },
+                new() { Id = 2, Name = "Dog" }
+            };
 
             var request = new KendoDataRequest
             {
@@ -106,12 +114,14 @@ namespace Pact.Kendo.Tests
         [InlineData("DESC")]
         public void KendoResult_Skip_Take(string direction)
         {
-            var items = new List<Basic>();
-            items.Add(new Basic { Id = 1, Name = "Cat" });
-            items.Add(new Basic { Id = 2, Name = "Dog" });
-            items.Add(new Basic { Id = 3, Name = "Apple" });
-            items.Add(new Basic { Id = 4, Name = "Fish" });
-            items.Add(new Basic { Id = 5, Name = "Cake" });
+            var items = new List<Basic>
+            {
+                new() { Id = 1, Name = "Cat" },
+                new() { Id = 2, Name = "Dog" },
+                new() { Id = 3, Name = "Apple" },
+                new() { Id = 4, Name = "Fish" },
+                new() { Id = 5, Name = "Cake" }
+            };
 
             var request = new KendoDataRequest
             {
@@ -121,7 +131,7 @@ namespace Pact.Kendo.Tests
                 Take = 1,
                 Sort = new List<KendoDataRequestSort>
                 {
-                    new KendoDataRequestSort {Dir = direction, Field = "Name"}
+                    new() {Dir = direction, Field = "Name"}
                 }
             };
 

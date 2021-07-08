@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32.SafeHandles;
 
@@ -9,9 +10,6 @@ namespace Pact.Impersonation
 {
     /// <summary>
     /// Windows-specific impersonation implementation
-    /// Jonny: Was going to try and make this so we can support async.
-    /// https://github.com/dotnet/runtime/issues/24009
-    /// This can't be done until the above ticket has been implement in .net 5.0 (or whatever its going to be called)
     /// </summary>
     public class WindowsImpersonator : IImpersonator
     {
@@ -27,9 +25,44 @@ namespace Pact.Impersonation
             int dwLogonType, int dwLogonProvider, out SafeAccessTokenHandle phToken);
         
         /// <inheritdoc />
-        public void ExecuteAction(ImpersonationSettings settings, Action action)
+        public void Execute(ImpersonationSettings settings, Action action)
         {
-            _logger.LogInformation("Setting up for impersonation");
+            var safeAccessTokenHandle = Logon(settings);
+
+            WindowsIdentity.RunImpersonated(safeAccessTokenHandle, action);
+
+            _logger.LogDebug("After impersonation: " + WindowsIdentity.GetCurrent().Name);
+        }
+
+        /// <inheritdoc />
+        public T Execute<T>(ImpersonationSettings settings, Func<T> func)
+        {
+            var safeAccessTokenHandle = Logon(settings);
+
+            return WindowsIdentity.RunImpersonated(safeAccessTokenHandle, func);
+        }
+
+        /// <inheritdoc />
+        public async Task ExecuteAsync(ImpersonationSettings settings, Func<Task> func)
+        {
+            var safeAccessTokenHandle = Logon(settings);
+
+            await WindowsIdentity.RunImpersonatedAsync(safeAccessTokenHandle, func);
+
+            _logger.LogDebug("After impersonation: " + WindowsIdentity.GetCurrent().Name);
+        }
+
+        /// <inheritdoc />
+        public async Task<T> ExecuteAsync<T>(ImpersonationSettings settings, Func<Task<T>> func)
+        {
+            var safeAccessTokenHandle = Logon(settings);
+
+            return await WindowsIdentity.RunImpersonatedAsync(safeAccessTokenHandle, func);
+        }
+
+        private SafeAccessTokenHandle Logon(ImpersonationSettings settings)
+        {
+            _logger.LogTrace("Setting up for impersonation");
 
             // Get the user token for the specified user, domain, and password using the 
             // unmanaged LogonUser method. 
@@ -46,19 +79,14 @@ namespace Pact.Impersonation
             if (!returnValue)
             {
                 var ret = Marshal.GetLastWin32Error();
-                Console.WriteLine("LogonUser failed with error code : {0}", ret);
-                throw new Win32Exception(ret);
+                var exc = new Win32Exception(ret);
+                _logger.LogError(exc, "LogonUser failed with error code: {Code}", ret);
+                throw exc;
             }
 
             // Check the identity.
-            _logger.LogInformation("Before impersonation: " + WindowsIdentity.GetCurrent().Name);
-
-            // Note: if you want to run as unimpersonated, pass
-            //       'SafeAccessTokenHandle.InvalidHandle' instead of variable 'safeAccessTokenHandle'
-            WindowsIdentity.RunImpersonated(safeAccessTokenHandle, action);
-
-            // Check the identity again.
-            _logger.LogInformation("After impersonation: " + WindowsIdentity.GetCurrent().Name);
+            _logger.LogDebug("Before impersonation: " + WindowsIdentity.GetCurrent().Name);
+            return safeAccessTokenHandle;
         }
     }
 }

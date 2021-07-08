@@ -158,7 +158,7 @@ namespace Pact.Localization
                 // the CultureInfo ctor
                 if (cultureName == null) continue;
 
-                var cultureInfo = GetCultureInfo(cultureName, supportedCultures, fallbackToParentCultures, currentDepth: 0);
+                var cultureInfo = GetCultureInfo(cultureName, supportedCultures, fallbackToParentCultures, 0);
                 if (cultureInfo != null)
                 {
                     return cultureInfo;

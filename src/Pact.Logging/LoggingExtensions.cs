@@ -102,7 +102,7 @@ namespace Pact.Logging
         {
             var endpoint = ctx.GetEndpoint();
 
-            if (!(endpoint is RouteEndpoint re)) return false;
+            if (endpoint is not RouteEndpoint re) return false;
 
             return string.Equals(
                 re.RoutePattern?.RawText,
@@ -245,7 +245,7 @@ namespace Pact.Logging
         /// <param name="obj"></param>
         /// <param name="memberName"></param>
         /// <returns></returns>
-        public static string MethodName(this object obj, [CallerMemberName] string memberName = "") => memberName;
+        public static string MethodName(this object _, [CallerMemberName] string memberName = "") => memberName;
 
         /// <summary>
         /// Helper to get the fully qualified calling method name

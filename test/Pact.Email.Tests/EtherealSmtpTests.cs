@@ -6,12 +6,33 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using Xunit;
 
 namespace Pact.Email.Tests
 {
     public class EtherealSmtpTests
     {
+        private readonly EmailSettings _settings;
+
+        public EtherealSmtpTests()
+        {
+            var config = new ConfigurationBuilder()
+                .AddUserSecrets<EtherealSmtpTests>()
+                .Build();
+
+            _settings = new EmailSettings
+            {
+                FromAddress = config["EtherealUsername"],
+                FromName = "Pact.Email.Tests",
+                SmtpPort = 587,
+                SmtpUri = "smtp.ethereal.email",
+                Username = config["EtherealUsername"],
+                Password = config["EtherealPassword"],
+                SmtpSslMode = SecureSocketOptions.StartTls
+            };
+        }
+
         /// <summary>
         /// Note: this will be skipped on CI, but will run locally. You will need to provide valid credentials in User Secrets
         /// via: https://ethereal.email/ in order for the test to pass
@@ -20,27 +41,17 @@ namespace Pact.Email.Tests
         [SkippableFact]
         public async Task Smtp_Auth_OK()
         {
-            Skip.If(IsCI);
+            Skip.If(IsCI, "Not tested on CI");
+            Skip.If(string.IsNullOrWhiteSpace(_settings.FromAddress), "No credentials in User Secrets");
+            Skip.If(string.IsNullOrWhiteSpace(_settings.Username), "No credentials in User Secrets");
+            Skip.If(string.IsNullOrWhiteSpace(_settings.Password), "No credentials in User Secrets");
 
             // arrange
             var services = new ServiceCollection();
 
-            var config = new ConfigurationBuilder()
-                .AddUserSecrets<EtherealSmtpTests>()
-                .Build();
-
             var client = new SmtpClient();
             services.AddSingleton<ISmtpClient>(client);
-            services.Configure<EmailSettings>(opts =>
-            {
-                opts.FromAddress = config["EtherealUsername"];
-                opts.FromName = "Pact.Email.Tests";
-                opts.SmtpPort = 587;
-                opts.SmtpUri = "smtp.ethereal.email";
-                opts.Username = config["EtherealUsername"];
-                opts.Password = config["EtherealPassword"];
-                opts.SmtpSslMode = SecureSocketOptions.StartTls;
-            });
+            services.AddSingleton<IOptions<EmailSettings>>(new OptionsWrapper<EmailSettings>(_settings));
             services.AddScoped<IEmailSender, EmailSender>();
             services.AddSingleton<ILogger<EmailSender>>(new NullLogger<EmailSender>());
             var provider = services.BuildServiceProvider();
