@@ -24,7 +24,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-           dotnet-version: '5.0.x'
+           dotnet-version: '6.0.x'
 
       - name: Add Private Nuget Feed
         run: Out-File -FilePath "nuget.config" -InputObject "<?xml version=`"1.0`" encoding=`"utf-8`"?>
