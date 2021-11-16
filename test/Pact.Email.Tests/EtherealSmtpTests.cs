@@ -18,7 +18,7 @@ namespace Pact.Email.Tests
         public EtherealSmtpTests()
         {
             var config = new ConfigurationBuilder()
-                .AddUserSecrets<EtherealSmtpTests>()
+                .AddUserSecrets<EtherealSmtpTests>(true)
                 .Build();
 
             _settings = new EmailSettings
