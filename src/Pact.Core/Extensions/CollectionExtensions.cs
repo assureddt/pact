@@ -48,6 +48,9 @@ namespace Pact.Core.Extensions
             bool normalize = true)
             where TIdentifier : struct
         {
+            if (normalize)
+                items.NormalizeOrder(orderSelector);
+
             for (var i = 0; i < items.Count; i++)
             {
                 if (!items[i].GetPropertyValue(idSelector).Equals(id)) continue;

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
@@ -46,7 +47,7 @@ namespace Pact.Core.Extensions
             var opts = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = caseInsensitive,
-                IgnoreNullValues = ignoreNull
+                DefaultIgnoreCondition = ignoreNull ? JsonIgnoreCondition.WhenWritingNull : JsonIgnoreCondition.Never
             };
 
             return JsonSerializer.Deserialize<T>(value, opts);
