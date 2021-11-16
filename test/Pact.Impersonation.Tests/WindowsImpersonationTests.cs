@@ -16,7 +16,7 @@ namespace Pact.Impersonation.Tests
         public WindowsImpersonationTests()
         {
             var config = new ConfigurationBuilder()
-                .AddUserSecrets<WindowsImpersonationTests>()
+                .AddUserSecrets<WindowsImpersonationTests>(true)
                 .Build();
 
             _settings = new ImpersonationSettings

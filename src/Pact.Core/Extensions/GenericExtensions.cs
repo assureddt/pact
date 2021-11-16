@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -34,7 +35,7 @@ namespace Pact.Core.Extensions
             var options = new JsonSerializerOptions
             {
                 WriteIndented = indent,
-                IgnoreNullValues = ignoreNull,
+                DefaultIgnoreCondition = ignoreNull ? JsonIgnoreCondition.WhenWritingNull : JsonIgnoreCondition.Never,
                 PropertyNameCaseInsensitive = caseInsensitive
             };
 

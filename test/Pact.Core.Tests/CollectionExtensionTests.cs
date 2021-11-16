@@ -35,6 +35,29 @@ namespace Pact.Core.Tests
         }
 
         [Fact]
+        public void UpdateOrder_Dec_Normalized_Uninitialized_AllApplied()
+        {
+            // arrange
+            var items = new[]
+            {
+                new MyClass { Id = 1, Order = 0 },
+                new MyClass { Id = 2, Order = 0 },
+                new MyClass { Id = 3, Order = 0 }
+            };
+
+            // act
+            items.UpdateOrderAndNormalize(2, CollectionExtensions.OrderShift.Decrement, x => x.Id, x => x.Order);
+
+            // assert
+            items[0].Id.ShouldBe(1);
+            items[0].Order.ShouldBe(2);
+            items[1].Id.ShouldBe(2);
+            items[1].Order.ShouldBe(1);
+            items[2].Id.ShouldBe(3);
+            items[2].Order.ShouldBe(3);
+        }
+
+        [Fact]
         public void UpdateOrder_Dec_Normalized_AllApplied()
         {
             // arrange
