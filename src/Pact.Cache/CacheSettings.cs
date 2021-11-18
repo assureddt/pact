@@ -11,6 +11,7 @@ namespace Pact.Cache
         public string Url { get; set; }
         public string StorageName { get; set; }
         public string StorageKey { get; set; }
+        public int DefaultMemoryExpirySeconds { get; set; } = 60;
 
         public void SqlServerOptions(SqlServerCacheOptions obj)
         {
@@ -24,6 +25,8 @@ namespace Pact.Cache
     {
         Memory,
         Redis,
-        SqlServer
+        SqlServer,
+        MemAndRedis,
+        MemAndSql
     }
 }

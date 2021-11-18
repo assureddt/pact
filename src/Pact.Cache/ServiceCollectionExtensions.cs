@@ -12,6 +12,7 @@ namespace Pact.Cache
         {
             switch (settings?.Provider)
             {
+                case CacheProvider.MemAndRedis:
                 case CacheProvider.Redis:
                     var redis = ConnectionMultiplexer.Connect(settings.ConnectionString);
                     services.AddStackExchangeRedisCache(opts =>
@@ -30,14 +31,24 @@ namespace Pact.Cache
                         dataProtectionBuilder.PersistKeysToStackExchangeRedis(redis);
                     }
                     break;
+                case CacheProvider.MemAndSql:
                 case CacheProvider.SqlServer:
                     services.AddDistributedSqlServerCache(settings.SqlServerOptions);
                     break;
-                default:
+                case CacheProvider.Memory:
                     services.AddDistributedMemoryCache();
                     break;
             }
-            services.AddSingleton<IDistributedCacheService, DistributedCacheService>();
+
+            if (settings?.Provider is CacheProvider.MemAndRedis or CacheProvider.MemAndSql)
+            {
+                services.AddMemoryCache();
+                services.AddSingleton<IDistributedCacheService, DualLayerCacheService>();
+            }
+            else
+            {
+                services.AddSingleton<IDistributedCacheService, DistributedCacheService>();
+            }
 
             return services;
         }
