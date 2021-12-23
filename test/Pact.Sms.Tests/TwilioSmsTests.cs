@@ -17,7 +17,7 @@ public class TwilioSmsTests
     {
         // arrange
         var twilioRest = new Mock<ITwilioRestClient>();
-        var twilioHttp = new Mock<Twilio.Http.HttpClient>();
+        var twilioHttp = new Mock<HttpClient>();
         twilioRest.Setup(m => m.HttpClient).Returns(twilioHttp.Object);
         twilioRest.Setup(m => m.RequestAsync(It.IsAny<Request>())).ReturnsAsync(new Response(HttpStatusCode.OK, ""));
 
@@ -35,7 +35,6 @@ public class TwilioSmsTests
         // assert
         // we can't actually assert that much meaningful actually happens, just satisfy ourselves that the twilio bits are called
         twilioRest.Verify(m => m.AccountSid);
-        twilioRest.Verify(m => m.Region);
         twilioRest.Verify(m => m.RequestAsync(It.IsAny<Request>()));
         twilioRest.VerifyNoOtherCalls();
     }
@@ -45,7 +44,7 @@ public class TwilioSmsTests
     {
         // arrange
         var twilioRest = new Mock<ITwilioRestClient>();
-        var twilioHttp = new Mock<Twilio.Http.HttpClient>();
+        var twilioHttp = new Mock<HttpClient>();
         twilioRest.Setup(m => m.HttpClient).Returns(twilioHttp.Object);
         twilioRest.Setup(m => m.RequestAsync(It.IsAny<Request>())).ReturnsAsync(new Response(HttpStatusCode.OK, ""));
 
@@ -64,7 +63,6 @@ public class TwilioSmsTests
         // we can't actually assert that much meaningful actually happens, just satisfy ourselves that the twilio bits are called
         svc.SupportsVoice.ShouldBeTrue();
         twilioRest.Verify(m => m.AccountSid);
-        twilioRest.Verify(m => m.Region);
         twilioRest.Verify(m => m.RequestAsync(It.IsAny<Request>()));
         twilioRest.VerifyNoOtherCalls();
     }
