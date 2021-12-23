@@ -7,7 +7,6 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
-using Pact.Core;
 using Shouldly;
 using Xunit;
 
@@ -71,7 +70,7 @@ namespace Pact.Cache.Tests
             var svc = new DistributedCacheService(cache.Object, new NullLogger<DistributedCacheService>());
 
             // act
-            var _ = await svc.GetOrCreateAsync("test", opts => Task.FromResult(new MyClass {Id = 1, Name = "Test"}));
+            var _ = await svc.GetOrCreateAsync("test", _ => Task.FromResult(new MyClass {Id = 1, Name = "Test"}));
 
             // assert
             cache.Verify(m => m.GetAsync("test", It.IsAny<CancellationToken>()));
@@ -89,7 +88,7 @@ namespace Pact.Cache.Tests
             var svc = new DistributedCacheService(cache.Object, new NullLogger<DistributedCacheService>());
 
             // act
-            var _ = await svc.GetOrCreateAsync("test", opts => Task.FromResult("blob"));
+            var _ = await svc.GetOrCreateAsync("test", _ => Task.FromResult("blob"));
 
             // assert
             cache.Verify(m => m.GetAsync("test", It.IsAny<CancellationToken>()));
@@ -107,7 +106,7 @@ namespace Pact.Cache.Tests
             var svc = new DistributedCacheService(cache.Object, new NullLogger<DistributedCacheService>());
 
             // act
-            var _ = svc.GetOrCreate("test", opts => new MyClass { Id = 1, Name = "Test" });
+            var _ = svc.GetOrCreate("test", _ => new MyClass { Id = 1, Name = "Test" });
 
             // assert
             cache.Verify(m => m.Get("test"));
@@ -125,7 +124,7 @@ namespace Pact.Cache.Tests
             var svc = new DistributedCacheService(cache.Object, new NullLogger<DistributedCacheService>());
 
             // act
-            var _ = svc.GetOrCreate("test", opts => "blob");
+            var _ = svc.GetOrCreate("test", _ => "blob");
 
             // assert
             cache.Verify(m => m.Get("test"));
@@ -142,7 +141,7 @@ namespace Pact.Cache.Tests
             var svc = new DistributedCacheService(cache.Object, new NullLogger<DistributedCacheService>());
 
             // act
-            var _ = await svc.SetAsync("test", opts => Task.FromResult(new MyClass { Id = 1, Name = "Test" }));
+            var _ = await svc.SetAsync("test", _ => Task.FromResult(new MyClass { Id = 1, Name = "Test" }));
 
             // assert
             cache.Verify(m => m.SetAsync("test", It.Is<byte[]>(x => x.SequenceEqual(expectedBytes)), It.IsAny<DistributedCacheEntryOptions>(), It.IsAny<CancellationToken>()));
@@ -158,7 +157,7 @@ namespace Pact.Cache.Tests
             var svc = new DistributedCacheService(cache.Object, new NullLogger<DistributedCacheService>());
 
             // act
-            var _ = await svc.SetAsync("test", opts => Task.FromResult("blob"));
+            var _ = await svc.SetAsync("test", _ => Task.FromResult("blob"));
 
             // assert
             cache.Verify(m => m.SetAsync("test", It.Is<byte[]>(x => x.SequenceEqual(expectedBytes)), It.IsAny<DistributedCacheEntryOptions>(), It.IsAny<CancellationToken>()));
@@ -174,7 +173,7 @@ namespace Pact.Cache.Tests
             var svc = new DistributedCacheService(cache.Object, new NullLogger<DistributedCacheService>());
 
             // act
-            var _ = svc.Set("test", opts => new MyClass { Id = 1, Name = "Test" });
+            var _ = svc.Set("test", _ => new MyClass { Id = 1, Name = "Test" });
 
             // assert
             cache.Verify(m => m.Set("test", It.Is<byte[]>(x => x.SequenceEqual(expectedBytes)), It.IsAny<DistributedCacheEntryOptions>()));
@@ -190,7 +189,7 @@ namespace Pact.Cache.Tests
             var svc = new DistributedCacheService(cache.Object, new NullLogger<DistributedCacheService>());
 
             // act
-            var _ = svc.Set("test", opts => "blob");
+            var _ = svc.Set("test", _ => "blob");
 
             // assert
             cache.Verify(m => m.Set("test", It.Is<byte[]>(x => x.SequenceEqual(expectedBytes)), It.IsAny<DistributedCacheEntryOptions>()));
@@ -228,32 +227,9 @@ namespace Pact.Cache.Tests
         }
 
         [Fact]
-        public async Task GetAsyncGeneric_Integration_Microsoft_OK()
+        public async Task GetAsyncGeneric_Integration_OK()
         {
             // arrange
-            // NOTE: default settings applied to ToJson under the hood should disable case sensitivity, so it should still deserialize fine
-            JsonSerialization.Serializer = JsonImplementation.Microsoft;
-
-            var cache = new MemoryDistributedCache(new OptionsWrapper<MemoryDistributedCacheOptions>(new MemoryDistributedCacheOptions()));
-            await cache.SetStringAsync("test", "{ \"id\": 1, \"Name\": \"Test\" }");
-
-            var svc = new DistributedCacheService(cache, new NullLogger<DistributedCacheService>());
-
-            // act
-            var result = await svc.GetAsync<MyClass>("test");
-
-            // assert
-            result.ShouldNotBeNull();
-            result.Id.ShouldBe(1);
-            result.Name.ShouldBe("Test");
-        }
-
-        [Fact]
-        public async Task GetAsyncGeneric_Integration_Newtonsoft_OK()
-        {
-            // arrange
-            JsonSerialization.Serializer = JsonImplementation.Newtonsoft;
-
             var cache = new MemoryDistributedCache(new OptionsWrapper<MemoryDistributedCacheOptions>(new MemoryDistributedCacheOptions()));
             await cache.SetStringAsync("test", "{ \"id\": 1, \"Name\": \"Test\" }");
 
