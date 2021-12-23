@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace Pact.Email;
+﻿namespace Pact.Email;
 
 /// <summary>
 /// Optionally used by the EmailSender service to write email data to the file system 

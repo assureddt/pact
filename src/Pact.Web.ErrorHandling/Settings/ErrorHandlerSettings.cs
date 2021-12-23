@@ -1,5 +1,4 @@
-﻿using System;
-using Pact.Web.ErrorHandling.Interfaces;
+﻿using Pact.Web.ErrorHandling.Interfaces;
 
 namespace Pact.Web.ErrorHandling.Settings;
 

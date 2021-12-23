@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using NetEscapades.AspNetCore.SecurityHeaders.Headers.ContentSecurityPolicy;
 using NetEscapades.AspNetCore.SecurityHeaders.Headers.FeaturePolicy;
 

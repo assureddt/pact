@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Pact.Web.Vue.Grid.Models;
+﻿namespace Pact.Web.Vue.Grid.Models;
 
 /// <summary>
 /// The result object from server side actions

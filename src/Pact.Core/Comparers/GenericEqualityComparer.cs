@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Pact.Core.Comparers;
+﻿namespace Pact.Core.Comparers;
 
 /// <summary>
 /// Provides equality comparison for a type based on the resolved value of a provided projection

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using System;
 using Pact.Core.Extensions;
 using System.Text.RegularExpressions;
 

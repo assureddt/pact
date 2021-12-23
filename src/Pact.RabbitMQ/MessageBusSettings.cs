@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Pact.RabbitMQ;
+﻿namespace Pact.RabbitMQ;
 
 public class MessageBusSettings
 {

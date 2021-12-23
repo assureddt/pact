@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
-using System;
 
 namespace Pact.Cache.Extensions;
 

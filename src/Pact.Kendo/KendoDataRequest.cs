@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Pact.Kendo;
+﻿namespace Pact.Kendo;
 
 /// <summary>
 /// A class used to support kendo server side requests.

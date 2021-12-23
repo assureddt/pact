@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace Pact.Sms;
+﻿namespace Pact.Sms;
 
 /// <summary>
 /// Abstraction for an SMS (and optionally Voice) delivery service

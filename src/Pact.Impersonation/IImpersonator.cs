@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace Pact.Impersonation;
+﻿namespace Pact.Impersonation;
 
 /// <summary>
 /// Interface onto execution of an action in an impersonated context (typically file-system)

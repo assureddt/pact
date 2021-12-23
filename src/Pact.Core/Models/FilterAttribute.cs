@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pact.Core.Models;
+﻿namespace Pact.Core.Models;
 
 /// <summary>
 /// Apply to property to say we are going to filter on it.
