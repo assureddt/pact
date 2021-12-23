@@ -11,10 +11,8 @@ namespace Pact.Core.Tests
     public class StringExtensionTests
     {
         [Fact]
-        public void FromJson_Microsoft_OK()
+        public void FromJson_OK()
         {
-            JsonSerialization.Serializer = JsonImplementation.Microsoft;
-
             // act
             var result = "{ \"Id\": 1, \"Name\": \"Test\" }".FromJson<MyClass>();
 
@@ -25,10 +23,8 @@ namespace Pact.Core.Tests
         }
 
         [Fact]
-        public void FromJson_Microsoft_CaseSensitive_Fail()
+        public void FromJson_CaseSensitive_Fail()
         {
-            JsonSerialization.Serializer = JsonImplementation.Microsoft;
-
             // act
             var result = "{ \"id\": 1, \"name\": \"test\" }".FromJson<MyClass>(caseInsensitive: false);
 
@@ -39,10 +35,8 @@ namespace Pact.Core.Tests
         }
 
         [Fact]
-        public void FromJson_Microsoft_CaseInSensitive_OK()
+        public void FromJson_CaseInSensitive_OK()
         {
-            JsonSerialization.Serializer = JsonImplementation.Microsoft;
-
             // act
             var result = "{ \"id\": 1, \"name\": \"Test\" }".FromJson<MyClass>();
 
@@ -53,86 +47,17 @@ namespace Pact.Core.Tests
         }
 
         [Fact]
-        public void FromJson_Microsoft_BadArray_Throws()
+        public void FromJson_BadArray_Throws()
         {
-            JsonSerialization.Serializer = JsonImplementation.Microsoft;
+
 
             // assert
             Assert.Throws<JsonException>(() => "{ \"Id\": 1, \"Name\": \"Test\" }, { \"Id\": 2, \"Name\": \"Test2\" }".FromJson<MyClass>());
         }
 
         [Fact]
-        public void FromJson_Microsoft_Relaxed_OK()
+        public void FromJson_Relaxed_OK()
         {
-            JsonSerialization.Serializer = JsonImplementation.Microsoft;
-
-            // act
-            var result = "{ \"Id\": 1, \"Name\": \"Test\" }, { \"Id\": 2, \"Name\": \"Test2\" }".FromJson<MyClass[]>(true);
-
-            // assert
-            result.ShouldSatisfyAllConditions(
-                () => result[0].Id.ShouldBe(1),
-                () => result[0].Name.ShouldBe("Test"),
-                () => result[1].Id.ShouldBe(2),
-                () => result[1].Name.ShouldBe("Test2"));
-        }
-
-        [Fact]
-        public void FromJson_Newtonsoft_OK()
-        {
-            JsonSerialization.Serializer = JsonImplementation.Newtonsoft;
-
-            // act
-            var result = "{ \"Id\": 1, \"Name\": \"Test\" }".FromJson<MyClass>();
-
-            // assert
-            result.ShouldSatisfyAllConditions(
-                () => result.Id.ShouldBe(1),
-                () => result.Name.ShouldBe("Test"));
-        }
-
-        [Fact]
-        public void FromJson_Newtonsoft_CaseSensitive_Ignored()
-        {
-            JsonSerialization.Serializer = JsonImplementation.Newtonsoft;
-
-            // act
-            var result = "{ \"id\": 1, \"name\": \"test\" }".FromJson<MyClass>(caseInsensitive: false);
-
-            // assert
-            result.ShouldSatisfyAllConditions(
-                () => result.Id.ShouldBe(1),
-                () => result.Name.ShouldBe("test"));
-        }
-
-        [Fact]
-        public void FromJson_Newtonsoft_CaseInSensitive_OK()
-        {
-            JsonSerialization.Serializer = JsonImplementation.Newtonsoft;
-
-            // act
-            var result = "{ \"id\": 1, \"name\": \"Test\" }".FromJson<MyClass>();
-
-            // assert
-            result.ShouldSatisfyAllConditions(
-                () => result.Id.ShouldBe(1),
-                () => result.Name.ShouldBe("Test"));
-        }
-
-        [Fact]
-        public void FromJson_Newtonsoft_BadArray_Throws()
-        {
-            JsonSerialization.Serializer = JsonImplementation.Newtonsoft;
-
-            // assert
-            Assert.Throws<Newtonsoft.Json.JsonReaderException>(() => "{ \"Id\": 1, \"Name\": \"Test\" }, { \"Id\": 2, \"Name\": \"Test2\" }".FromJson<MyClass>());
-        }
-
-        [Fact]
-        public void FromJson_Newtonsoft_Relaxed_OK()
-        {
-            JsonSerialization.Serializer = JsonImplementation.Newtonsoft;
-
             // act
             var result = "{ \"Id\": 1, \"Name\": \"Test\" }, { \"Id\": 2, \"Name\": \"Test2\" }".FromJson<MyClass[]>(true);
 

@@ -7,8 +7,6 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Pact.Core.Extensions
 {
@@ -17,7 +15,6 @@ namespace Pact.Core.Extensions
         /// <summary>
         /// Converts a Json string to its representative object of the defined type
         /// </summary>
-        /// <remarks>Internally, this uses either Newtonsoft or System.Text.Json, depending on <see cref="JsonSerialization.Serializer"/>. Defaults to STJ.</remarks>
         /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
         /// <param name="relaxedArrayEnclosure">If true, isn't picky about square brackets wrapping a comma-separated list of objects</param>
@@ -34,14 +31,6 @@ namespace Pact.Core.Extensions
             {
                 if (!value.TrimStart().StartsWith("[")) value = "[" + value;
                 if (!value.TrimEnd().EndsWith("]")) value += "]";
-            }
-
-            if (JsonSerialization.Serializer == JsonImplementation.Newtonsoft)
-            {
-                return JsonConvert.DeserializeObject<T>(value, new JsonSerializerSettings
-                {
-                    NullValueHandling = ignoreNull ? NullValueHandling.Ignore : NullValueHandling.Include
-                });
             }
 
             var opts = new JsonSerializerOptions
@@ -73,7 +62,7 @@ namespace Pact.Core.Extensions
             Path.GetInvalidFileNameChars().Aggregate(filename, (current, c) => current.Replace(c, replaceChar).Trim());
 
         /// <summary>
-        /// Extracts clean email addresses from a csv-style string that may contain descriptional info
+        /// Extracts clean email addresses from a csv-style string that may contain descriptive info
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -91,7 +80,7 @@ namespace Pact.Core.Extensions
         /// <param name="c"></param>
         /// <returns></returns>
         public static bool IsBasicUppercaseLetter(this char c) {
-            return c >= 'A' && c <= 'Z';
+            return c is >= 'A' and <= 'Z';
         }
 
         /// <summary>
