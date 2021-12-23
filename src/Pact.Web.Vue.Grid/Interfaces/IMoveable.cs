@@ -1,7 +1,6 @@
-﻿namespace Pact.Web.Vue.Grid.Interfaces
+﻿namespace Pact.Web.Vue.Grid.Interfaces;
+
+public interface IMoveable: IDatabaseObject
 {
-    public interface IMoveable: IDatabaseObject
-    {
-        public int Order { get; set; }
-    }
+    public int Order { get; set; }
 }

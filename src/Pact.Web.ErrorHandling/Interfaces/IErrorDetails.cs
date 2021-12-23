@@ -1,8 +1,7 @@
-namespace Pact.Web.ErrorHandling.Interfaces
+namespace Pact.Web.ErrorHandling.Interfaces;
+
+public interface IErrorDetails
 {
-    public interface IErrorDetails
-    {
-        public int? Code { get; }
-        public string Details { get; }
-    }
+    public int? Code { get; }
+    public string Details { get; }
 }

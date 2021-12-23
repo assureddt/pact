@@ -7,151 +7,150 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Pact.Kendo.Tests
+namespace Pact.Kendo.Tests;
+
+public class QueryableExtensionsTests
 {
-    public class QueryableExtensionsTests
+    private static FakeContext GetFakeContext()
     {
-        private static FakeContext GetFakeContext()
-        {
-            var options = new DbContextOptionsBuilder<FakeContext>()
+        var options = new DbContextOptionsBuilder<FakeContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
 
-            return new FakeContext(options);
-        }
+        return new FakeContext(options);
+    }
 
-        [Fact]
-        public void Kendo_CoverAll_No_Sort()
+    [Fact]
+    public void Kendo_CoverAll_No_Sort()
+    {
+        var items = new List<Basic>
         {
-            var items = new List<Basic>
-            {
-                new() { Id = 1, Name = "Cat" },
-                new() { Id = 2, Name = "Dog" }
-            };
+            new() { Id = 1, Name = "Cat" },
+            new() { Id = 2, Name = "Dog" }
+        };
 
-            var request = new KendoDataRequest
-            {
-                Page = 0,
-                PageSize = 5,
-                Skip = 0,
-                Take = 5
-            };
-
-            var results = items.AsQueryable().Kendo(request);
-            Assert.True(results.Count() == 2);
-        }
-
-        [Fact]
-        public void Kendo_CoverAll_Sort()
+        var request = new KendoDataRequest
         {
-            var items = new List<Basic>
-            {
-                new() { Id = 1, Name = "Cat" },
-                new() { Id = 2, Name = "Dog" }
-            };
+            Page = 0,
+            PageSize = 5,
+            Skip = 0,
+            Take = 5
+        };
 
-            var request = new KendoDataRequest
-            {
-                Page = 0,
-                PageSize = 5,
-                Skip = 0,
-                Take = 5,
-                Sort = new List<KendoDataRequestSort>
-                {
-                    new() {Dir = "ASC", Field = "Name"}
-                }
-            };
+        var results = items.AsQueryable().Kendo(request);
+        Assert.True(results.Count() == 2);
+    }
 
-            var results = items.AsQueryable().Kendo(request);
-            Assert.True(results.First().Name == "Cat");
-        }
-
-        [Fact]
-        public void Kendo_Multi_Sort()
+    [Fact]
+    public void Kendo_CoverAll_Sort()
+    {
+        var items = new List<Basic>
         {
-            var items = new List<Basic>
-            {
-                new() { Id = 1, Name = "Cat", Order = 0 },
-                new() { Id = 2, Name = "Dog", Order = 1 },
-                new() { Id = 3, Name = "Aardvark", Order = 1 }
-            };
+            new() { Id = 1, Name = "Cat" },
+            new() { Id = 2, Name = "Dog" }
+        };
 
-            var request = new KendoDataRequest
-            {
-                Page = 0,
-                PageSize = 5,
-                Skip = 0,
-                Take = 5,
-                Sort = new List<KendoDataRequestSort>
-                {
-                    new() {Dir = "ASC", Field = "Order"},
-                    new() {Dir = "ASC", Field = "Name"}
-                }
-            };
-
-            var results = items.AsQueryable().Kendo(request);
-            Assert.True(results.First().Name == "Cat");
-            Assert.True(results.Skip(1).First().Name == "Aardvark");
-            Assert.True(results.Skip(2).First().Name == "Dog");
-        }
-
-        [Fact]
-        public async Task KendoResult_Standard()
+        var request = new KendoDataRequest
         {
-            await using var context = GetFakeContext();
-            await context.Basics.AddAsync(new Basic { Id = 1, Name = "Cat" });
-            await context.Basics.AddAsync(new Basic { Id = 2, Name = "Dog" });
-            await context.SaveChangesAsync();
-
-            var request = new KendoDataRequest
+            Page = 0,
+            PageSize = 5,
+            Skip = 0,
+            Take = 5,
+            Sort = new List<KendoDataRequestSort>
             {
-                Page = 0,
-                PageSize = 5,
-                Skip = 0,
-                Take = 5
-            };
+                new() {Dir = "ASC", Field = "Name"}
+            }
+        };
 
-            var result = await context.Basics.KendoResultAsync(request);
+        var results = items.AsQueryable().Kendo(request);
+        Assert.True(results.First().Name == "Cat");
+    }
 
-            Assert.IsType<JsonResult>(result);
-            var resultValue = Assert.IsType<KendoResult<Basic>>(result.Value);
-            Assert.True(resultValue.Result == "OK");
-            Assert.True(resultValue.Count == 2);
-            Assert.True(resultValue.Records.Count == 2);
-        }
-
-        [Fact]
-        public async Task KendoResult_Skip_Take()
+    [Fact]
+    public void Kendo_Multi_Sort()
+    {
+        var items = new List<Basic>
         {
-            await using var context = GetFakeContext();
-            await context.Basics.AddAsync(new Basic { Id = 1, Name = "Cat" });
-            await context.Basics.AddAsync(new Basic { Id = 2, Name = "Dog" });
-            await context.Basics.AddAsync(new Basic { Id = 3, Name = "Apple" });
-            await context.Basics.AddAsync(new Basic { Id = 4, Name = "Fish" });
-            await context.Basics.AddAsync(new Basic { Id = 5, Name = "Cake" });
-            await context.SaveChangesAsync();
+            new() { Id = 1, Name = "Cat", Order = 0 },
+            new() { Id = 2, Name = "Dog", Order = 1 },
+            new() { Id = 3, Name = "Aardvark", Order = 1 }
+        };
 
-            var request = new KendoDataRequest
+        var request = new KendoDataRequest
+        {
+            Page = 0,
+            PageSize = 5,
+            Skip = 0,
+            Take = 5,
+            Sort = new List<KendoDataRequestSort>
             {
-                Page = 0,
-                PageSize = 5,
-                Skip = 1,
-                Take = 1,
-                Sort = new List<KendoDataRequestSort>
-                {
-                    new() {Dir = "ASC", Field = "Name"}
-                }
-            };
+                new() {Dir = "ASC", Field = "Order"},
+                new() {Dir = "ASC", Field = "Name"}
+            }
+        };
 
-            var result = await context.Basics.KendoResultAsync(request);
+        var results = items.AsQueryable().Kendo(request);
+        Assert.True(results.First().Name == "Cat");
+        Assert.True(results.Skip(1).First().Name == "Aardvark");
+        Assert.True(results.Skip(2).First().Name == "Dog");
+    }
 
-            Assert.IsType<JsonResult>(result);
-            var resultValue = Assert.IsType<KendoResult<Basic>>(result.Value);
-            Assert.True(resultValue.Result == "OK");
-            Assert.True(resultValue.Count == 5);
+    [Fact]
+    public async Task KendoResult_Standard()
+    {
+        await using var context = GetFakeContext();
+        await context.Basics.AddAsync(new Basic { Id = 1, Name = "Cat" });
+        await context.Basics.AddAsync(new Basic { Id = 2, Name = "Dog" });
+        await context.SaveChangesAsync();
 
-            var resultItem = Assert.Single(resultValue.Records);
-            Assert.True(resultItem.Name == "Dog");
-        }
+        var request = new KendoDataRequest
+        {
+            Page = 0,
+            PageSize = 5,
+            Skip = 0,
+            Take = 5
+        };
+
+        var result = await context.Basics.KendoResultAsync(request);
+
+        Assert.IsType<JsonResult>(result);
+        var resultValue = Assert.IsType<KendoResult<Basic>>(result.Value);
+        Assert.True(resultValue.Result == "OK");
+        Assert.True(resultValue.Count == 2);
+        Assert.True(resultValue.Records.Count == 2);
+    }
+
+    [Fact]
+    public async Task KendoResult_Skip_Take()
+    {
+        await using var context = GetFakeContext();
+        await context.Basics.AddAsync(new Basic { Id = 1, Name = "Cat" });
+        await context.Basics.AddAsync(new Basic { Id = 2, Name = "Dog" });
+        await context.Basics.AddAsync(new Basic { Id = 3, Name = "Apple" });
+        await context.Basics.AddAsync(new Basic { Id = 4, Name = "Fish" });
+        await context.Basics.AddAsync(new Basic { Id = 5, Name = "Cake" });
+        await context.SaveChangesAsync();
+
+        var request = new KendoDataRequest
+        {
+            Page = 0,
+            PageSize = 5,
+            Skip = 1,
+            Take = 1,
+            Sort = new List<KendoDataRequestSort>
+            {
+                new() {Dir = "ASC", Field = "Name"}
+            }
+        };
+
+        var result = await context.Basics.KendoResultAsync(request);
+
+        Assert.IsType<JsonResult>(result);
+        var resultValue = Assert.IsType<KendoResult<Basic>>(result.Value);
+        Assert.True(resultValue.Result == "OK");
+        Assert.True(resultValue.Count == 5);
+
+        var resultItem = Assert.Single(resultValue.Records);
+        Assert.True(resultItem.Name == "Dog");
     }
 }

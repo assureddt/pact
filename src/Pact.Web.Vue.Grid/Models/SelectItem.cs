@@ -1,11 +1,10 @@
-﻿namespace Pact.Web.Vue.Grid.Models
+﻿namespace Pact.Web.Vue.Grid.Models;
+
+/// <summary>
+/// This is the DTO of the front end format for selects and filters.
+/// </summary>
+public class SelectItem
 {
-    /// <summary>
-    /// This is the DTO of the front end format for selects and filters.
-    /// </summary>
-    public class SelectItem
-    {
-        public int Id { get; set; }
-        public string Display { get; set; }
-    }
+    public int Id { get; set; }
+    public string Display { get; set; }
 }

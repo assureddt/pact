@@ -1,16 +1,15 @@
 ﻿using System.IO;
 
-namespace Pact.Email
+namespace Pact.Email;
+
+/// <summary>
+/// Optionally used by the EmailSender service to write email data to the file system 
+/// </summary>
+public interface IMaildropProvider
 {
     /// <summary>
-    /// Optionally used by the EmailSender service to write email data to the file system 
+    /// Prepare a stream for writing the email data
     /// </summary>
-    public interface IMaildropProvider
-    {
-        /// <summary>
-        /// Prepare a stream for writing the email data
-        /// </summary>
-        /// <returns></returns>
-        public StreamWriter GetStreamWriter();
-    }
+    /// <returns></returns>
+    public StreamWriter GetStreamWriter();
 }

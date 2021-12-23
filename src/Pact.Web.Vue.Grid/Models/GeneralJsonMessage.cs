@@ -1,7 +1,6 @@
-﻿namespace Pact.Web.Vue.Grid.Models
+﻿namespace Pact.Web.Vue.Grid.Models;
+
+public class GeneralJsonMessage : GeneralJsonOK
 {
-    public class GeneralJsonMessage : GeneralJsonOK
-    {
-        public string Message { get; set; }
-    }
+    public string Message { get; set; }
 }

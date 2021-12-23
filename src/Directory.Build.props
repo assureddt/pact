@@ -12,6 +12,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
     <RepositoryUrl>https://github.com/assureddt/pact</RepositoryUrl>
     <!-- Toggle to produce markdown documentation -->
     <DocGen>false</DocGen>

@@ -1,15 +1,14 @@
 ﻿using System;
 
-namespace Pact.Core.Extensions
+namespace Pact.Core.Extensions;
+
+public static class IntegerExtensions
 {
-    public static class IntegerExtensions
+    public static void Times(this int count, Action action)
     {
-        public static void Times(this int count, Action action)
+        for (var i = 0; i < count; i++)
         {
-            for (var i = 0; i < count; i++)
-            {
-                action();
-            }
+            action();
         }
     }
 }

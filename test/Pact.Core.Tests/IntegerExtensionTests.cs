@@ -2,21 +2,20 @@ using Pact.Core.Extensions;
 using Shouldly;
 using Xunit;
 
-namespace Pact.Core.Tests
+namespace Pact.Core.Tests;
+
+public class IntegerExtensionTests
 {
-    public class IntegerExtensionTests
+    [Fact]
+    public void Times_Applied()
     {
-        [Fact]
-        public void Times_Applied()
-        {
-            // arrange
-            var initial = 1;
+        // arrange
+        var initial = 1;
 
-            // act
-            8.Times(() => initial++);
+        // act
+        8.Times(() => initial++);
 
-            // assert
-            initial.ShouldBe(9);
-        }
+        // assert
+        initial.ShouldBe(9);
     }
 }

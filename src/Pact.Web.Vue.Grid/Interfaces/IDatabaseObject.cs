@@ -1,7 +1,6 @@
-﻿namespace Pact.Web.Vue.Grid.Interfaces
+﻿namespace Pact.Web.Vue.Grid.Interfaces;
+
+public interface IDatabaseObject
 {
-    public interface IDatabaseObject
-    {
-        public int Id { get; set; }
-    }
+    public int Id { get; set; }
 }

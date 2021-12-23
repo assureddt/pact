@@ -7,60 +7,59 @@ using Moq.AutoMock;
 using System;
 using System.Data.Common;
 
-namespace Pact.Web.Vue.Grid.Tests
+namespace Pact.Web.Vue.Grid.Tests;
+
+public class BaseTest : IDisposable
 {
-    public class BaseTest : IDisposable
+    public AutoMocker mocker;
+
+    private readonly DbConnection _connection;
+    private readonly DbContextOptions<FakeContext> _contextOptions;
+    public readonly FakeContext _context;
+    public readonly MapperConfiguration _mappingConfig;
+
+    public BaseTest()
     {
-        public AutoMocker mocker;
+        _contextOptions = new DbContextOptionsBuilder<FakeContext>()
+            .UseSqlite(CreateInMemoryDatabase())
+            .Options;
 
-        private readonly DbConnection _connection;
-        private readonly DbContextOptions<FakeContext> _contextOptions;
-        public readonly FakeContext _context;
-        public readonly MapperConfiguration _mappingConfig;
+        _connection = RelationalOptionsExtension.Extract(_contextOptions).Connection;
 
-        public BaseTest()
+        var services = new ServiceCollection();
+
+        services.AddDbContext<FakeContext>(o => o.UseSqlite(CreateInMemoryDatabase()));
+
+        services.AddLogging();
+
+        var provider = services.BuildServiceProvider();
+
+        _context = provider.GetRequiredService<FakeContext>(); ;
+        _context.Database.EnsureDeleted();
+        _context.Database.EnsureCreated();
+
+        mocker = new AutoMocker(Moq.MockBehavior.Default);
+        mocker.Use(_context);
+        var _mappingConfig = new MapperConfiguration(mc =>
         {
-            _contextOptions = new DbContextOptionsBuilder<FakeContext>()
-                    .UseSqlite(CreateInMemoryDatabase())
-                    .Options;
+            mc.AddProfile(new Map());
+        });
+        var mapper = _mappingConfig.CreateMapper();
+        mocker.Use(mapper);
+    }
 
-            _connection = RelationalOptionsExtension.Extract(_contextOptions).Connection;
+    private static DbConnection CreateInMemoryDatabase()
+    {
+        var connection = new SqliteConnection("Filename=:memory:");
 
-            var services = new ServiceCollection();
+        connection.Open();
 
-            services.AddDbContext<FakeContext>(o => o.UseSqlite(CreateInMemoryDatabase()));
+        return connection;
+    }
 
-            services.AddLogging();
-
-            var provider = services.BuildServiceProvider();
-
-            _context = provider.GetRequiredService<FakeContext>(); ;
-            _context.Database.EnsureDeleted();
-            _context.Database.EnsureCreated();
-
-            mocker = new AutoMocker(Moq.MockBehavior.Default);
-            mocker.Use(_context);
-            var _mappingConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new Map());
-            });
-            var mapper = _mappingConfig.CreateMapper();
-            mocker.Use(mapper);
-        }
-
-        private static DbConnection CreateInMemoryDatabase()
-        {
-            var connection = new SqliteConnection("Filename=:memory:");
-
-            connection.Open();
-
-            return connection;
-        }
-
-        public void Dispose()
-        {
-            _context.Dispose();
-            _connection.Dispose();
-        }
+    public void Dispose()
+    {
+        _context.Dispose();
+        _connection.Dispose();
     }
 }

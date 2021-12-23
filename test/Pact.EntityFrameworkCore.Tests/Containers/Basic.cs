@@ -1,9 +1,8 @@
-﻿namespace Pact.EntityFrameworkCore.Tests.Containers
+﻿namespace Pact.EntityFrameworkCore.Tests.Containers;
+
+public class Basic
 {
-    public class Basic
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public bool SoftDelete { get; set; }
-    }
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public bool SoftDelete { get; set; }
 }

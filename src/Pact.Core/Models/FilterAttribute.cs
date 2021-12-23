@@ -1,13 +1,12 @@
 ﻿using System;
 
-namespace Pact.Core.Models
+namespace Pact.Core.Models;
+
+/// <summary>
+/// Apply to property to say we are going to filter on it.
+/// Used with <see cref="EnumerableExtensions.TextFilter{T}(System.Collections.Generic.IEnumerable{T}, string)"/> and <see cref="QueryableExtensions.TextFilter{T}(System.Linq.IQueryable{T}, string)"/>
+/// </summary>
+[AttributeUsage(AttributeTargets.Property)]
+public class FilterAttribute : Attribute
 {
-    /// <summary>
-    /// Apply to property to say we are going to filter on it.
-    /// Used with <see cref="EnumerableExtensions.TextFilter{T}(System.Collections.Generic.IEnumerable{T}, string)"/> and <see cref="QueryableExtensions.TextFilter{T}(System.Linq.IQueryable{T}, string)"/>
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
-    public class FilterAttribute : Attribute
-    {
-    }
 }
