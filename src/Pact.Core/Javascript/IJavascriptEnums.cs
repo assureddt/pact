@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pact.Core.Javascript;
+﻿namespace Pact.Core.Javascript;
 
 public interface IJavascriptEnums
 {

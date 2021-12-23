@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using MimeKit;
+﻿using MimeKit;
 
 namespace Pact.Email;
 

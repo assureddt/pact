@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pact.Core.Extensions;
+﻿namespace Pact.Core.Extensions;
 
 public static class IntegerExtensions
 {

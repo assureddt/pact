@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Pact.Kendo;
+﻿namespace Pact.Kendo;
 
 /// <summary>
 /// The result object from kendo server side actions

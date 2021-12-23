@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace Pact.RabbitMQ;
+﻿namespace Pact.RabbitMQ;
 
 /// <summary>
 /// Defines handler for sending messages

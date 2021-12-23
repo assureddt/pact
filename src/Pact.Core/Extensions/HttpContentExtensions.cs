@@ -1,7 +1,4 @@
-﻿using System.Net.Http;
-using System.Threading.Tasks;
-
-namespace Pact.Core.Extensions;
+﻿namespace Pact.Core.Extensions;
 
 public static class HttpContentExtensions
 {

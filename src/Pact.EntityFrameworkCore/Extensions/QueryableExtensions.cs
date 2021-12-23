@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Pact.Core.Models;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace Pact.EntityFrameworkCore.Extensions;

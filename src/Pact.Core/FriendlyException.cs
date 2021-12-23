@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pact.Core;
+﻿namespace Pact.Core;
 
 public class FriendlyException : Exception
 {

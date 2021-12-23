@@ -1,11 +1,8 @@
 ﻿#nullable enable
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Pact.Web.Vue.Grid.Interfaces;
 using AutoMapper;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Pact.Web.Vue.Grid.Controllers;
 
