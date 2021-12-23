@@ -3,53 +3,52 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Pact.Kendo
+namespace Pact.Kendo;
+
+public static class QueryableExtensions
 {
-    public static class QueryableExtensions
+    /// <summary>
+    /// Kendo data source support for soft delete, text filtering and sorting
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <param name="kendoDataRequest"></param>
+    /// <returns></returns>
+    public static IQueryable<T> Kendo<T>(this IQueryable<T> source, KendoDataRequest kendoDataRequest) where T : class
     {
-        /// <summary>
-        /// Kendo data source support for soft delete, text filtering and sorting
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="kendoDataRequest"></param>
-        /// <returns></returns>
-        public static IQueryable<T> Kendo<T>(this IQueryable<T> source, KendoDataRequest kendoDataRequest) where T : class
-        {
-            //Remove soft delete
-            source = Core.Extensions.CollectionExtensions.SoftDelete(source);
+        //Remove soft delete
+        source = Core.Extensions.CollectionExtensions.SoftDelete(source);
 
-            //Kendo text filter
-            source = EntityFrameworkCore.Extensions.QueryableExtensions.TextFilter(source, kendoDataRequest.TextFilter);
+        //Kendo text filter
+        source = EntityFrameworkCore.Extensions.QueryableExtensions.TextFilter(source, kendoDataRequest.TextFilter);
 
-            //Sort
-            if (kendoDataRequest.Sort?.Any() != true) return source;
+        //Sort
+        if (kendoDataRequest.Sort?.Any() != true) return source;
 
-            source = Core.Extensions.CollectionExtensions.OrderBy(source, kendoDataRequest.Sort.First().ToString());
-            source = kendoDataRequest.Sort.Skip(1).Aggregate(source, (current, sort) => Core.Extensions.CollectionExtensions.ThenBy(current, sort.ToString()));
+        source = Core.Extensions.CollectionExtensions.OrderBy(source, kendoDataRequest.Sort.First().ToString());
+        source = kendoDataRequest.Sort.Skip(1).Aggregate(source, (current, sort) => Core.Extensions.CollectionExtensions.ThenBy(current, sort.ToString()));
 
-            return source;
-        }
+        return source;
+    }
 
-        /// <summary>
-        /// Kendo data source support for soft delete, text filtering and sorting
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="kendoDataRequest"></param>
-        /// <returns></returns>
-        public static async Task<JsonResult> KendoResultAsync<T>(this IQueryable<T> source, KendoDataRequest kendoDataRequest) where T : class
-        {
-            //Execute
-            var items = await source.ToListAsync();
+    /// <summary>
+    /// Kendo data source support for soft delete, text filtering and sorting
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <param name="kendoDataRequest"></param>
+    /// <returns></returns>
+    public static async Task<JsonResult> KendoResultAsync<T>(this IQueryable<T> source, KendoDataRequest kendoDataRequest) where T : class
+    {
+        //Execute
+        var items = await source.ToListAsync();
 
-            //Get the count for kendo ui grids
-            var count = items.Count;
+        //Get the count for kendo ui grids
+        var count = items.Count;
 
-            //Skip/Take
-            items = items.Skip(kendoDataRequest.Skip).Take(kendoDataRequest.Take).ToList();
+        //Skip/Take
+        items = items.Skip(kendoDataRequest.Skip).Take(kendoDataRequest.Take).ToList();
 
-            return new JsonResult(new KendoResult<T> { Result = "OK", Records = items, Count = count });
-        }
+        return new JsonResult(new KendoResult<T> { Result = "OK", Records = items, Count = count });
     }
 }

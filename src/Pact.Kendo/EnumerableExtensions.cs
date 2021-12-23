@@ -2,57 +2,56 @@
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Pact.Kendo
+namespace Pact.Kendo;
+
+/// <summary>
+/// A set of enumerable extensions to help with common functions
+/// </summary>
+public static class EnumerableExtensions
 {
     /// <summary>
-    /// A set of enumerable extensions to help with common functions
+    /// Kendo data source support for soft delete, text filtering and sorting
     /// </summary>
-    public static class EnumerableExtensions
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <param name="kendoDataRequest">filer and pagination options</param>
+    /// <returns></returns>
+    public static IEnumerable<T> Kendo<T>(this IEnumerable<T> source, KendoDataRequest kendoDataRequest) where T : class
     {
-        /// <summary>
-        /// Kendo data source support for soft delete, text filtering and sorting
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="kendoDataRequest">filer and pagination options</param>
-        /// <returns></returns>
-        public static IEnumerable<T> Kendo<T>(this IEnumerable<T> source, KendoDataRequest kendoDataRequest) where T : class
-        {
-            //Remove soft delete
-            source = Core.Extensions.CollectionExtensions.SoftDelete(source);
+        //Remove soft delete
+        source = Core.Extensions.CollectionExtensions.SoftDelete(source);
 
-            //Kendo text filter
-            source = Core.Extensions.CollectionExtensions.TextFilter(source, kendoDataRequest.TextFilter);
+        //Kendo text filter
+        source = Core.Extensions.CollectionExtensions.TextFilter(source, kendoDataRequest.TextFilter);
 
-            //Sort
-            if (kendoDataRequest.Sort?.Any() != true) return source;
+        //Sort
+        if (kendoDataRequest.Sort?.Any() != true) return source;
 
-            var ordered = Core.Extensions.CollectionExtensions.OrderBy(source, kendoDataRequest.Sort.First().ToString());
-            ordered = kendoDataRequest.Sort.Skip(1).Aggregate(ordered, (current, sort) => Core.Extensions.CollectionExtensions.ThenBy(current, sort.ToString()));
+        var ordered = Core.Extensions.CollectionExtensions.OrderBy(source, kendoDataRequest.Sort.First().ToString());
+        ordered = kendoDataRequest.Sort.Skip(1).Aggregate(ordered, (current, sort) => Core.Extensions.CollectionExtensions.ThenBy(current, sort.ToString()));
 
-            return ordered;
-        }
+        return ordered;
+    }
 
-        /// <summary>
-        /// Formats data source into json result kendo ui expects
-        /// Applies pagination
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="kendoDataRequest">filer and pagination options</param>
-        /// <returns></returns>
-        public static JsonResult KendoResult<T>(this IEnumerable<T> source, KendoDataRequest kendoDataRequest) where T : class
-        {
-            //Execute
-            var items = source.ToList();
+    /// <summary>
+    /// Formats data source into json result kendo ui expects
+    /// Applies pagination
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <param name="kendoDataRequest">filer and pagination options</param>
+    /// <returns></returns>
+    public static JsonResult KendoResult<T>(this IEnumerable<T> source, KendoDataRequest kendoDataRequest) where T : class
+    {
+        //Execute
+        var items = source.ToList();
 
-            //Get the count for kendo ui grids
-            var count = items.Count;
+        //Get the count for kendo ui grids
+        var count = items.Count;
 
-            //Skip/Take
-            items = items.Skip(kendoDataRequest.Skip).Take(kendoDataRequest.Take).ToList();
+        //Skip/Take
+        items = items.Skip(kendoDataRequest.Skip).Take(kendoDataRequest.Take).ToList();
 
-            return new JsonResult(new KendoResult<T> { Result = "OK", Records = items, Count = count });
-        }
+        return new JsonResult(new KendoResult<T> { Result = "OK", Records = items, Count = count });
     }
 }

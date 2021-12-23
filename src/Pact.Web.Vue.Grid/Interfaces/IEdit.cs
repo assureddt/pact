@@ -1,6 +1,5 @@
-﻿namespace Pact.Web.Vue.Grid.Interfaces
+﻿namespace Pact.Web.Vue.Grid.Interfaces;
+
+public interface IEdit : IDatabaseObject
 {
-    public interface IEdit : IDatabaseObject
-    {
-    }
 }

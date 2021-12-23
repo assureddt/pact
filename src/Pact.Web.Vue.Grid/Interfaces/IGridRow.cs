@@ -1,6 +1,5 @@
-﻿namespace Pact.Web.Vue.Grid.Interfaces
+﻿namespace Pact.Web.Vue.Grid.Interfaces;
+
+public interface IGridRow
 {
-    public interface IGridRow
-    {
-    }
 }

@@ -8,99 +8,98 @@ using Shouldly;
 using Pact.Web.Vue.Grid.Models;
 using System.Linq;
 
-namespace Pact.Web.Vue.Grid.Tests
+namespace Pact.Web.Vue.Grid.Tests;
+
+public class SoftDeleteDefaultCRUDControllerTests : BaseTest
 {
-    public class SoftDeleteDefaultCRUDControllerTests : BaseTest
+    //This is the rolled up class used for all the tests in this file..
+    internal class TestController : DefaultCRUDController<SoftDeleteDatabaseObject, GridRowOutput, EditOutput>
     {
-        //This is the rolled up class used for all the tests in this file..
-        internal class TestController : DefaultCRUDController<SoftDeleteDatabaseObject, GridRowOutput, EditOutput>
+        public TestController(FakeContext context, IMapper mapper) : base(context, mapper)
         {
-            public TestController(FakeContext context, IMapper mapper) : base(context, mapper)
-            {
-                PostChangeAction = () => {
-                    WasPostChangeActionCalled = true;
-                    return Task.CompletedTask;
-                };
-            }
-
-            public bool WasPostChangeActionCalled;
+            PostChangeAction = () => {
+                WasPostChangeActionCalled = true;
+                return Task.CompletedTask;
+            };
         }
 
-        [Fact]
-        public async Task Read()
+        public bool WasPostChangeActionCalled;
+    }
+
+    [Fact]
+    public async Task Read()
+    {
+        // arrange
+        var testController = mocker.CreateInstance<TestController>();
+
+        await _context.SoftDeletes.AddAsync(new SoftDeleteDatabaseObject
         {
-            // arrange
-            var testController = mocker.CreateInstance<TestController>();
-
-            await _context.SoftDeletes.AddAsync(new SoftDeleteDatabaseObject
-            {
-                Name = "Cake A"
-            });
-            await _context.SoftDeletes.AddAsync(new SoftDeleteDatabaseObject
-            {
-                Name = "Cake B",
-                SoftDelete = true
-            });
-            await _context.SaveChangesAsync();
-
-            // act
-            var result = await testController.Read(0, 10, "name", 0, null);
-
-            // assert
-            var dataItems = result.Value.ShouldBeAssignableTo<GenericGridResult<GridRowOutput>>();
-            dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
-            dataItems.Count.ShouldBe(1);
-            dataItems.Records.First().Name.ShouldBe("Cake A");
-        }
-
-
-        [Fact]
-        public async Task Remove_Basic()
+            Name = "Cake A"
+        });
+        await _context.SoftDeletes.AddAsync(new SoftDeleteDatabaseObject
         {
-            // arrange
-            var testController = mocker.CreateInstance<TestController>();
+            Name = "Cake B",
+            SoftDelete = true
+        });
+        await _context.SaveChangesAsync();
 
-            await _context.SoftDeletes.AddAsync(new SoftDeleteDatabaseObject
-            {
-                Name = "Cake A",
-                Id = 1
-            });
-            await _context.SaveChangesAsync();
-            _context.ChangeTracker.Clear();
+        // act
+        var result = await testController.Read(0, 10, "name", 0, null);
 
-            // act
-            var result = await testController.Remove(1);
+        // assert
+        var dataItems = result.Value.ShouldBeAssignableTo<GenericGridResult<GridRowOutput>>();
+        dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
+        dataItems.Count.ShouldBe(1);
+        dataItems.Records.First().Name.ShouldBe("Cake A");
+    }
 
-            // assert
-            var dataItems = result.Value.ShouldBeAssignableTo<GeneralJsonOK>();
-            dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
 
-            (await _context.SoftDeletes.CountAsync()).ShouldBe(1);
-            (await _context.SoftDeletes.FirstAsync()).SoftDelete.ShouldBe(true);
-        }
+    [Fact]
+    public async Task Remove_Basic()
+    {
+        // arrange
+        var testController = mocker.CreateInstance<TestController>();
 
-        [Fact]
-        public async Task Remove_Check_Post_Action_Called()
+        await _context.SoftDeletes.AddAsync(new SoftDeleteDatabaseObject
         {
-            // arrange
-            var testController = mocker.CreateInstance<TestController>();
+            Name = "Cake A",
+            Id = 1
+        });
+        await _context.SaveChangesAsync();
+        _context.ChangeTracker.Clear();
 
-            await _context.SoftDeletes.AddAsync(new SoftDeleteDatabaseObject
-            {
-                Name = "Cake A",
-                Id = 1
-            });
-            await _context.SaveChangesAsync();
-            _context.ChangeTracker.Clear();
+        // act
+        var result = await testController.Remove(1);
 
-            // act
-            var result = await testController.Remove(1);
+        // assert
+        var dataItems = result.Value.ShouldBeAssignableTo<GeneralJsonOK>();
+        dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
 
-            // assert
-            var dataItems = result.Value.ShouldBeAssignableTo<GeneralJsonOK>();
-            dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
+        (await _context.SoftDeletes.CountAsync()).ShouldBe(1);
+        (await _context.SoftDeletes.FirstAsync()).SoftDelete.ShouldBe(true);
+    }
 
-            testController.WasPostChangeActionCalled.ShouldBeTrue();
-        }
+    [Fact]
+    public async Task Remove_Check_Post_Action_Called()
+    {
+        // arrange
+        var testController = mocker.CreateInstance<TestController>();
+
+        await _context.SoftDeletes.AddAsync(new SoftDeleteDatabaseObject
+        {
+            Name = "Cake A",
+            Id = 1
+        });
+        await _context.SaveChangesAsync();
+        _context.ChangeTracker.Clear();
+
+        // act
+        var result = await testController.Remove(1);
+
+        // assert
+        var dataItems = result.Value.ShouldBeAssignableTo<GeneralJsonOK>();
+        dataItems.ShouldNotBeNull().Result.ShouldBe("OK");
+
+        testController.WasPostChangeActionCalled.ShouldBeTrue();
     }
 }

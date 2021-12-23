@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace Pact.Core.Javascript
+namespace Pact.Core.Javascript;
+
+public interface IJavascriptEnums
 {
-    public interface IJavascriptEnums
-    {
-        string Enums(params Type[] enums);
-    }
+    string Enums(params Type[] enums);
 }

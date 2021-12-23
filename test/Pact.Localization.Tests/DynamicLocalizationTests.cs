@@ -11,200 +11,199 @@ using Moq;
 using Shouldly;
 using Xunit;
 
-namespace Pact.Localization.Tests
+namespace Pact.Localization.Tests;
+
+public class DynamicLocalizationTests
 {
-    public class DynamicLocalizationTests
+    [SkippableFact]
+    public async Task Minimal_Defaults_enGB()
     {
-        [SkippableFact]
-        public async Task Minimal_Defaults_enGB()
+        Skip.IfNot(OperatingSystem.IsWindows(), "Windows Only");
+
+        // arrange
+        var resolver = new Mock<ISupportedCulturesResolver>();
+        var options = new OptionsWrapper<RequestLocalizationOptions>(new RequestLocalizationOptions());
+        var mw = new DynamicLocalizationMiddleware(innerHttpContext =>
         {
-            Skip.IfNot(OperatingSystem.IsWindows(), "Windows Only");
+            innerHttpContext.Response.WriteAsync(CultureInfo.CurrentCulture.ToString());
+            return Task.CompletedTask;
+        }, options);
 
-            // arrange
-            var resolver = new Mock<ISupportedCulturesResolver>();
-            var options = new OptionsWrapper<RequestLocalizationOptions>(new RequestLocalizationOptions());
-            var mw = new DynamicLocalizationMiddleware(innerHttpContext =>
+        var services = new ServiceCollection();
+        services.AddSingleton(resolver.Object);
+
+        var context = new DefaultHttpContext();
+        context.Response.Body = new MemoryStream();
+        context.RequestServices = services.BuildServiceProvider();
+
+        // act
+        await mw.InvokeAsync(context);
+
+        // assert
+        context.Response.Body.Seek(0, SeekOrigin.Begin);
+        var body = await new StreamReader(context.Response.Body).ReadToEndAsync();
+        body.ShouldBe("en-GB");
+    }
+
+    [SkippableFact]
+    public async Task Extended_Match_frFR()
+    {
+        Skip.IfNot(OperatingSystem.IsWindows(), "Windows Only");
+
+        // arrange
+        var resolver = new Mock<ISupportedCulturesResolver>();
+        resolver.Setup(m => m.GetSupportedCulturesAsync(It.IsAny<HttpContext>()))
+            .ReturnsAsync(new List<CultureInfo>
             {
-                innerHttpContext.Response.WriteAsync(CultureInfo.CurrentCulture.ToString());
-                return Task.CompletedTask;
-            }, options);
-
-            var services = new ServiceCollection();
-            services.AddSingleton(resolver.Object);
-
-            var context = new DefaultHttpContext();
-            context.Response.Body = new MemoryStream();
-            context.RequestServices = services.BuildServiceProvider();
-
-            // act
-            await mw.InvokeAsync(context);
-
-            // assert
-            context.Response.Body.Seek(0, SeekOrigin.Begin);
-            var body = await new StreamReader(context.Response.Body).ReadToEndAsync();
-            body.ShouldBe("en-GB");
-        }
-
-        [SkippableFact]
-        public async Task Extended_Match_frFR()
-        {
-            Skip.IfNot(OperatingSystem.IsWindows(), "Windows Only");
-
-            // arrange
-            var resolver = new Mock<ISupportedCulturesResolver>();
-            resolver.Setup(m => m.GetSupportedCulturesAsync(It.IsAny<HttpContext>()))
-                .ReturnsAsync(new List<CultureInfo>
-                {
-                    new("en-GB"),
-                    new("fr-FR"),
-                    new("de-DE")
-                });
-
-            var options = new OptionsWrapper<RequestLocalizationOptions>(new RequestLocalizationOptions());
-            var mw = new DynamicLocalizationMiddleware(innerHttpContext =>
-            {
-                innerHttpContext.Response.WriteAsync(CultureInfo.CurrentCulture.ToString());
-                return Task.CompletedTask;
-            }, options);
-
-            var services = new ServiceCollection();
-            services.AddSingleton(resolver.Object);
-
-            var context = new DefaultHttpContext();
-            context.Response.Body = new MemoryStream();
-            context.RequestServices = services.BuildServiceProvider();
-            context.Request.Headers["Accept-Language"] = "fr-FR";
-
-            // act
-            await mw.InvokeAsync(context);
-
-            // assert
-            context.Response.Body.Seek(0, SeekOrigin.Begin);
-            var body = await new StreamReader(context.Response.Body).ReadToEndAsync();
-            body.ShouldBe("fr-FR");
-        }
-
-        [SkippableFact]
-        public async Task Extended_NoMatch_enGB()
-        {
-            Skip.IfNot(OperatingSystem.IsWindows(), "Windows Only");
-
-            // arrange
-            var resolver = new Mock<ISupportedCulturesResolver>();
-            resolver.Setup(m => m.GetSupportedCulturesAsync(It.IsAny<HttpContext>()))
-                .ReturnsAsync(new List<CultureInfo>
-                {
-                    new("en-GB"),
-                    new("fr-FR"),
-                    new("de-DE")
-                });
-
-            var options = new OptionsWrapper<RequestLocalizationOptions>(new RequestLocalizationOptions());
-            var mw = new DynamicLocalizationMiddleware(innerHttpContext =>
-            {
-                innerHttpContext.Response.WriteAsync(CultureInfo.CurrentCulture.ToString());
-                return Task.CompletedTask;
-            }, options);
-
-            var services = new ServiceCollection();
-            services.AddSingleton(resolver.Object);
-
-            var context = new DefaultHttpContext();
-            context.Response.Body = new MemoryStream();
-            context.RequestServices = services.BuildServiceProvider();
-            context.Request.Headers["Accept-Language"] = "es-ES";
-
-            // act
-            await mw.InvokeAsync(context);
-
-            // assert
-            context.Response.Body.Seek(0, SeekOrigin.Begin);
-            var body = await new StreamReader(context.Response.Body).ReadToEndAsync();
-            body.ShouldBe("en-GB");
-        }
-        
-        [SkippableFact]
-        public async Task Extended_Partial_frCA_NoFallback_enGB()
-        {
-            Skip.IfNot(OperatingSystem.IsWindows(), "Windows Only");
-
-            // arrange
-            var resolver = new Mock<ISupportedCulturesResolver>();
-            resolver.Setup(m => m.GetSupportedCulturesAsync(It.IsAny<HttpContext>()))
-                .ReturnsAsync(new List<CultureInfo>
-                {
-                    new("en-GB"),
-                    new("fr"),
-                    new("fr-FR"),
-                    new("de-DE")
-                });
-
-            var options = new OptionsWrapper<RequestLocalizationOptions>(new RequestLocalizationOptions
-            {
-                FallBackToParentCultures = false,
-                FallBackToParentUICultures = false
+                new("en-GB"),
+                new("fr-FR"),
+                new("de-DE")
             });
-            var mw = new DynamicLocalizationMiddleware(innerHttpContext =>
-            {
-                innerHttpContext.Response.WriteAsync(CultureInfo.CurrentCulture.ToString());
-                return Task.CompletedTask;
-            }, options);
 
-            var services = new ServiceCollection();
-            services.AddSingleton(resolver.Object);
-
-            var context = new DefaultHttpContext();
-            context.Response.Body = new MemoryStream();
-            context.RequestServices = services.BuildServiceProvider();
-            context.Request.Headers["Accept-Language"] = "fr-CA";
-
-            // act
-            await mw.InvokeAsync(context);
-
-            // assert
-            context.Response.Body.Seek(0, SeekOrigin.Begin);
-            var body = await new StreamReader(context.Response.Body).ReadToEndAsync();
-            body.ShouldBe("en-GB");
-        }
-
-        [SkippableFact]
-        public async Task Extended_Partial_frCA_WithFallback_frFR()
+        var options = new OptionsWrapper<RequestLocalizationOptions>(new RequestLocalizationOptions());
+        var mw = new DynamicLocalizationMiddleware(innerHttpContext =>
         {
-            Skip.IfNot(OperatingSystem.IsWindows(), "Windows Only");
+            innerHttpContext.Response.WriteAsync(CultureInfo.CurrentCulture.ToString());
+            return Task.CompletedTask;
+        }, options);
 
-            // arrange
-            var resolver = new Mock<ISupportedCulturesResolver>();
-            resolver.Setup(m => m.GetSupportedCulturesAsync(It.IsAny<HttpContext>()))
-                .ReturnsAsync(new List<CultureInfo>
-                {
-                    new("en-GB"),
-                    new("fr"),
-                    new("fr-FR"),
-                    new("de-DE")
-                });
+        var services = new ServiceCollection();
+        services.AddSingleton(resolver.Object);
 
-            var options = new OptionsWrapper<RequestLocalizationOptions>(new RequestLocalizationOptions());
-            var mw = new DynamicLocalizationMiddleware(innerHttpContext =>
+        var context = new DefaultHttpContext();
+        context.Response.Body = new MemoryStream();
+        context.RequestServices = services.BuildServiceProvider();
+        context.Request.Headers["Accept-Language"] = "fr-FR";
+
+        // act
+        await mw.InvokeAsync(context);
+
+        // assert
+        context.Response.Body.Seek(0, SeekOrigin.Begin);
+        var body = await new StreamReader(context.Response.Body).ReadToEndAsync();
+        body.ShouldBe("fr-FR");
+    }
+
+    [SkippableFact]
+    public async Task Extended_NoMatch_enGB()
+    {
+        Skip.IfNot(OperatingSystem.IsWindows(), "Windows Only");
+
+        // arrange
+        var resolver = new Mock<ISupportedCulturesResolver>();
+        resolver.Setup(m => m.GetSupportedCulturesAsync(It.IsAny<HttpContext>()))
+            .ReturnsAsync(new List<CultureInfo>
             {
-                innerHttpContext.Response.WriteAsync(CultureInfo.CurrentCulture.ToString());
-                return Task.CompletedTask;
-            }, options);
+                new("en-GB"),
+                new("fr-FR"),
+                new("de-DE")
+            });
 
-            var services = new ServiceCollection();
-            services.AddSingleton(resolver.Object);
+        var options = new OptionsWrapper<RequestLocalizationOptions>(new RequestLocalizationOptions());
+        var mw = new DynamicLocalizationMiddleware(innerHttpContext =>
+        {
+            innerHttpContext.Response.WriteAsync(CultureInfo.CurrentCulture.ToString());
+            return Task.CompletedTask;
+        }, options);
 
-            var context = new DefaultHttpContext();
-            context.Response.Body = new MemoryStream();
-            context.RequestServices = services.BuildServiceProvider();
-            context.Request.Headers["Accept-Language"] = "fr-CA";
+        var services = new ServiceCollection();
+        services.AddSingleton(resolver.Object);
 
-            // act
-            await mw.InvokeAsync(context);
+        var context = new DefaultHttpContext();
+        context.Response.Body = new MemoryStream();
+        context.RequestServices = services.BuildServiceProvider();
+        context.Request.Headers["Accept-Language"] = "es-ES";
 
-            // assert
-            context.Response.Body.Seek(0, SeekOrigin.Begin);
-            var body = await new StreamReader(context.Response.Body).ReadToEndAsync();
-            body.ShouldBe("fr");
-        }
+        // act
+        await mw.InvokeAsync(context);
+
+        // assert
+        context.Response.Body.Seek(0, SeekOrigin.Begin);
+        var body = await new StreamReader(context.Response.Body).ReadToEndAsync();
+        body.ShouldBe("en-GB");
+    }
+        
+    [SkippableFact]
+    public async Task Extended_Partial_frCA_NoFallback_enGB()
+    {
+        Skip.IfNot(OperatingSystem.IsWindows(), "Windows Only");
+
+        // arrange
+        var resolver = new Mock<ISupportedCulturesResolver>();
+        resolver.Setup(m => m.GetSupportedCulturesAsync(It.IsAny<HttpContext>()))
+            .ReturnsAsync(new List<CultureInfo>
+            {
+                new("en-GB"),
+                new("fr"),
+                new("fr-FR"),
+                new("de-DE")
+            });
+
+        var options = new OptionsWrapper<RequestLocalizationOptions>(new RequestLocalizationOptions
+        {
+            FallBackToParentCultures = false,
+            FallBackToParentUICultures = false
+        });
+        var mw = new DynamicLocalizationMiddleware(innerHttpContext =>
+        {
+            innerHttpContext.Response.WriteAsync(CultureInfo.CurrentCulture.ToString());
+            return Task.CompletedTask;
+        }, options);
+
+        var services = new ServiceCollection();
+        services.AddSingleton(resolver.Object);
+
+        var context = new DefaultHttpContext();
+        context.Response.Body = new MemoryStream();
+        context.RequestServices = services.BuildServiceProvider();
+        context.Request.Headers["Accept-Language"] = "fr-CA";
+
+        // act
+        await mw.InvokeAsync(context);
+
+        // assert
+        context.Response.Body.Seek(0, SeekOrigin.Begin);
+        var body = await new StreamReader(context.Response.Body).ReadToEndAsync();
+        body.ShouldBe("en-GB");
+    }
+
+    [SkippableFact]
+    public async Task Extended_Partial_frCA_WithFallback_frFR()
+    {
+        Skip.IfNot(OperatingSystem.IsWindows(), "Windows Only");
+
+        // arrange
+        var resolver = new Mock<ISupportedCulturesResolver>();
+        resolver.Setup(m => m.GetSupportedCulturesAsync(It.IsAny<HttpContext>()))
+            .ReturnsAsync(new List<CultureInfo>
+            {
+                new("en-GB"),
+                new("fr"),
+                new("fr-FR"),
+                new("de-DE")
+            });
+
+        var options = new OptionsWrapper<RequestLocalizationOptions>(new RequestLocalizationOptions());
+        var mw = new DynamicLocalizationMiddleware(innerHttpContext =>
+        {
+            innerHttpContext.Response.WriteAsync(CultureInfo.CurrentCulture.ToString());
+            return Task.CompletedTask;
+        }, options);
+
+        var services = new ServiceCollection();
+        services.AddSingleton(resolver.Object);
+
+        var context = new DefaultHttpContext();
+        context.Response.Body = new MemoryStream();
+        context.RequestServices = services.BuildServiceProvider();
+        context.Request.Headers["Accept-Language"] = "fr-CA";
+
+        // act
+        await mw.InvokeAsync(context);
+
+        // assert
+        context.Response.Body.Seek(0, SeekOrigin.Begin);
+        var body = await new StreamReader(context.Response.Body).ReadToEndAsync();
+        body.ShouldBe("fr");
     }
 }

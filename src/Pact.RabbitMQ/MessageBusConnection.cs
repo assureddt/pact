@@ -3,69 +3,68 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 
-namespace Pact.RabbitMQ
+namespace Pact.RabbitMQ;
+
+/// <summary>
+/// The raw message bus connection handler
+/// </summary>
+public class MessageBusConnection : IMessageBusConnection, IDisposable
 {
-    /// <summary>
-    /// The raw message bus connection handler
-    /// </summary>
-    public class MessageBusConnection : IMessageBusConnection, IDisposable
+    public MessageBusConnection(ILogger<MessageBusConnection> logger, IOptions<MessageBusSettings> options)
     {
-        public MessageBusConnection(ILogger<MessageBusConnection> logger, IOptions<MessageBusSettings> options)
+        _logger = logger;
+
+        try
         {
-            _logger = logger;
+            Options = options.Value;
 
-            try
+            _logger.LogTrace("Connecting to message bus {host}", Options.Hostname);
+            ConnectionFactory = new ConnectionFactory
             {
-                Options = options.Value;
-
-                _logger.LogTrace("Connecting to message bus {host}", Options.Hostname);
-                ConnectionFactory = new ConnectionFactory
-                {
-                    HostName = Options.Hostname,
-                    UserName = Options.Username,
-                    Password = Options.Password,
-                    AutomaticRecoveryEnabled = true
-                };
-                Connection = ConnectionFactory.CreateConnection();
-            }
-            catch (Exception exc)
-            {
-                _logger.LogError(exc, "Error connecting to message bus");
-            }
+                HostName = Options.Hostname,
+                UserName = Options.Username,
+                Password = Options.Password,
+                AutomaticRecoveryEnabled = true
+            };
+            Connection = ConnectionFactory.CreateConnection();
         }
-
-        private readonly ILogger<MessageBusConnection> _logger;
-        public MessageBusSettings Options { get; }
-        public ConnectionFactory ConnectionFactory { get; }
-        public IConnection Connection { get; }
-
-        /// <summary>
-        /// Gets the current channel to the server.
-        /// </summary>
-        /// <returns></returns>
-        public IModel GetModel()
+        catch (Exception exc)
         {
-            try
-            {
-                var channel = Connection.CreateModel();
-
-                //Set to each worker only gets one message at a time.
-                channel.BasicQos(0, 1, false);
-
-                return channel;
-            }
-            catch (Exception exc)
-            {
-                _logger.LogError(exc, "Error creating channel");
-                throw;
-            }
+            _logger.LogError(exc, "Error connecting to message bus");
         }
-
-        public void Dispose()
-        {
-            _logger.LogDebug("Closing and shutting down message bus connection");
-            Connection.Dispose();
-        }
-
     }
+
+    private readonly ILogger<MessageBusConnection> _logger;
+    public MessageBusSettings Options { get; }
+    public ConnectionFactory ConnectionFactory { get; }
+    public IConnection Connection { get; }
+
+    /// <summary>
+    /// Gets the current channel to the server.
+    /// </summary>
+    /// <returns></returns>
+    public IModel GetModel()
+    {
+        try
+        {
+            var channel = Connection.CreateModel();
+
+            //Set to each worker only gets one message at a time.
+            channel.BasicQos(0, 1, false);
+
+            return channel;
+        }
+        catch (Exception exc)
+        {
+            _logger.LogError(exc, "Error creating channel");
+            throw;
+        }
+    }
+
+    public void Dispose()
+    {
+        _logger.LogDebug("Closing and shutting down message bus connection");
+        Connection.Dispose();
+    }
+
 }

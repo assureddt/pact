@@ -1,7 +1,6 @@
-﻿namespace Pact.Web.Vue.Grid.Interfaces
+﻿namespace Pact.Web.Vue.Grid.Interfaces;
+
+public interface ISoftDelete : IDatabaseObject
 {
-    public interface ISoftDelete : IDatabaseObject
-    {
-        public bool SoftDelete { get; set; }
-    }
+    public bool SoftDelete { get; set; }
 }

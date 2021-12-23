@@ -2,40 +2,39 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace Pact.Core.Helpers
+namespace Pact.Core.Helpers;
+
+public static class StopwatchHelper
 {
-    public static class StopwatchHelper
+    /// <summary>
+    /// Helper to wrap an action in a stopwatch in order to time it
+    /// </summary>
+    /// <param name="action">The action to be timed</param>
+    /// <returns>How long the action took to execute</returns>
+    public static TimeSpan Time(Action action)
     {
-        /// <summary>
-        /// Helper to wrap an action in a stopwatch in order to time it
-        /// </summary>
-        /// <param name="action">The action to be timed</param>
-        /// <returns>How long the action took to execute</returns>
-        public static TimeSpan Time(Action action)
-        {
-            var sw = Stopwatch.StartNew();
+        var sw = Stopwatch.StartNew();
 
-            action();
+        action();
 
-            sw.Stop();
+        sw.Stop();
 
-            return sw.Elapsed;
-        }
+        return sw.Elapsed;
+    }
 
-        /// <summary>
-        /// Helper to wrap an asynchronous function in a stopwatch in order to time it
-        /// </summary>
-        /// <param name="func">The asynchronous function to be timed</param>
-        /// <returns>How long the function took to execute</returns>
-        public static async Task<TimeSpan> TimeAsync(Func<Task> func)
-        {
-            var sw = Stopwatch.StartNew();
+    /// <summary>
+    /// Helper to wrap an asynchronous function in a stopwatch in order to time it
+    /// </summary>
+    /// <param name="func">The asynchronous function to be timed</param>
+    /// <returns>How long the function took to execute</returns>
+    public static async Task<TimeSpan> TimeAsync(Func<Task> func)
+    {
+        var sw = Stopwatch.StartNew();
 
-            await func();
+        await func();
 
-            sw.Stop();
+        sw.Stop();
 
-            return sw.Elapsed;
-        }
+        return sw.Elapsed;
     }
 }

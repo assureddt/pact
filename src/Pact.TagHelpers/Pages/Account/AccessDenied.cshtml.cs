@@ -2,12 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Pact.Web.Models;
 
-namespace Pact.TagHelpers.Pages.Account
+namespace Pact.TagHelpers.Pages.Account;
+
+[AllowAnonymous]
+[IgnoreAntiforgeryToken]
+public class AccessDeniedModel : PageModelBase
 {
-    [AllowAnonymous]
-    [IgnoreAntiforgeryToken]
-    public class AccessDeniedModel : PageModelBase
-    {
-        public override string Title => "Access Denied";
-    }
+    public override string Title => "Access Denied";
 }

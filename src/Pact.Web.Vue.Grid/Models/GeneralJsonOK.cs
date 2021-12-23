@@ -1,7 +1,6 @@
-﻿namespace Pact.Web.Vue.Grid.Models
+﻿namespace Pact.Web.Vue.Grid.Models;
+
+public class GeneralJsonOK
 {
-    public class GeneralJsonOK
-    {
-        public string Result { get; set; }
-    }
+    public string Result { get; set; }
 }

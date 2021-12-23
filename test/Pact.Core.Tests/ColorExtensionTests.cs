@@ -3,45 +3,44 @@ using Pact.Core.Extensions;
 using Shouldly;
 using Xunit;
 
-namespace Pact.Core.Tests
+namespace Pact.Core.Tests;
+
+public class ColorExtensionTests
 {
-    public class ColorExtensionTests
+    [Fact]
+    public void CssHex_AsExpected()
     {
-        [Fact]
-        public void CssHex_AsExpected()
-        {
-            // arrange
-            var col = Color.OrangeRed;
+        // arrange
+        var col = Color.OrangeRed;
 
-            // act
-            var result = col.ToCssHex();
+        // act
+        var result = col.ToCssHex();
 
-            // assert
-            result.ShouldBe("#FF4500");
-        }
+        // assert
+        result.ShouldBe("#FF4500");
+    }
 
-        [Fact]
-        public void CssHex_WithAlpha_AsExpected()
-        {
-            // arrange
-            var col = Color.MediumPurple;
+    [Fact]
+    public void CssHex_WithAlpha_AsExpected()
+    {
+        // arrange
+        var col = Color.MediumPurple;
 
-            // act
-            var result = col.ToCssHex(true);
+        // act
+        var result = col.ToCssHex(true);
 
-            // assert
-            result.ShouldBe("#FF9370DB");
-        }
+        // assert
+        result.ShouldBe("#FF9370DB");
+    }
 
-        [Fact]
-        public void RandomColors_AsExpected()
-        {
-            // act
-            var result = ColorExtensions.GetRandomKnownColors(8);
+    [Fact]
+    public void RandomColors_AsExpected()
+    {
+        // act
+        var result = ColorExtensions.GetRandomKnownColors(8);
 
-            // assert
-            result.Count.ShouldBe(8);
-            result.ShouldBeUnique();
-        }
+        // assert
+        result.Count.ShouldBe(8);
+        result.ShouldBeUnique();
     }
 }
