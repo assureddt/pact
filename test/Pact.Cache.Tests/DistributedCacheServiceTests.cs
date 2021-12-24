@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -66,16 +67,22 @@ public class DistributedCacheServiceTests
         // arrange
         var expectedBytes = Encoding.UTF8.GetBytes("{\"Id\":1,\"Name\":\"Test\"}");
         var cache = new Mock<IDistributedCache>();
+        var logger = new Mock<ILogger<DistributedCacheService>>();
         cache.Setup(m => m.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync((byte[])null);
-        var svc = new DistributedCacheService(cache.Object, new NullLogger<DistributedCacheService>());
+        var svc = new DistributedCacheService(cache.Object, logger.Object);
+
+        const string key = "test";
 
         // act
-        var _ = await svc.GetOrCreateAsync("test", _ => Task.FromResult(new MyClass {Id = 1, Name = "Test"}));
+        var _ = await svc.GetOrCreateAsync(key, _ => Task.FromResult(new MyClass {Id = 1, Name = "Test"}));
 
         // assert
-        cache.Verify(m => m.GetAsync("test", It.IsAny<CancellationToken>()));
-        cache.Verify(m => m.SetAsync("test", It.Is<byte[]>(x => x.SequenceEqual(expectedBytes)), It.IsAny<DistributedCacheEntryOptions>(), It.IsAny<CancellationToken>()));
+        cache.Verify(m => m.GetAsync(key, It.IsAny<CancellationToken>()));
+        cache.Verify(m => m.SetAsync(key, It.Is<byte[]>(x => x.SequenceEqual(expectedBytes)), It.IsAny<DistributedCacheEntryOptions>(), It.IsAny<CancellationToken>()));
         cache.VerifyNoOtherCalls();
+
+        logger.Verify(m => m.IsEnabled(LogLevel.Debug));
+        logger.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -231,7 +238,7 @@ public class DistributedCacheServiceTests
     {
         // arrange
         var cache = new MemoryDistributedCache(new OptionsWrapper<MemoryDistributedCacheOptions>(new MemoryDistributedCacheOptions()));
-        await cache.SetStringAsync("test", "{ \"id\": 1, \"Name\": \"Test\" }");
+        await cache.SetStringAsync("test", "{ \"Id\": 1, \"Name\": \"Test\" }");
 
         var svc = new DistributedCacheService(cache, new NullLogger<DistributedCacheService>());
 

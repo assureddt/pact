@@ -46,36 +46,6 @@ public class StringExtensionTests
     }
 
     [Fact]
-    public void ForJs_OK()
-    {
-        // arrange
-        var helpMock = new Mock<IHtmlHelper>();
-        var help = helpMock.Object;
-
-        var _ = help.ForJs("test o'trace");
-
-        // assert
-        helpMock.Verify(m => m.Raw(It.Is<string>(x => x == "\"test o\\u0027trace\"")));
-        helpMock.VerifyNoOtherCalls();
-    }
-
-
-    [Fact]
-    public void ForJs_HtmlContent_OK()
-    {
-        // arrange
-        var content = new HtmlString("test o'trace");
-        var helpMock = new Mock<IHtmlHelper>();
-        var help = helpMock.Object;
-
-        var _ = help.ForJs(content);
-
-        // assert
-        helpMock.Verify(m => m.Raw(It.Is<string>(x => x == "\"test o\\u0027trace\"")));
-        helpMock.VerifyNoOtherCalls();
-    }
-
-    [Fact]
     public void GetLines_OK()
     {
         // arrange

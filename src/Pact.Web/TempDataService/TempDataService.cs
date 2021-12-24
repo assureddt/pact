@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Text.Json;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Pact.Core.Extensions;
 using System.Text.RegularExpressions;
@@ -24,36 +25,35 @@ public class TempDataService : ITempDataService
     }
 
     ///<inheritdoc/>
-    public void Set<T>(string key, T value) where T : class
+    public void Set<T>(string key, T value, JsonSerializerOptions jsonOptions = null) where T : class
     {
-        GetTempData()[key] = value.ToJson();
+        GetTempData()[key] = value.ToJson(jsonOptions);
     }
 
     ///<inheritdoc/>
-    public T Get<T>(string key) where T : class
+    public T Get<T>(string key, JsonSerializerOptions jsonOptions = null) where T : class
     {
         if (!GetTempData().TryGetValue(key, out var value) || value is not string json)
             return default;
 
         GetTempData().Remove(key);
-        return json.FromJson<T>();
-
+        return json.FromJson<T>(jsonOptions);
     }
 
     ///<inheritdoc/>
-    public string StoreOnKeyToken<T>(string key, T value) where T : class
+    public string StoreOnKeyToken<T>(string key, T value, JsonSerializerOptions jsonOptions = null) where T : class
     {
         var token = "Z" + Regex.Replace(Convert.ToBase64String(Guid.NewGuid().ToByteArray()), "[/+=]", "-");
         var cacheKey = UrlCacheString + key + ":" + token;
-        Set(cacheKey, value);
+        Set(cacheKey, value, jsonOptions);
         return token;
     }
 
     ///<inheritdoc/>
-    public T GetFromKeyToken<T>(string key, string token) where T : class
+    public T GetFromKeyToken<T>(string key, string token, JsonSerializerOptions jsonOptions = null) where T : class
     {
         var cacheKey = UrlCacheString + key + ":" + token;
-        return Get<T>(cacheKey);
+        return Get<T>(cacheKey, jsonOptions);
     }
 
     ///<inheritdoc/>
