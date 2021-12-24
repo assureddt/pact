@@ -1,6 +1,5 @@
 using System;
 using System.Runtime.InteropServices;
-using System.Text.Json;
 using Pact.Core.Extensions;
 using Shouldly;
 using Xunit;
@@ -10,71 +9,6 @@ namespace Pact.Core.Tests;
 [Collection("JsonSerializerSequential")]
 public class StringExtensionTests
 {
-    [Fact]
-    public void FromJson_OK()
-    {
-        // act
-        var result = "{ \"Id\": 1, \"Name\": \"Test\" }".FromJson<MyClass>();
-
-        // assert
-        result.ShouldSatisfyAllConditions(
-            () => result.Id.ShouldBe(1),
-            () => result.Name.ShouldBe("Test"));
-    }
-
-    [Fact]
-    public void FromJson_CaseSensitive_Fail()
-    {
-        // act
-        var result = "{ \"id\": 1, \"name\": \"test\" }".FromJson<MyClass>(caseInsensitive: false);
-
-        // assert
-        result.ShouldSatisfyAllConditions(
-            () => result.Id.ShouldBe(0),
-            () => result.Name.ShouldBe(null));
-    }
-
-    [Fact]
-    public void FromJson_CaseInSensitive_OK()
-    {
-        // act
-        var result = "{ \"id\": 1, \"name\": \"Test\" }".FromJson<MyClass>();
-
-        // assert
-        result.ShouldSatisfyAllConditions(
-            () => result.Id.ShouldBe(1),
-            () => result.Name.ShouldBe("Test"));
-    }
-
-    [Fact]
-    public void FromJson_BadArray_Throws()
-    {
-
-
-        // assert
-        Assert.Throws<JsonException>(() => "{ \"Id\": 1, \"Name\": \"Test\" }, { \"Id\": 2, \"Name\": \"Test2\" }".FromJson<MyClass>());
-    }
-
-    [Fact]
-    public void FromJson_Relaxed_OK()
-    {
-        // act
-        var result = "{ \"Id\": 1, \"Name\": \"Test\" }, { \"Id\": 2, \"Name\": \"Test2\" }".FromJson<MyClass[]>(true);
-
-        // assert
-        result.ShouldSatisfyAllConditions(
-            () => result[0].Id.ShouldBe(1),
-            () => result[0].Name.ShouldBe("Test"),
-            () => result[1].Id.ShouldBe(2),
-            () => result[1].Name.ShouldBe("Test2"));
-    }
-
-    private class MyClass
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-    }
-
     [Fact]
     public void Alphanumerics_OK()
     {

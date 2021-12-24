@@ -413,7 +413,7 @@ public class DualLayerCacheServiceTests
     {
         // arrange
         var cache = new MemoryDistributedCache(new OptionsWrapper<MemoryDistributedCacheOptions>(new MemoryDistributedCacheOptions()));
-        await cache.SetStringAsync("test", "{ \"id\": 1, \"Name\": \"Test\" }");
+        await cache.SetStringAsync("test", "{ \"Id\": 1, \"Name\": \"Test\" }");
 
         var memory = new MemoryCache(new OptionsWrapper<MemoryCacheOptions>(new MemoryCacheOptions()));
         var svc = new DualLayerCacheService(cache, memory, new NullLogger<DualLayerCacheService>(), _opts);

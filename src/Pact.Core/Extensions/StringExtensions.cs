@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
 namespace Pact.Core.Extensions;
@@ -13,29 +12,14 @@ public static class StringExtensions
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="value"></param>
-    /// <param name="relaxedArrayEnclosure">If true, isn't picky about square brackets wrapping a comma-separated list of objects</param>
-    /// <param name="caseInsensitive">Ignore character casing of property names (ignored by Newtonsoft - always insensitive)</param>
-    /// <param name="ignoreNull">Ignore null values</param>
+    /// <param name="options">Optional options to override the default STJ ones</param>
     /// <returns></returns>
-    public static T FromJson<T>(this string value, bool relaxedArrayEnclosure = false, bool caseInsensitive = true, bool ignoreNull = false)
+    /// <remarks>NOTE: we've moved away from overriding global defaults as it's probably a net-bad thing - the caller is always now in control of the serialization options</remarks>
+    public static T FromJson<T>(this string value, JsonSerializerOptions options = null)
     {
         // NOTE: newtonsoft.json would return null if this is passed in. System.Text.Json (correctly) throws an exception as an empty string is invalid json
         // ... as such, checking separately
-        if (string.IsNullOrWhiteSpace(value)) return default;
-
-        if (relaxedArrayEnclosure && typeof(T).IsArray)
-        {
-            if (!value.TrimStart().StartsWith("[")) value = "[" + value;
-            if (!value.TrimEnd().EndsWith("]")) value += "]";
-        }
-
-        var opts = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = caseInsensitive,
-            DefaultIgnoreCondition = ignoreNull ? JsonIgnoreCondition.WhenWritingNull : JsonIgnoreCondition.Never
-        };
-
-        return JsonSerializer.Deserialize<T>(value, opts);
+        return string.IsNullOrWhiteSpace(value) ? default : JsonSerializer.Deserialize<T>(value, options);
     }
 
     /// <summary>
@@ -93,7 +77,7 @@ public static class StringExtensions
             if (!string.IsNullOrEmpty(s) && s.Trim().Length > 0)
             {
                 var conv = TypeDescriptor.GetConverter(typeof(T));
-                result = (T)conv.ConvertFrom(s);
+                result = (T)conv.ConvertFrom(s)!;
             }
         }
         catch

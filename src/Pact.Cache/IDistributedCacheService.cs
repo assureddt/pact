@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
+﻿using System.Text.Json;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Pact.Cache;
 
@@ -19,8 +20,9 @@ public interface IDistributedCacheService
     /// <remarks>Internally deserializes from JSON</remarks>
     /// <typeparam name="T"></typeparam>
     /// <param name="key"></param>
+    /// <param name="jsonOptions">Optional options to override the default STJ ones</param>
     /// <returns></returns>
-    T Get<T>(string key) where T : class;
+    T Get<T>(string key, JsonSerializerOptions jsonOptions = null) where T : class;
     /// <summary>
     /// Get the value type of a specified key
     /// </summary>
@@ -38,8 +40,9 @@ public interface IDistributedCacheService
     /// <param name="key"></param>
     /// <param name="value"></param>
     /// <param name="options"></param>
+    /// <param name="jsonOptions">Optional options to override the default STJ ones</param>
     /// <returns></returns>
-    T Set<T>(string key, T value, DistributedCacheEntryOptions options) where T : class;
+    T Set<T>(string key, T value, DistributedCacheEntryOptions options, JsonSerializerOptions jsonOptions = null) where T : class;
     /// <summary>
     /// Store a value type against the specified key
     /// </summary>
@@ -58,8 +61,9 @@ public interface IDistributedCacheService
     /// <typeparam name="T"></typeparam>
     /// <param name="key"></param>
     /// <param name="factory"></param>
+    /// <param name="jsonOptions">Optional options to override the default STJ ones</param>
     /// <returns></returns>
-    T Set<T>(string key, Func<DistributedCacheEntryOptions, T> factory) where T : class;
+    T Set<T>(string key, Func<DistributedCacheEntryOptions, T> factory, JsonSerializerOptions jsonOptions = null) where T : class;
     /// <summary>
     /// Store a value type against the specified key
     /// </summary>
@@ -77,8 +81,9 @@ public interface IDistributedCacheService
     /// <typeparam name="T"></typeparam>
     /// <param name="key"></param>
     /// <param name="factory"></param>
+    /// <param name="jsonOptions">Optional options to override the default STJ ones</param>
     /// <returns></returns>
-    T GetOrCreate<T>(string key, Func<DistributedCacheEntryOptions, T> factory) where T : class;
+    T GetOrCreate<T>(string key, Func<DistributedCacheEntryOptions, T> factory, JsonSerializerOptions jsonOptions = null) where T : class;
     /// <summary>
     /// Retrieves or creates a value type against the specified key
     /// </summary>
@@ -102,8 +107,9 @@ public interface IDistributedCacheService
     /// <remarks>Internally deserializes from JSON</remarks>
     /// <typeparam name="T"></typeparam>
     /// <param name="key"></param>
+    /// <param name="jsonOptions">Optional options to override the default STJ ones</param>
     /// <returns></returns>
-    Task<T> GetAsync<T>(string key) where T : class;
+    Task<T> GetAsync<T>(string key, JsonSerializerOptions jsonOptions = null) where T : class;
     /// <summary>
     /// Retrieves a value type against the specified key
     /// </summary>
@@ -121,8 +127,9 @@ public interface IDistributedCacheService
     /// <param name="key"></param>
     /// <param name="value"></param>
     /// <param name="options"></param>
+    /// <param name="jsonOptions">Optional options to override the default STJ ones</param>
     /// <returns></returns>
-    Task<T> SetAsync<T>(string key, T value, DistributedCacheEntryOptions options) where T : class;
+    Task<T> SetAsync<T>(string key, T value, DistributedCacheEntryOptions options, JsonSerializerOptions jsonOptions = null) where T : class;
     /// <summary>
     /// Store a value type against the specified key
     /// </summary>
@@ -141,8 +148,9 @@ public interface IDistributedCacheService
     /// <typeparam name="T"></typeparam>
     /// <param name="key"></param>
     /// <param name="factory"></param>
+    /// <param name="jsonOptions">Optional options to override the default STJ ones</param>
     /// <returns></returns>
-    Task<T> SetAsync<T>(string key, Func<DistributedCacheEntryOptions, Task<T>> factory) where T : class;
+    Task<T> SetAsync<T>(string key, Func<DistributedCacheEntryOptions, Task<T>> factory, JsonSerializerOptions jsonOptions = null) where T : class;
     /// <summary>
     /// Store a value type against the specified key
     /// </summary>
@@ -160,8 +168,9 @@ public interface IDistributedCacheService
     /// <typeparam name="T"></typeparam>
     /// <param name="key"></param>
     /// <param name="factory"></param>
+    /// <param name="jsonOptions">Optional options to override the default STJ ones</param>
     /// <returns></returns>
-    Task<T> GetOrCreateAsync<T>(string key, Func<DistributedCacheEntryOptions, Task<T>> factory) where T : class;
+    Task<T> GetOrCreateAsync<T>(string key, Func<DistributedCacheEntryOptions, Task<T>> factory, JsonSerializerOptions jsonOptions = null) where T : class;
     /// <summary>
     /// Retrieves or creates a value type against the specified key
     /// </summary>
