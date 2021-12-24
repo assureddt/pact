@@ -81,7 +81,7 @@ public class DistributedCacheServiceTests
         cache.Verify(m => m.SetAsync(key, It.Is<byte[]>(x => x.SequenceEqual(expectedBytes)), It.IsAny<DistributedCacheEntryOptions>(), It.IsAny<CancellationToken>()));
         cache.VerifyNoOtherCalls();
 
-        logger.Verify(m => m.IsEnabled(LogLevel.Debug));
+        logger.Verify(m => m.IsEnabled(LogLevel.Trace));
         logger.VerifyNoOtherCalls();
     }
 

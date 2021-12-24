@@ -15,16 +15,16 @@ public abstract class DistributedCacheBase : IDistributedCacheService
         _logger = logger;
     }
 
-    protected void CacheLogContext(string key, Action action)
+    protected void CacheLogContext(CacheOperation operation, string key, Action action)
     {
-        CacheLogContext(key, () =>
+        CacheLogContext(operation, key, () =>
         {
             action();
             return 0;
         });
     }
 
-    protected T CacheLogContext<T>(string key, Func<T> action)
+    protected T CacheLogContext<T>(CacheOperation operation, string key, Func<T> action)
     {
         try
         {
@@ -32,11 +32,11 @@ public abstract class DistributedCacheBase : IDistributedCacheService
         }
         catch (Exception e)
         {
-            _logger.CacheOperationFailed(key, e);
+            _logger.CacheOperationFailed(operation, key, e);
         }
         finally
         {
-            _logger.CacheOperationRequested(key);
+            _logger.CacheOperationRequested(operation, key);
         }
 
         return default;
@@ -144,4 +144,11 @@ public abstract class DistributedCacheBase : IDistributedCacheService
     public abstract Task<T> SetAsync<T>(string key, T value, DistributedCacheEntryOptions options, JsonSerializerOptions jsonOptions = null) where T : class;
     /// <inheritdoc/>
     public abstract Task<T?> SetValueAsync<T>(string key, T value, DistributedCacheEntryOptions options) where T : struct;
+}
+
+public enum CacheOperation
+{
+    Get,
+    Set,
+    Remove
 }

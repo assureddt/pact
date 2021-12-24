@@ -18,19 +18,19 @@ public class DistributedCacheService : DistributedCacheBase
 
     /// <inheritdoc/>
     public override T Get<T>(string key, JsonSerializerOptions jsonOptions = null) where T : class
-        => CacheLogContext(key, () => _cache.GetString(key)?.FromJson<T>(jsonOptions));
+        => CacheLogContext(CacheOperation.Get, key, () => _cache.GetString(key)?.FromJson<T>(jsonOptions));
 
     /// <inheritdoc/>
     public override async Task<T> GetAsync<T>(string key, JsonSerializerOptions jsonOptions = null) where T : class
-        => await CacheLogContext(key, async () => (await _cache.GetStringAsync(key))?.FromJson<T>(jsonOptions));
+        => await CacheLogContext(CacheOperation.Get, key, async () => (await _cache.GetStringAsync(key))?.FromJson<T>(jsonOptions));
 
     /// <inheritdoc/>
     public override T? GetValue<T>(string key) where T : struct
-        => CacheLogContext(key, () => _cache.GetString(key).ToNullable<T>());
+        => CacheLogContext(CacheOperation.Get, key, () => _cache.GetString(key).ToNullable<T>());
 
     /// <inheritdoc/>
     public override Task<T?> GetValueAsync<T>(string key) where T : struct
-        => CacheLogContext(key, async () => (await _cache.GetStringAsync(key).ConfigureAwait(false)).ToNullable<T>());
+        => CacheLogContext(CacheOperation.Get, key, async () => (await _cache.GetStringAsync(key).ConfigureAwait(false)).ToNullable<T>());
 
     /// <inheritdoc/>
     public override T Set<T>(string key, T value, DistributedCacheEntryOptions options, JsonSerializerOptions jsonOptions = null) where T : class
@@ -38,7 +38,7 @@ public class DistributedCacheService : DistributedCacheBase
         if (value == null)
             return null;
 
-        CacheLogContext(key, () =>
+        CacheLogContext(CacheOperation.Set, key, () =>
         {
             _cache.SetString(key, value.ToJson(jsonOptions), options ?? new DistributedCacheEntryOptions());
         });
@@ -49,7 +49,7 @@ public class DistributedCacheService : DistributedCacheBase
     /// <inheritdoc/>
     public override async Task<T> SetAsync<T>(string key, T value, DistributedCacheEntryOptions options, JsonSerializerOptions jsonOptions = null) where T : class
     {
-        await CacheLogContext(key, async () =>
+        await CacheLogContext(CacheOperation.Set, key, async () =>
         {
             await _cache.SetStringAsync(key, value.ToJson(jsonOptions), options ?? new DistributedCacheEntryOptions()).ConfigureAwait(false);
         }).ConfigureAwait(false);
@@ -60,7 +60,7 @@ public class DistributedCacheService : DistributedCacheBase
     /// <inheritdoc/>
     public override T? SetValue<T>(string key, T value, DistributedCacheEntryOptions options) where T : struct
     {
-        CacheLogContext(key, () =>
+        CacheLogContext(CacheOperation.Set, key, () =>
         {
             _cache.SetString(key, value.ToString(), options ?? new DistributedCacheEntryOptions());
         });
@@ -71,7 +71,7 @@ public class DistributedCacheService : DistributedCacheBase
     /// <inheritdoc/>
     public override async Task<T?> SetValueAsync<T>(string key, T value, DistributedCacheEntryOptions options) where T : struct
     {
-        await CacheLogContext(key, async () =>
+        await CacheLogContext(CacheOperation.Set, key, async () =>
         {
             await _cache.SetStringAsync(key, value.ToString(), options ?? new DistributedCacheEntryOptions()).ConfigureAwait(false);
         }).ConfigureAwait(false);
@@ -82,7 +82,7 @@ public class DistributedCacheService : DistributedCacheBase
     /// <inheritdoc/>
     public override void Remove(params string[] keys)
     {
-        CacheLogContext(string.Join("; ", keys), () =>
+        CacheLogContext(CacheOperation.Remove, string.Join("; ", keys), () =>
         {
             foreach (var key in keys)
             {
@@ -94,7 +94,7 @@ public class DistributedCacheService : DistributedCacheBase
     /// <inheritdoc/>
     public override Task RemoveAsync(params string[] keys)
     {
-        return CacheLogContext(string.Join("; ", keys),async () =>
+        return CacheLogContext(CacheOperation.Remove, string.Join("; ", keys),async () =>
         {
             foreach (var key in keys)
             {
