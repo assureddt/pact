@@ -3,6 +3,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Pact.Cache.Extensions;
 using Pact.Core.Extensions;
 
 namespace Pact.Cache;
@@ -12,6 +13,7 @@ public class DualLayerCacheService : DistributedCacheBase
 {
     private readonly IDistributedCache _cache;
     private readonly IMemoryCache _memory;
+    private readonly ILogger<DualLayerCacheService> _logger;
     private readonly TimeSpan _memoryRetention;
 
     public DualLayerCacheService(IDistributedCache cache, IMemoryCache memory, ILogger<DualLayerCacheService> logger, IOptions<CacheSettings> settings)
@@ -19,6 +21,7 @@ public class DualLayerCacheService : DistributedCacheBase
     {
         _cache = cache;
         _memory = memory;
+        _logger = logger;
         _memoryRetention = TimeSpan.FromSeconds(settings?.Value.DefaultMemoryExpirySeconds ?? 60);
     }
 
@@ -62,11 +65,14 @@ public class DualLayerCacheService : DistributedCacheBase
 
     private T Get<T>(string key, Func<DistributedCacheEntryOptions, T> factory, JsonSerializerOptions jsonOptions = null) where T : class
     {
-        return CacheLogContext(key, () =>
+        return CacheLogContext(CacheOperation.Get, key, () =>
         {
             var inMem = _memory.Get<T>(key);
             if (inMem != null)
+            {
+                _logger.MemoryCacheHit(key);
                 return inMem;
+            }
 
             if (factory == null)
                 return _cache.GetString(key)?.FromJson<T>(jsonOptions);
@@ -79,11 +85,14 @@ public class DualLayerCacheService : DistributedCacheBase
 
     private async Task<T> GetAsync<T>(string key, Func<DistributedCacheEntryOptions, Task<T>> factory, JsonSerializerOptions jsonOptions = null) where T : class
     {
-        return await CacheLogContext(key, async () =>
+        return await CacheLogContext(CacheOperation.Get, key, async () =>
         {
             var inMem = _memory.Get<T>(key);
             if (inMem != null)
+            {
+                _logger.MemoryCacheHit(key);
                 return inMem;
+            }
 
             if (factory == null)
                 return (await _cache.GetStringAsync(key))?.FromJson<T>(jsonOptions);
@@ -96,11 +105,14 @@ public class DualLayerCacheService : DistributedCacheBase
 
     private T? GetValue<T>(string key, Func<DistributedCacheEntryOptions, T> factory) where T : struct
     {
-        return CacheLogContext(key, () =>
+        return CacheLogContext(CacheOperation.Get, key, () =>
         {
             var inMem = _memory.Get<T?>(key);
             if (inMem != null)
+            {
+                _logger.MemoryCacheHit(key);
                 return inMem;
+            }
 
             if (factory == null)
                 return _cache.GetString(key)?.ToNullable<T>();
@@ -113,11 +125,14 @@ public class DualLayerCacheService : DistributedCacheBase
 
     private async Task<T?> GetValueAsync<T>(string key, Func<DistributedCacheEntryOptions, Task<T>> factory) where T : struct
     {
-        return await CacheLogContext(key, async () =>
+        return await CacheLogContext(CacheOperation.Get, key, async () =>
         {
             var inMem = _memory.Get<T?>(key);
             if (inMem != null)
+            {
+                _logger.MemoryCacheHit(key);
                 return inMem;
+            }
 
             if (factory == null)
                 return (await _cache.GetStringAsync(key))?.ToNullable<T>();
@@ -134,7 +149,7 @@ public class DualLayerCacheService : DistributedCacheBase
         if (value == null)
             return null;
 
-        CacheLogContext(key, () =>
+        CacheLogContext(CacheOperation.Set, key, () =>
         {
             _cache.SetString(key, value.ToJson(jsonOptions), options ?? new DistributedCacheEntryOptions());
             _memory.Set(key, value, GetMemoryRetention(options));
@@ -146,7 +161,7 @@ public class DualLayerCacheService : DistributedCacheBase
     /// <inheritdoc/>
     public override async Task<T> SetAsync<T>(string key, T value, DistributedCacheEntryOptions options, JsonSerializerOptions jsonOptions = null) where T : class
     {
-        await CacheLogContext(key, async () =>
+        await CacheLogContext(CacheOperation.Set, key, async () =>
         {
             await _cache.SetStringAsync(key, value.ToJson(jsonOptions), options ?? new DistributedCacheEntryOptions()).ConfigureAwait(false);
             _memory.Set(key, value, GetMemoryRetention(options));
@@ -158,7 +173,7 @@ public class DualLayerCacheService : DistributedCacheBase
     /// <inheritdoc/>
     public override T? SetValue<T>(string key, T value, DistributedCacheEntryOptions options) where T : struct
     {
-        CacheLogContext(key, () =>
+        CacheLogContext(CacheOperation.Set, key, () =>
         {
             _cache.SetString(key, value.ToString(), options ?? new DistributedCacheEntryOptions());
             _memory.Set(key, value, GetMemoryRetention(options));
@@ -170,7 +185,7 @@ public class DualLayerCacheService : DistributedCacheBase
     /// <inheritdoc/>
     public override async Task<T?> SetValueAsync<T>(string key, T value, DistributedCacheEntryOptions options) where T : struct
     {
-        await CacheLogContext(key, async () =>
+        await CacheLogContext(CacheOperation.Set, key, async () =>
         {
             await _cache.SetStringAsync(key, value.ToString(), options ?? new DistributedCacheEntryOptions()).ConfigureAwait(false);
             _memory.Set(key, value, GetMemoryRetention(options));
@@ -182,7 +197,7 @@ public class DualLayerCacheService : DistributedCacheBase
     /// <inheritdoc/>
     public override void Remove(params string[] keys)
     {
-        CacheLogContext(string.Join("; ", keys), () =>
+        CacheLogContext(CacheOperation.Remove, string.Join("; ", keys), () =>
         {
             foreach (var key in keys)
             {
@@ -195,7 +210,7 @@ public class DualLayerCacheService : DistributedCacheBase
     /// <inheritdoc/>
     public override Task RemoveAsync(params string[] keys)
     {
-        return CacheLogContext(string.Join("; ", keys), async () =>
+        return CacheLogContext(CacheOperation.Remove, string.Join("; ", keys), async () =>
         {
             foreach (var key in keys)
             {
