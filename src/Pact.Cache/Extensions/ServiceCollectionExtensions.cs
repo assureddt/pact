@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 
-namespace Pact.Cache;
+namespace Pact.Cache.Extensions;
 
 public static class ServiceCollectionExtensions
 {
