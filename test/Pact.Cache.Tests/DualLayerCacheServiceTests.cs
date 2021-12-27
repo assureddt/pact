@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -86,6 +87,36 @@ public class DualLayerCacheServiceTests
     }
 
     [Fact]
+    public void Get_InDist_SetMem()
+    {
+        // arrange
+        var cache = new Mock<IDistributedCache>();
+        const string obj = "blob";
+        var expectedBytes = Encoding.UTF8.GetBytes($"\"{obj}\"");
+
+        cache.Setup(m => m.Get("test")).Returns(expectedBytes);
+
+        var memory = new Mock<IMemoryCache>();
+        var entry = new Mock<ICacheEntry>();
+        memory.Setup(m => m.CreateEntry(It.IsAny<object>())).Returns(entry.Object);
+        var svc = new DualLayerCacheService(cache.Object, memory.Object, new NullLogger<DualLayerCacheService>(), _opts);
+
+        // act
+        var _ = svc.Get<string>("test");
+
+        // assert
+        cache.Verify(m => m.Get("test"));
+        cache.VerifyNoOtherCalls();
+        entry.VerifySet(m => m.Value = obj);
+        entry.VerifySet(m => m.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(_opts.Value.DefaultMemoryExpirySeconds));
+        entry.Verify(m => m.Dispose());
+        object val;
+        memory.Verify(m => m.TryGetValue("test", out val));
+        memory.Verify(m => m.CreateEntry("test"));
+        memory.VerifyNoOtherCalls();
+    }
+
+    [Fact]
     public void Get_InMem_SkipDistributed_OK()
     {
         // arrange
@@ -113,26 +144,81 @@ public class DualLayerCacheServiceTests
         var cache = new Mock<IDistributedCache>();
         cache.Setup(m => m.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync((byte[])null);
         var memory = new Mock<IMemoryCache>();
+        var logger = new Mock<ILogger<DualLayerCacheService>>();
+        logger.Setup(m => m.IsEnabled(LogLevel.Trace)).Returns(true);
         var entry = new Mock<ICacheEntry>();
         memory.Setup(m => m.CreateEntry(It.IsAny<object>())).Returns(entry.Object);
-        var svc = new DualLayerCacheService(cache.Object, memory.Object, new NullLogger<DualLayerCacheService>(), _opts);
+        var svc = new DualLayerCacheService(cache.Object, memory.Object, logger.Object, _opts);
+        const string key = "test";
 
         // act
         var obj = new MyClass {Id = 1, Name = "Test"};
-        var _ = await svc.GetOrCreateAsync("test", _ => Task.FromResult(obj));
+        var _ = await svc.GetOrCreateAsync(key, opts =>
+        {
+            opts.AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1);
+            return Task.FromResult(obj);
+        });
 
         // assert
-        cache.Verify(m => m.GetAsync("test", It.IsAny<CancellationToken>()));
-        cache.Verify(m => m.SetAsync("test", It.Is<byte[]>(x => x.SequenceEqual(expectedBytes)), It.IsAny<DistributedCacheEntryOptions>(), It.IsAny<CancellationToken>()));
+        cache.Verify(m => m.GetAsync(key, It.IsAny<CancellationToken>()));
+        cache.Verify(m => m.SetAsync(key, It.Is<byte[]>(x => x.SequenceEqual(expectedBytes)), It.IsAny<DistributedCacheEntryOptions>(), It.IsAny<CancellationToken>()));
         cache.VerifyNoOtherCalls();
         entry.VerifySet(m => m.Value = obj);
         entry.VerifySet(m => m.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(_opts.Value.DefaultMemoryExpirySeconds));
         entry.Verify(m => m.Dispose());
         entry.VerifyNoOtherCalls();
         object val;
-        memory.Verify(m => m.TryGetValue("test", out val));
-        memory.Verify(m => m.CreateEntry("test"));
+        memory.Verify(m => m.TryGetValue(key, out val));
+        memory.Verify(m => m.CreateEntry(key));
         memory.VerifyNoOtherCalls();
+
+        logger.Verify(m => m.IsEnabled(LogLevel.Trace));
+        logger.Verify(m => m.Log(LogLevel.Trace, It.IsAny<EventId>(),
+            It.Is<It.IsAnyType>((obj, t) => obj.ToString() == $"Distributed Cache operation requested ({CacheOperation.Get}) => {key}"),
+            null, (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()));
+        logger.Verify(m => m.Log(LogLevel.Trace, It.IsAny<EventId>(),
+            It.Is<It.IsAnyType>((obj, t) => obj.ToString() == $"Distributed Cache operation requested ({CacheOperation.Set}) => {key}"),
+            null, (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()));
+
+        logger.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task GetOrCreateAsync_Generic_InMem_OK()
+    {
+        // arrange
+        var obj = new MyClass { Id = 1, Name = "Test" };
+        var o = (object) obj;
+        const string key = "test";
+        var cache = new Mock<IDistributedCache>();
+        cache.Setup(m => m.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync((byte[])null);
+        var memory = new Mock<IMemoryCache>();
+        var logger = new Mock<ILogger<DualLayerCacheService>>();
+        logger.Setup(m => m.IsEnabled(LogLevel.Trace)).Returns(true);
+        var entry = new Mock<ICacheEntry>();
+        memory.Setup(m => m.CreateEntry(It.IsAny<object>())).Returns(entry.Object);
+        memory.Setup(m => m.TryGetValue(key, out o)).Returns(true);
+        var svc = new DualLayerCacheService(cache.Object, memory.Object, logger.Object, _opts);
+
+        // act
+        var _ = await svc.GetOrCreateAsync(key, _ => Task.FromResult(obj));
+
+        // assert
+        cache.VerifyNoOtherCalls();
+        entry.VerifyNoOtherCalls();
+        object val;
+        memory.Verify(m => m.TryGetValue(key, out val));
+        memory.VerifyNoOtherCalls();
+
+        logger.Verify(m => m.IsEnabled(LogLevel.Trace));
+        logger.Verify(m => m.Log(LogLevel.Trace, It.IsAny<EventId>(),
+            It.Is<It.IsAnyType>((obj, t) => obj.ToString() == $"Distributed Cache operation requested ({CacheOperation.Get}) => {key}"),
+            null, (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()));
+        logger.Verify(m => m.Log(LogLevel.Trace, It.IsAny<EventId>(),
+            It.Is<It.IsAnyType>((obj, t) => obj.ToString() == $"Distributed Memory Cache Hit => {key}"),
+            null, (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()));
+
+        logger.VerifyNoOtherCalls();
     }
 
     [Fact]

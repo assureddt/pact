@@ -74,12 +74,14 @@ public class DualLayerCacheService : DistributedCacheBase
                 return inMem;
             }
 
-            if (factory == null)
-                return _cache.GetString(key)?.FromJson<T>(jsonOptions);
-                
             var result = _cache.GetString(key)?.FromJson<T>(jsonOptions);
 
-            return result != null ? _memory.Set(key, result) : Set(key, factory, jsonOptions);
+            if (result == null)
+                return factory?.Invoke(new DistributedCacheEntryOptions());
+
+            _memory.Set(key, result, GetMemoryRetention(null));
+
+            return result;
         });
     }
 
@@ -94,12 +96,19 @@ public class DualLayerCacheService : DistributedCacheBase
                 return inMem;
             }
 
-            if (factory == null)
-                return (await _cache.GetStringAsync(key))?.FromJson<T>(jsonOptions);
-
             var result = (await _cache.GetStringAsync(key))?.FromJson<T>(jsonOptions);
 
-            return result != null ? _memory.Set(key, result) : await SetAsync(key, factory, jsonOptions);
+            if (result == null)
+            {
+                if (factory == null)
+                    return null;
+
+                return await factory(new DistributedCacheEntryOptions());
+            }
+
+            _memory.Set(key, result, GetMemoryRetention(null));
+
+            return result;
         });
     }
 
@@ -114,12 +123,14 @@ public class DualLayerCacheService : DistributedCacheBase
                 return inMem;
             }
 
-            if (factory == null)
-                return _cache.GetString(key)?.ToNullable<T>();
-
             var result = _cache.GetString(key)?.ToNullable<T>();
 
-            return result != null ? _memory.Set(key, result) : SetValue(key, factory);
+            if (result == null)
+                return factory?.Invoke(new DistributedCacheEntryOptions());
+
+            _memory.Set(key, result, GetMemoryRetention(null));
+
+            return result;
         });
     }
 
@@ -134,12 +145,19 @@ public class DualLayerCacheService : DistributedCacheBase
                 return inMem;
             }
 
-            if (factory == null)
-                return (await _cache.GetStringAsync(key))?.ToNullable<T>();
-
             var result = (await _cache.GetStringAsync(key))?.ToNullable<T>();
 
-            return result != null ? _memory.Set(key, result) : await SetValueAsync(key, factory);
+            if (result == null)
+            {
+                if (factory == null)
+                    return null;
+
+                return await factory(new DistributedCacheEntryOptions());
+            }
+
+            _memory.Set(key, result, GetMemoryRetention(null));
+
+            return result;
         });
     }
 
