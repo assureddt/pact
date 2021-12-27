@@ -26,11 +26,6 @@ public class DualLayerCacheService : DistributedCacheBase
     }
 
     /// <summary>
-    /// This is a global setting to change the expiry of the memory layer cache - it will be deliberately very short as we're just looking to speed up
-    /// successive reads in the same request, rather than expecting it to be there between requests and we don't want to use more memory than necessary
-    /// </summary>
-
-    /// <summary>
     /// Ensures the in-memory retention is not beyond the provided distributed options
     /// </summary>
     /// <param name="options"></param>

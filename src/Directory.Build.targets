@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(DocGen)'=='true'">
-    <PackageReference Include="DefaultDocumentation" Version="0.6.14">
+    <PackageReference Include="DefaultDocumentation" Version="0.7.9">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -16,7 +16,8 @@
   <PropertyGroup Condition="'$(DocGen)'=='true'">
     <DefaultDocumentationFileNameMode>FullName</DefaultDocumentationFileNameMode>
     <DefaultDocumentationInvalidCharReplacement>-</DefaultDocumentationInvalidCharReplacement>
-    <DefaultDocumentationWikiLinks>true</DefaultDocumentationWikiLinks>
+    <DefaultDocumentationRemoveFileExtensionFromLinks>true</DefaultDocumentationRemoveFileExtensionFromLinks>
+    <DefaultDocumentationAssemblyPageName>$(ProjectName)-Index</DefaultDocumentationAssemblyPageName>
     <DefaultDocumentationFolder>$(SolutionDir)/../$(SolutionName).wiki/$(ProjectName)</DefaultDocumentationFolder>
     <DocumentationFile>bin/$(Configuration)/$(TargetFramework)/$(ProjectName).xml</DocumentationFile>
     <DefaultDocumentationHome>$(ProjectName)-Index</DefaultDocumentationHome>
