@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Twilio.AspNet.Core" Version="5.68.3" />
+    <PackageReference Include="Twilio.AspNet.Core" Version="5.71.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using NetEscapades.AspNetCore.SecurityHeaders.Headers.ContentSecurityPolicy;
-using NetEscapades.AspNetCore.SecurityHeaders.Headers.FeaturePolicy;
+using NetEscapades.AspNetCore.SecurityHeaders.Headers.PermissionsPolicy;
 
 namespace Pact.Web.Extensions;
 
 public static class SecurityHeaderExtensions
 {
     /// <summary>
-    /// Configures a restricted feature policy for web apps that don't need any
+    /// Configures a restricted permissions policy for web apps that don't need any
     /// </summary>
     /// <param name="builder"></param>
     /// <returns></returns>
-    public static FeaturePolicyBuilder AddDefaultFeaturePolicy(this FeaturePolicyBuilder builder)
+    public static PermissionsPolicyBuilder AddDefaultPermissionsPolicy(this PermissionsPolicyBuilder builder)
     {
         builder.AddAccelerometer().None();
         builder.AddAutoplay().None();
@@ -25,7 +25,7 @@ public static class SecurityHeaderExtensions
         builder.AddMidi().None();
         builder.AddPayment().None();
         builder.AddPictureInPicture().None();
-        builder.AddSyncXHR() .None();
+        builder.AddSyncXHR().None();
         builder.AddUsb().None();
         builder.AddXR().None();
 
@@ -37,7 +37,7 @@ public static class SecurityHeaderExtensions
     /// </summary>
     /// <param name="builder"></param>
     /// <returns></returns>
-    public static CustomFeaturePolicyDirectiveBuilder AddXR(this FeaturePolicyBuilder builder) => builder.AddCustomFeature("xr-spatial-tracking");
+    public static CustomPermissionsPolicyDirectiveBuilder AddXR(this PermissionsPolicyBuilder builder) => builder.AddCustomFeature("xr-spatial-tracking");
 
     /// <summary>
     /// Adds default CSP From urls for Google Analytics
@@ -108,7 +108,7 @@ public static class SecurityHeaderExtensions
             .AddContentTypeOptionsNoSniff()
             .AddStrictTransportSecurityMaxAgeIncludeSubDomains()
             .AddReferrerPolicyStrictOriginWhenCrossOrigin()
-            .AddFeaturePolicy(fp => fp.AddDefaultFeaturePolicy())
+            .AddPermissionsPolicy(fp => fp.AddDefaultPermissionsPolicy())
             .AddCustomHeader("X-Permitted-Cross-Domain-Policies", "none")
             .RemoveServerHeader()
             .AddContentSecurityPolicy(builder =>
@@ -136,12 +136,14 @@ public static class SecurityHeaderExtensions
     /// Should be good for most simple-but-secure sites
     /// </summary>
     /// <param name="app"></param>
+    /// <param name="reportOnly">Indicates that CSP should only report errors, not enforce the restrictions</param>
+    /// <param name="reportUri">Provide a https://report-uri.com/ URL to receive CSP reports</param>
     /// <returns></returns>
-    public static IApplicationBuilder UseCspWithPactDefaults(this IApplicationBuilder app)
+    public static IApplicationBuilder UseCspWithPactDefaults(this IApplicationBuilder app, bool reportOnly = false, string reportUri = null)
     {
-        return app.UseCspWithFeaturePolicy(false, csp =>
+        return app.UseCspWithFeaturePolicy(reportOnly, csp =>
         {
-            csp.AddDefaultCsp(null);
+            csp.AddDefaultCsp(reportUri);
             csp.AddFrameSrc().Self().FromGoogleRecaptcha();
             csp.AddImgSrc().Self().Data().FromGoogleAnalytics();
             csp.AddConnectSrc().Self().FromGoogleAnalytics();
@@ -162,12 +164,14 @@ public static class SecurityHeaderExtensions
     /// Should be good for most simple-but-secure sites (that don't use google resources)
     /// </summary>
     /// <param name="app"></param>
+    /// <param name="reportOnly">Indicates that CSP should only report errors, not enforce the restrictions</param>
+    /// <param name="reportUri">Provide a https://report-uri.com/ URL to receive CSP reports</param>
     /// <returns></returns>
-    public static IApplicationBuilder UseCspWithPactDefaultsNoGoogle(this IApplicationBuilder app)
+    public static IApplicationBuilder UseCspWithPactDefaultsNoGoogle(this IApplicationBuilder app, bool reportOnly = false, string reportUri = null)
     {
-        return app.UseCspWithFeaturePolicy(false, csp =>
+        return app.UseCspWithFeaturePolicy(reportOnly, csp =>
         {
-            csp.AddDefaultCsp(null);
+            csp.AddDefaultCsp(reportUri);
             csp.AddFrameSrc().None();
             csp.AddImgSrc().Self().Data();
             csp.AddConnectSrc().Self();
