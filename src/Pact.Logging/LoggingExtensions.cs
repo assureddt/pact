@@ -106,8 +106,6 @@ public static class LoggingExtensions
             StringComparison.Ordinal);
     }
 
-    private const string OriginalValuePrefix = "__";
-
     /// <summary>
     /// Retrieves a dictionary of the values of all public properties we may want to log from an object
     /// </summary>
