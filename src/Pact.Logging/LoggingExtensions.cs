@@ -1,6 +1,5 @@
-﻿using Serilog.AspNetCore;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Reflection;
+﻿using System.ComponentModel;
+using Serilog.AspNetCore;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -107,8 +106,6 @@ public static class LoggingExtensions
             StringComparison.Ordinal);
     }
 
-    private const string OriginalValuePrefix = "__";
-
     /// <summary>
     /// Retrieves a dictionary of the values of all public properties we may want to log from an object
     /// </summary>
@@ -119,12 +116,27 @@ public static class LoggingExtensions
     {
         if (obj == null) return new Dictionary<string, object>();
 
-        var type = obj.GetType().GetTypeInfo();
+        var props = TypeDescriptor.GetProperties(obj);
+        var dict = new Dictionary<string, object>();
+        
+        foreach (PropertyDescriptor x in props)
+        {
+            if (!x.PropertyType.IsPrimitive && x.PropertyType != typeof(string) && x.PropertyType != typeof(DateTime) &&
+                x.PropertyType != typeof(DateTime?) && x.PropertyType != typeof(int?) &&
+                x.PropertyType != typeof(bool?)) continue;
             
-        return type.DeclaredProperties.Where(x => x.CanRead && !x.IsSpecialName && x.CanWrite && x.CustomAttributes.All(y => y.AttributeType != typeof(NotMappedAttribute)) &&
-                                                  (!filtered || !(x.Name.ToLowerInvariant().Contains("password") || x.Name.ToLowerInvariant().Contains("token"))) &&
-                                                  (x.PropertyType.IsPrimitive || x.PropertyType == typeof(string) || x.PropertyType == typeof(DateTime) || x.PropertyType == typeof(DateTime?) || x.PropertyType == typeof(int?) || x.PropertyType == typeof(bool?)))
-            .ToDictionary(x => x.Name, x => x.GetValue(obj));
+            if (!filtered || !(x.Name.ToLowerInvariant().Contains("password") ||
+                               x.Name.ToLowerInvariant().Contains("token")))
+            {
+                dict.TryAdd(x.Name, x.GetValue(obj));
+            }
+            else
+            {
+                dict.TryAdd(x.Name, "[Redacted]");
+            }
+        }
+
+        return dict;
     }
 
     /// <summary>
@@ -135,7 +147,7 @@ public static class LoggingExtensions
     /// <param name="original"></param>
     /// <param name="filtered">By default, this is true, and removes any properties including "password" or "token" in their names</param>
     /// <returns></returns>
-    public static Dictionary<string, object> GetDifference<T>(this T amended, T original, bool filtered = true)
+    public static Dictionary<string, ObjectChange> GetDifference<T>(this T amended, T original, bool filtered = true)
     {
         var originalProps = GetLogPropertyDictionary(original, filtered);
 
@@ -150,7 +162,7 @@ public static class LoggingExtensions
     /// <param name="originalProps"></param>
     /// <param name="filtered">By default, this is true, and removes any properties including "password" or "token" in their names</param>
     /// <returns></returns>
-    public static Dictionary<string, object> GetDifference<T>(this T amended, Dictionary<string, object> originalProps, bool filtered = true)
+    public static Dictionary<string, ObjectChange> GetDifference<T>(this T amended, Dictionary<string, object> originalProps, bool filtered = true)
     {
         var amendedProps = GetLogPropertyDictionary(amended, filtered);
             
@@ -163,11 +175,11 @@ public static class LoggingExtensions
     /// <param name="amendedProps"></param>
     /// <param name="originalProps"></param>
     /// <returns></returns>
-    public static Dictionary<string, object> GetDifference(this Dictionary<string, object> amendedProps, Dictionary<string, object> originalProps)
+    public static Dictionary<string, ObjectChange> GetDifference(this Dictionary<string, object> amendedProps, Dictionary<string, object> originalProps)
     {
         var allKeys = originalProps.Keys.Union(amendedProps.Keys);
 
-        var differences = new Dictionary<string, object>();
+        var differences = new Dictionary<string, ObjectChange>();
         foreach (var key in allKeys)
         {
             if (amendedProps.ContainsKey(key) && originalProps.ContainsKey(key))
@@ -178,22 +190,33 @@ public static class LoggingExtensions
                 if (originalValue?.ToString() == amendedValue?.ToString())
                 {
                     if (key.Equals("id", StringComparison.OrdinalIgnoreCase))
-                        differences.Add(key, originalValue);
+                        differences.Add(key, new ObjectChange(originalValue));
 
                     continue;
                 }
 
-                differences.Add(key, amendedValue);
-                differences.Add($"{OriginalValuePrefix}{key}", originalValue);
+                differences.Add(key, new ObjectChange(originalValue, amendedValue, ObjectChange.ChangeType.Edit));
             }
             else if (amendedProps.ContainsKey(key))
             {
-                differences.Add(key, amendedProps[key]);
+                differences.Add(key, new ObjectChange(null, amendedProps[key], ObjectChange.ChangeType.New));
             }
-            else differences.Add(key, originalProps[key]);
+            else differences.Add(key, new ObjectChange(originalProps[key], null, ObjectChange.ChangeType.Removed));
         }
 
         return differences;
+    }
+
+    /// <summary>
+    /// Shorthand for adding an object to a log scope
+    /// </summary>
+    /// <param name="logger"></param>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static IDisposable BeginScope(this ILogger logger, string key, object value)
+    {
+        return logger.BeginScope(new Dictionary<string, object> { { key, value } });
     }
 
     /// <summary>
@@ -205,29 +228,31 @@ public static class LoggingExtensions
     /// <param name="updated"></param>
     /// <param name="message"></param>
     /// <param name="args"></param>
-    public static void LogDifference<T>(this ILogger logger, Dictionary<string, object> original, T updated, string message, params object[] args)
+    public static void LogDifference<T>(
+        this ILogger logger,
+        Dictionary<string, object> original,
+        T updated,
+        string message,
+        params object[] args)
     {
         try
         {
             var difference = updated.GetDifference(original);
-
-            if (difference.Keys.All(x => !x.StartsWith(OriginalValuePrefix)))
+            if (difference.Values.All(x => x.Change == ObjectChange.ChangeType.None))
             {
                 logger.LogDebug(message, args);
-
-                return;
             }
-
-            using (logger.BeginScope(difference))
+            else
             {
-                logger.LogInformation(message, args);
+                using (logger.BeginScope("@ObjectChanges", difference))
+                    logger.LogInformation(message, args);
             }
         }
-        catch (Exception exc)
+        catch (Exception ex)
         {
             try
             {
-                logger.LogWarning(exc, $"Failed to compile Log Difference for: {message}", args);
+                logger.LogWarning(ex, "Failed to compile Log Difference for: " + message, args);
             }
             catch
             {

@@ -21,9 +21,10 @@ public class LoggingExtensionTests
         // assert
         dict.Keys.ShouldContain("Id");
         dict.Keys.ShouldContain("Name");
-        dict.Keys.ShouldNotContain("SecurePassword");
+        dict.Keys.ShouldContain("SecurePassword");
         dict["Id"].ShouldBe(1);
         dict["Name"].ShouldBe("Test");
+        dict["SecurePassword"].ShouldBe("[Redacted]");
     }
 
     [Fact]
@@ -57,11 +58,9 @@ public class LoggingExtensionTests
         // assert
         dict.Keys.ShouldContain("Id");
         dict.Keys.ShouldContain("Name");
-        dict.Keys.ShouldContain("__Name");
-        dict.Keys.ShouldNotContain("SecurePassword");
-        dict["Id"].ShouldBe(1);
-        dict["Name"].ShouldBe("Tested");
-        dict["__Name"].ShouldBe("Test");
+        dict["Id"].OriginalValue.ShouldBe(1);
+        dict["Name"].NewValue.ShouldBe("Tested");
+        dict["Name"].OriginalValue.ShouldBe("Test");
     }
         
     [Fact]
@@ -81,11 +80,9 @@ public class LoggingExtensionTests
         // assert
         dict.Keys.ShouldContain("Id");
         dict.Keys.ShouldContain("Name");
-        dict.Keys.ShouldContain("__Name");
-        dict.Keys.ShouldNotContain("SecurePassword");
-        dict["Id"].ShouldBe(1);
-        dict["Name"].ShouldBe("Tested");
-        dict["__Name"].ShouldBe("Test");
+        dict["Id"].OriginalValue.ShouldBe(1);
+        dict["Name"].NewValue.ShouldBe("Tested");
+        dict["Name"].OriginalValue.ShouldBe("Test");
     }
 
     [Fact]
@@ -109,11 +106,9 @@ public class LoggingExtensionTests
         // assert
         dict.Keys.ShouldContain("Id");
         dict.Keys.ShouldContain("Name");
-        dict.Keys.ShouldContain("__Name");
-        dict.Keys.ShouldNotContain("SecurePassword");
-        dict["Id"].ShouldBe(1);
-        dict["Name"].ShouldBe("Tested");
-        dict["__Name"].ShouldBe("Test");
+        dict["Id"].OriginalValue.ShouldBe(1);
+        dict["Name"].NewValue.ShouldBe("Tested");
+        dict["Name"].OriginalValue.ShouldBe("Test");
     }
 
     [Fact]
