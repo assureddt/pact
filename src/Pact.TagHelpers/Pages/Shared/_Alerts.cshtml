@@ -1,5 +1,16 @@
 ﻿@using Pact.Web.Interfaces
-<alert alert-type="success" condition="@TempData.ContainsKey(nameof(IAlertsModel.Success))">@Html.Raw(TempData[nameof(IAlertsModel.Success)])</alert>
-<alert alert-type="info" condition="@TempData.ContainsKey(nameof(IAlertsModel.Info))">@Html.Raw(TempData[nameof(IAlertsModel.Info)])</alert>
-<alert alert-type="warning" condition="@TempData.ContainsKey(nameof(IAlertsModel.Warning))">@Html.Raw(TempData[nameof(IAlertsModel.Warning)])</alert>
-<alert alert-type="danger" condition="@TempData.ContainsKey(nameof(IAlertsModel.Error))">@Html.Raw(TempData[nameof(IAlertsModel.Error)])</alert>
+@if (Model is IAlertsModel alerts)
+{
+    // if we're actively using this interface in our code, we can use the property directly for passing back messages without the need for a redirect
+    <alert alert-type="success" condition="@(!string.IsNullOrWhiteSpace(alerts.Success))">@Html.Raw(alerts.Success)</alert>
+    <alert alert-type="info" condition="@(!string.IsNullOrWhiteSpace(alerts.Info))">@Html.Raw(alerts.Info)</alert>
+    <alert alert-type="warning" condition="@(!string.IsNullOrWhiteSpace(alerts.Warning))">@Html.Raw(alerts.Warning)</alert>
+    <alert alert-type="danger" condition="@(!string.IsNullOrWhiteSpace(alerts.Error))">@Html.Raw(alerts.Error)</alert>
+}
+else
+{
+    <alert alert-type="success" condition="@TempData.ContainsKey(nameof(IAlertsModel.Success))">@Html.Raw(TempData[nameof(IAlertsModel.Success)])</alert>
+    <alert alert-type="info" condition="@TempData.ContainsKey(nameof(IAlertsModel.Info))">@Html.Raw(TempData[nameof(IAlertsModel.Info)])</alert>
+    <alert alert-type="warning" condition="@TempData.ContainsKey(nameof(IAlertsModel.Warning))">@Html.Raw(TempData[nameof(IAlertsModel.Warning)])</alert>
+    <alert alert-type="danger" condition="@TempData.ContainsKey(nameof(IAlertsModel.Error))">@Html.Raw(TempData[nameof(IAlertsModel.Error)])</alert>
+}
