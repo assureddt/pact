@@ -6,6 +6,8 @@
     <alert alert-type="info" condition="@(!string.IsNullOrWhiteSpace(alerts.Info))">@Html.Raw(alerts.Info)</alert>
     <alert alert-type="warning" condition="@(!string.IsNullOrWhiteSpace(alerts.Warning))">@Html.Raw(alerts.Warning)</alert>
     <alert alert-type="danger" condition="@(!string.IsNullOrWhiteSpace(alerts.Error))">@Html.Raw(alerts.Error)</alert>
+    // ... but if we're using it in that manner, we don't also want them to be added to TempData for the subsequent redirect
+    alerts.Success = alerts.Info = alerts.Warning = alerts.Error = string.Empty;
 }
 else
 {
