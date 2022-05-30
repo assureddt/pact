@@ -140,7 +140,7 @@ public static class LoggingExtensions
     }
 
     /// <summary>
-    /// Retrieves a dictionary of all properties between the two objects and, where values differ, introduces a prefixed key for the original value
+    /// Retrieves a dictionary of all properties between the two objects and, where values differ
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="amended"></param>
@@ -155,7 +155,20 @@ public static class LoggingExtensions
     }
 
     /// <summary>
-    /// Retrieves a dictionary of all properties between the object &amp; original property dictionary and, where values differ, introduces a prefixed key for the original value
+    /// Retrieves a dictionary of all properties in the object (with no original state passed, this will present as all new values)
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="amended"></param>
+    /// <param name="filtered">By default, this is true, and removes any properties including "password" or "token" in their names</param>
+    /// <returns></returns>
+    public static Dictionary<string, ObjectChange> GetDifference<T>(this T amended, bool filtered = true)
+    {
+        return GetDifference(amended, null, filtered);
+    }
+
+
+    /// <summary>
+    /// Retrieves a dictionary of all properties between the object &amp; original property dictionary and, where values differ
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="amended"></param>
@@ -170,19 +183,19 @@ public static class LoggingExtensions
     }
 
     /// <summary>
-    /// Retrieves a dictionary of all properties between the two dictionaries and, where values differ, introduces a prefixed key for the original value
+    /// Retrieves a dictionary of all properties between the two dictionaries and, where values differ
     /// </summary>
     /// <param name="amendedProps"></param>
-    /// <param name="originalProps"></param>
+    /// <param name="originalProps">Accepts null if no original state exists</param>
     /// <returns></returns>
     public static Dictionary<string, ObjectChange> GetDifference(this Dictionary<string, object> amendedProps, Dictionary<string, object> originalProps)
     {
-        var allKeys = originalProps.Keys.Union(amendedProps.Keys);
+        var allKeys = originalProps?.Keys.Union(amendedProps.Keys) ?? amendedProps.Keys;
 
         var differences = new Dictionary<string, ObjectChange>();
         foreach (var key in allKeys)
         {
-            if (amendedProps.ContainsKey(key) && originalProps.ContainsKey(key))
+            if (amendedProps.ContainsKey(key) && originalProps?.ContainsKey(key) == true)
             {
                 var originalValue = originalProps[key];
                 var amendedValue = amendedProps[key];
@@ -201,10 +214,23 @@ public static class LoggingExtensions
             {
                 differences.Add(key, new ObjectChange(null, amendedProps[key], ObjectChange.ChangeType.New));
             }
-            else differences.Add(key, new ObjectChange(originalProps[key], null, ObjectChange.ChangeType.Removed));
+            else if (originalProps?.ContainsKey(key) == true)
+            {
+                differences.Add(key, new ObjectChange(originalProps[key], null, ObjectChange.ChangeType.Removed));
+            }
         }
 
         return differences;
+    }
+
+    /// <summary>
+    /// Retrieves a dictionary of all changes (but with no origin, these will present as all new values)
+    /// </summary>
+    /// <param name="amendedProps"></param>
+    /// <returns></returns>
+    public static Dictionary<string, ObjectChange> GetDifference(this Dictionary<string, object> amendedProps)
+    {
+        return amendedProps.GetDifference(null);
     }
 
     /// <summary>
@@ -224,12 +250,14 @@ public static class LoggingExtensions
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="logger"></param>
+    /// <param name="level"></param>
     /// <param name="original"></param>
     /// <param name="updated"></param>
     /// <param name="message"></param>
     /// <param name="args"></param>
     public static void LogDifference<T>(
         this ILogger logger,
+        LogLevel level,
         Dictionary<string, object> original,
         T updated,
         string message,
@@ -245,7 +273,7 @@ public static class LoggingExtensions
             else
             {
                 using (logger.BeginScope("@ObjectChanges", difference))
-                    logger.LogInformation(message, args);
+                    logger.Log(level, message, args);
             }
         }
         catch (Exception ex)
@@ -259,6 +287,61 @@ public static class LoggingExtensions
                 // ignored
             }
         }
+    }
+
+    /// <summary>
+    /// Logs all properties on the objects and, where differences exist, denotes the original value with a prefixed key
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="logger"></param>
+    /// <param name="original"></param>
+    /// <param name="updated"></param>
+    /// <param name="message"></param>
+    /// <param name="args"></param>
+    public static void LogDifference<T>(
+        this ILogger logger,
+        Dictionary<string, object> original,
+        T updated,
+        string message,
+        params object[] args)
+    {
+        logger.LogDifference(LogLevel.Information, original, updated, message, args);
+    }
+
+    /// <summary>
+    /// Logs all properties on the objects, with no original state provided, to indicate a new object
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="logger"></param>
+    /// <param name="level"></param>
+    /// <param name="updated"></param>
+    /// <param name="message"></param>
+    /// <param name="args"></param>
+    public static void LogDifference<T>(
+        this ILogger logger,
+        LogLevel level,
+        T updated,
+        string message,
+        params object[] args)
+    {
+        logger.LogDifference(level, null, updated, message, args);
+    }
+
+    /// <summary>
+    /// Logs all properties on the objects, with no original state provided, to indicate a new object
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="logger"></param>
+    /// <param name="updated"></param>
+    /// <param name="message"></param>
+    /// <param name="args"></param>
+    public static void LogDifference<T>(
+        this ILogger logger,
+        T updated,
+        string message,
+        params object[] args)
+    {
+        logger.LogDifference(null, updated, message, args);
     }
 
     /// <summary>

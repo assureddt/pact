@@ -112,6 +112,28 @@ public class LoggingExtensionTests
     }
 
     [Fact]
+    public void GetDiff_OriginalNull_OK()
+    {
+        // arrange
+        var obj2 = new Dictionary<string, object>
+        {
+            { "Id", 1 },
+            { "Name", "Tested" }
+        };
+
+        // act
+        var dict = obj2.GetDifference();
+
+        // assert
+        dict.Keys.ShouldContain("Id");
+        dict.Keys.ShouldContain("Name");
+        dict["Id"].OriginalValue.ShouldBe(null);
+        dict["Id"].NewValue.ShouldBe(1);
+        dict["Name"].NewValue.ShouldBe("Tested");
+        dict["Name"].OriginalValue.ShouldBe(null);
+    }
+
+    [Fact]
     public void LogDiff_OK()
     {
         // arrange
@@ -130,6 +152,40 @@ public class LoggingExtensionTests
         // assert
         logger.Verify(m => m.BeginScope(It.IsAny<Dictionary<string, object>>()));
         logger.Verify(m => m.Log(It.IsAny<LogLevel>(), It.IsAny<EventId>(), It.IsAny<It.IsAnyType>(), It.IsAny<Exception>(), (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()));
+        logger.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public void LogDiff_New_OK()
+    {
+        // arrange
+        var obj2 = new MyClass { Id = 1, Name = "Tested" };
+        var logger = new Mock<ILogger<LoggingExtensionTests>>();
+        var logObj = logger.Object;
+
+        // act
+        logObj.LogDifference(obj2, "Difference");
+
+        // assert
+        logger.Verify(m => m.BeginScope(It.IsAny<Dictionary<string, object>>()));
+        logger.Verify(m => m.Log(LogLevel.Information, It.IsAny<EventId>(), It.IsAny<It.IsAnyType>(), It.IsAny<Exception>(), (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()));
+        logger.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public void LogDiff_New_Debug_OK()
+    {
+        // arrange
+        var obj2 = new MyClass { Id = 1, Name = "Tested" };
+        var logger = new Mock<ILogger<LoggingExtensionTests>>();
+        var logObj = logger.Object;
+
+        // act
+        logObj.LogDifference(LogLevel.Debug, obj2, "Difference");
+
+        // assert
+        logger.Verify(m => m.BeginScope(It.IsAny<Dictionary<string, object>>()));
+        logger.Verify(m => m.Log(LogLevel.Debug, It.IsAny<EventId>(), It.IsAny<It.IsAnyType>(), It.IsAny<Exception>(), (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()));
         logger.VerifyNoOtherCalls();
     }
 
