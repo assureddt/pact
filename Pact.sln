@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30524.135
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32519.111
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Cache", "src\Pact.Cache\Pact.Cache.csproj", "{0D6C5D86-0DF3-4BD7-9280-DC2B2517734E}"
 EndProject
@@ -69,6 +69,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.EntityFrameworkCore.Tests", "test\Pact.EntityFrameworkCore.Tests\Pact.EntityFrameworkCore.Tests.csproj", "{1D13222A-60B3-420C-81B2-533E6EC4B3FD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pact.Impersonation.Tests", "test\Pact.Impersonation.Tests\Pact.Impersonation.Tests.csproj", "{1BD4FB5E-E29F-41EF-9977-1FD018BC6C87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pact.Logging.Loki", "src\Pact.Logging.Loki\Pact.Logging.Loki.csproj", "{632FD409-193C-47D3-BF7A-C2921B14602C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -180,6 +182,10 @@ Global
 		{1BD4FB5E-E29F-41EF-9977-1FD018BC6C87}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1BD4FB5E-E29F-41EF-9977-1FD018BC6C87}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1BD4FB5E-E29F-41EF-9977-1FD018BC6C87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{632FD409-193C-47D3-BF7A-C2921B14602C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{632FD409-193C-47D3-BF7A-C2921B14602C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{632FD409-193C-47D3-BF7A-C2921B14602C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{632FD409-193C-47D3-BF7A-C2921B14602C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
