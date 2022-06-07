@@ -12,15 +12,9 @@
 
   <ItemGroup>
     <PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'NETCOREAPP3_1' ">
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.*" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'NET5_0' ">
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.*" />
   </ItemGroup>
+
 
   <ItemGroup>
     <ProjectReference Include="..\Pact.Core\Pact.Core.csproj" />

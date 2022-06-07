@@ -11,16 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="IPNetwork2" Version="2.5.407" />
+    <PackageReference Include="IPNetwork2" Version="2.5.422" />
     <PackageReference Include="NetEscapades.AspNetCore.SecurityHeaders" Version="0.16.1" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'NETCOREAPP3_1' ">
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.1.*" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.1.*" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'NET5_0' ">
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.*" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.*" />
   </ItemGroup>
