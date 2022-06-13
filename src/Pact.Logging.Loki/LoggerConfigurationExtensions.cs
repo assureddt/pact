@@ -13,7 +13,8 @@ namespace Pact.Logging.Loki;
 
 public static class LoggerConfigurationExtensions
 {
-    private const string DefaultOutputTemplate = "{Message:lj}{NewLine}{Exception}";
+    private const string DefaultOutputTemplate =
+        "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
 
     /// <summary>
     /// Adds a non-durable sink that will send log events to Grafana Loki.
@@ -89,8 +90,8 @@ public static class LoggerConfigurationExtensions
         ITextFormatter? textFormatter = null,
         bool createLevelLabel = true,
         bool useInternalTimestamp = false,
-        string certificatePath = null,
-        string certificateKeyPath = null)
+        string? certificatePath = null,
+        string? certificateKeyPath = null)
     {
         HttpClient httpClient;
         if (!string.IsNullOrWhiteSpace(certificatePath))
@@ -100,7 +101,9 @@ public static class LoggerConfigurationExtensions
                 ClientCertificateOptions = ClientCertificateOption.Manual,
                 SslProtocols = SslProtocols.Tls12
             };
+
             handler.ClientCertificates.Add(X509Certificate2.CreateFromPemFile(certificatePath, certificateKeyPath));
+
             httpClient = new HttpClient(handler);
         }
         else
