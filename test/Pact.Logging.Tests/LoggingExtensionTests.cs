@@ -34,7 +34,7 @@ public class LoggingExtensionTests
         var obj = new MyClass { Id = 1, Name = "Test", SecurePassword = "blah" };
 
         // act
-        var dict = obj.GetLogPropertyDictionary(false);
+        var dict = obj.GetLogPropertyDictionary(Array.Empty<string>());
 
         // assert
         dict.Keys.ShouldContain("Id");
@@ -50,7 +50,7 @@ public class LoggingExtensionTests
     {
         // arrange
         var obj = new MyClass { Id = 1, Name = "Test" };
-        var obj2 = new MyClass { Id = 1, Name = "Tested" };
+        var obj2 = new MyClass { Id = 1, Name = "Tested", When = DateTime.Now };
 
         // act
         var dict = obj2.GetDifference(obj);
@@ -58,9 +58,12 @@ public class LoggingExtensionTests
         // assert
         dict.Keys.ShouldContain("Id");
         dict.Keys.ShouldContain("Name");
+        dict.Keys.ShouldContain("When");
         dict["Id"].OriginalValue.ShouldBe(1);
         dict["Name"].NewValue.ShouldBe("Tested");
         dict["Name"].OriginalValue.ShouldBe("Test");
+        dict["When"].NewValue.ShouldBe(obj2.When);
+        dict["When"].OriginalValue.ShouldBe(null);
     }
         
     [Fact]
@@ -203,10 +206,95 @@ public class LoggingExtensionTests
         this.FullMethodName().ShouldBe("Pact.Logging.Tests.LoggingExtensionTests.Itsa_Me_Mario_Too");
     }
 
+    [Fact]
+    public void IsSupported_DateTime()
+    {
+        DateTime.Now.IsSupportedLogProperty().ShouldBeTrue();
+    }
+
+    [Fact]
+    public void IsSupported_NullableDateTime()
+    {
+        ((DateTime?)DateTime.Now).IsSupportedLogProperty().ShouldBeTrue();
+    }
+
+    [Fact]
+    public void IsSupported_Long()
+    {
+        1L.IsSupportedLogProperty().ShouldBeTrue();
+    }
+
+    [Fact]
+    public void IsSupported_NullableLong()
+    {
+        ((long?)1).IsSupportedLogProperty().ShouldBeTrue();
+    }
+
+    [Fact]
+    public void IsSupported_Int()
+    {
+        1.IsSupportedLogProperty().ShouldBeTrue();
+    }
+
+    [Fact]
+    public void IsSupported_NullableInt()
+    {
+        ((int?)1).IsSupportedLogProperty().ShouldBeTrue();
+    }
+
+    [Fact]
+    public void IsSupported_Double()
+    {
+        1.0D.IsSupportedLogProperty().ShouldBeTrue();
+    }
+
+    [Fact]
+    public void IsSupported_NullableDouble()
+    {
+        ((double?)1.0D).IsSupportedLogProperty().ShouldBeTrue();
+    }
+
+    [Fact]
+    public void IsSupported_Float()
+    {
+        1F.IsSupportedLogProperty().ShouldBeTrue();
+    }
+
+    [Fact]
+    public void IsSupported_NullableFloat()
+    {
+        ((float?)1.0F).IsSupportedLogProperty().ShouldBeTrue();
+    }
+
+    [Fact]
+    public void IsSupported_Boolean()
+    {
+        true.IsSupportedLogProperty().ShouldBeTrue();
+    }
+
+    [Fact]
+    public void IsSupported_NullableBoolean()
+    {
+        ((bool?)true).IsSupportedLogProperty().ShouldBeTrue();
+    }
+
+    [Fact]
+    public void IsSupported_String()
+    {
+        "string".IsSupportedLogProperty().ShouldBeTrue();
+    }
+
+    [Fact]
+    public void IsNotSupported_Class()
+    {
+        new MyClass().IsSupportedLogProperty().ShouldBeFalse();
+    }
+
     private class MyClass
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string SecurePassword { get; set; }
+        public DateTime? When { get; set; }
     }
 }

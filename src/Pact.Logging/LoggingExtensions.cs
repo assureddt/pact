@@ -52,10 +52,10 @@ public static class LoggingExtensions
     /// <param name="httpContext"></param>
     public static void EnrichFromContext(IDiagnosticContext diagnosticContext, HttpContext httpContext)
     {
-        diagnosticContext.Set("IdentityName", httpContext?.User?.Identity?.Name);
-        diagnosticContext.Set("RemoteIp", httpContext?.Connection?.RemoteIpAddress);
+        diagnosticContext.Set("IdentityName", httpContext?.User.Identity?.Name);
+        diagnosticContext.Set("RemoteIp", httpContext?.Connection.RemoteIpAddress);
 
-        if (httpContext?.Request?.Headers != null && httpContext.Request.Headers.ContainsKey(HeaderNames.UserAgent))
+        if (httpContext?.Request.Headers != null && httpContext.Request.Headers.ContainsKey(HeaderNames.UserAgent))
         {
             diagnosticContext.Set("Agent", httpContext.Request.Headers[HeaderNames.UserAgent]);
         }
@@ -68,10 +68,10 @@ public static class LoggingExtensions
     /// <param name="context"></param>
     public static void EnrichFromFilterContext(IDiagnosticContext diagnosticContext, FilterContext context)
     {
-        diagnosticContext.Set("RouteData", context?.ActionDescriptor?.RouteValues);
-        diagnosticContext.Set("ActionName", context?.ActionDescriptor?.DisplayName);
-        diagnosticContext.Set("ActionId", context?.ActionDescriptor?.Id);
-        diagnosticContext.Set("ValidationState", context?.ModelState?.IsValid);
+        diagnosticContext.Set("RouteData", context?.ActionDescriptor.RouteValues);
+        diagnosticContext.Set("ActionName", context?.ActionDescriptor.DisplayName);
+        diagnosticContext.Set("ActionId", context?.ActionDescriptor.Id);
+        diagnosticContext.Set("ValidationState", context?.ModelState.IsValid);
     }
 
     /// <summary>
@@ -101,42 +101,62 @@ public static class LoggingExtensions
         if (endpoint is not RouteEndpoint re) return false;
 
         return string.Equals(
-            re.RoutePattern?.RawText,
+            re.RoutePattern.RawText,
             name,
             StringComparison.Ordinal);
     }
+
+    private static readonly string[] DefaultFilterTerms = {"password", "token"};
+
+    public static Dictionary<string, object> GetLogPropertyDictionary(this object obj) => GetLogPropertyDictionary(obj, DefaultFilterTerms);
 
     /// <summary>
     /// Retrieves a dictionary of the values of all public properties we may want to log from an object
     /// </summary>
     /// <param name="obj"></param>
-    /// <param name="filtered">By default, this is true, and removes any properties including "password" or "token" in their names</param>
+    /// <param name="filterTerms">By default, this filters any props containing the terms "password" or "token" if no override is provided</param>
     /// <returns></returns>
-    public static Dictionary<string, object> GetLogPropertyDictionary(this object obj, bool filtered = true)
+    public static Dictionary<string, object> GetLogPropertyDictionary(this object obj, params string[] filterTerms)
     {
         if (obj == null) return new Dictionary<string, object>();
 
         var props = TypeDescriptor.GetProperties(obj);
         var dict = new Dictionary<string, object>();
         
-        foreach (PropertyDescriptor x in props)
+        foreach (var x in props.Cast<PropertyDescriptor>().Where(x => IsSupportedLogProperty(x.PropertyType)))
         {
-            if (!x.PropertyType.IsPrimitive && x.PropertyType != typeof(string) && x.PropertyType != typeof(DateTime) &&
-                x.PropertyType != typeof(DateTime?) && x.PropertyType != typeof(int?) &&
-                x.PropertyType != typeof(bool?)) continue;
-            
-            if (!filtered || !(x.Name.ToLowerInvariant().Contains("password") ||
-                               x.Name.ToLowerInvariant().Contains("token")))
-            {
-                dict.TryAdd(x.Name, x.GetValue(obj));
-            }
-            else
-            {
-                dict.TryAdd(x.Name, "[Redacted]");
-            }
+            dict.TryAdd(x.Name,
+                filterTerms.Any(y => x.Name.Contains(y, StringComparison.InvariantCultureIgnoreCase))
+                    ? "[Redacted]"
+                    : x.GetValue(obj));
         }
 
         return dict;
+    }
+
+    internal static bool IsNullable<T>(this T obj, out Type underlying)
+    {
+        underlying = null;
+
+        if (obj == null)
+            return true;
+
+        var type = typeof(T);
+        if (!type.IsValueType)
+            return true;
+
+        underlying = Nullable.GetUnderlyingType(type);
+        return underlying != null;
+    }
+
+    internal static bool IsSupportedLogProperty<T>(this T _) => typeof(T).IsSupportedLogProperty();
+
+    internal static bool IsSupportedLogProperty(this Type type)
+    {
+        if (type == typeof(string) || type.IsValueType) 
+            return true;
+
+        return type.IsNullable(out var underlying) && underlying?.IsSupportedLogProperty() == true;
     }
 
     /// <summary>
@@ -145,13 +165,27 @@ public static class LoggingExtensions
     /// <typeparam name="T"></typeparam>
     /// <param name="amended"></param>
     /// <param name="original"></param>
-    /// <param name="filtered">By default, this is true, and removes any properties including "password" or "token" in their names</param>
     /// <returns></returns>
-    public static Dictionary<string, ObjectChange> GetDifference<T>(this T amended, T original, bool filtered = true)
+    public static Dictionary<string, ObjectChange> GetDifference<T>(this T amended, T original)
     {
-        var originalProps = GetLogPropertyDictionary(original, filtered);
+        var originalProps = GetLogPropertyDictionary(original);
 
-        return GetDifference(amended, originalProps, filtered);
+        return GetDifference(amended, originalProps);
+    }
+
+    /// <summary>
+    /// Retrieves a dictionary of all properties between the two objects and, where values differ
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="amended"></param>
+    /// <param name="original"></param>
+    /// <param name="filterTerms">By default, this filters any props containing the terms "password" or "token" if no override is provided</param>
+    /// <returns></returns>
+    public static Dictionary<string, ObjectChange> GetDifference<T>(this T amended, T original, params string[] filterTerms)
+    {
+        var originalProps = GetLogPropertyDictionary(original, filterTerms);
+
+        return GetDifference(amended, originalProps, filterTerms);
     }
 
     /// <summary>
@@ -159,13 +193,23 @@ public static class LoggingExtensions
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="amended"></param>
-    /// <param name="filtered">By default, this is true, and removes any properties including "password" or "token" in their names</param>
     /// <returns></returns>
-    public static Dictionary<string, ObjectChange> GetDifference<T>(this T amended, bool filtered = true)
+    public static Dictionary<string, ObjectChange> GetDifference<T>(this T amended)
     {
-        return GetDifference(amended, null, filtered);
+        return GetDifference(amended, null, DefaultFilterTerms);
     }
 
+    /// <summary>
+    /// Retrieves a dictionary of all properties in the object (with no original state passed, this will present as all new values)
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="amended"></param>
+    /// <param name="filterTerms">By default, this filters any props containing the terms "password" or "token" if no override is provided</param>
+    /// <returns></returns>
+    public static Dictionary<string, ObjectChange> GetDifference<T>(this T amended, params string[] filterTerms)
+    {
+        return GetDifference(amended, null, filterTerms);
+    }
 
     /// <summary>
     /// Retrieves a dictionary of all properties between the object &amp; original property dictionary and, where values differ
@@ -173,11 +217,25 @@ public static class LoggingExtensions
     /// <typeparam name="T"></typeparam>
     /// <param name="amended"></param>
     /// <param name="originalProps"></param>
-    /// <param name="filtered">By default, this is true, and removes any properties including "password" or "token" in their names</param>
     /// <returns></returns>
-    public static Dictionary<string, ObjectChange> GetDifference<T>(this T amended, Dictionary<string, object> originalProps, bool filtered = true)
+    public static Dictionary<string, ObjectChange> GetDifference<T>(this T amended, Dictionary<string, object> originalProps)
     {
-        var amendedProps = GetLogPropertyDictionary(amended, filtered);
+        var amendedProps = GetLogPropertyDictionary(amended);
+            
+        return amendedProps.GetDifference(originalProps);
+    }
+
+    /// <summary>
+    /// Retrieves a dictionary of all properties between the object &amp; original property dictionary and, where values differ
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="amended"></param>
+    /// <param name="originalProps"></param>
+    /// <param name="filterTerms">By default, this filters any props containing the terms "password" or "token" if no override is provided</param>
+    /// <returns></returns>
+    public static Dictionary<string, ObjectChange> GetDifference<T>(this T amended, Dictionary<string, object> originalProps, params string[] filterTerms)
+    {
+        var amendedProps = GetLogPropertyDictionary(amended, filterTerms);
             
         return amendedProps.GetDifference(originalProps);
     }
@@ -230,7 +288,7 @@ public static class LoggingExtensions
     /// <returns></returns>
     public static Dictionary<string, ObjectChange> GetDifference(this Dictionary<string, object> amendedProps)
     {
-        return amendedProps.GetDifference(null);
+        return amendedProps.GetDifference((Dictionary<string, object>)null);
     }
 
     /// <summary>
@@ -347,7 +405,7 @@ public static class LoggingExtensions
     /// <summary>
     /// Helper to get the basic calling method name
     /// </summary>
-    /// <param name="obj"></param>
+    /// <param name="_"></param>
     /// <param name="memberName"></param>
     /// <returns></returns>
     public static string MethodName(this object _, [CallerMemberName] string memberName = "") => memberName;
