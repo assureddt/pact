@@ -151,7 +151,7 @@ public static class LoggingExtensions
     {
         var originalProps = GetLogPropertyDictionary(original, filtered);
 
-        return GetDifference(amended, originalProps);
+        return GetDifference(amended, originalProps, filtered);
     }
 
     /// <summary>
